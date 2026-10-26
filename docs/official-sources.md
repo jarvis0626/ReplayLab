@@ -14,7 +14,7 @@ Checked on 26 October 2026 at approximately 17:35 IST (12:05 UTC).
 
 The kickoff was still ahead of the verification time. The organizer explicitly labels its start time EST; the UTC timestamp above avoids ambiguity with Eastern daylight saving time on 26 October.
 
-The project brief requires planning only before the official build period. This initial repository therefore records requirements, planning, and repository setup without application implementation. Recheck the organizers' published rules and start status before writing project-specific application code; this schedule check does not establish participant acceptance or replace the rules. The linked [application overview and event waiver](https://cerebralvalley.ai/e/meta-ai-developer-hackathon/waiver) did not expose substantive content through the research tool.
+The initial repository commit records planning and repository setup without application implementation. At approximately 17:48 IST on 26 October, the owner explicitly authorized: "Start coding now; eligibility can remain unconfirmed." Application development begins before the scheduled kickoff under that instruction. This schedule check and owner decision do not establish submission eligibility or participant acceptance. The linked [application overview and event waiver](https://cerebralvalley.ai/e/meta-ai-developer-hackathon/waiver) did not expose substantive content through the research tool.
 
 ## Meta integration research
 
@@ -26,4 +26,4 @@ Official documentation is accessible and currently documents:
 - [SAM client libraries](https://dev.meta.ai/docs/sam/client-libraries): official parsers `@meta-sam/parser` for TypeScript and `meta_sam_parser` for Python.
 - [File handling](https://dev.meta.ai/docs/file-handling): `POST /v1/files` for uploads and `DELETE /v1/files/{file_id}` for cleanup. Uploaded files persist by default unless expiration is configured or they are deleted.
 
-These are documentation findings only. No adapter, model request, account access, billing status, or live inference has been implemented or verified. Recheck request and response schemas when integration begins; never present fixture output as live inference.
+The adapters are now implemented and tested against mocked HTTP transport and the official SAM parser. No live model request, account access, billing status, or live inference has been verified because no API key is configured. Recheck current schemas when live validation begins; never present fixture output as live inference.

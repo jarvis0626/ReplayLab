@@ -1,89 +1,99 @@
 # ReplayLab architecture
 
-**Status:** Planning only. No application, model integration, or automated test suite has been implemented or verified. Build work must begin within the official hackathon window after checking the organizer's current rules.
+ReplayLab implements a local workflow for a controlled tabletop task: process a
+demonstration, review a proposed task graph, approve observable rules, capture a
+checkpoint, and receive PASS, FAIL, or UNCERTAIN with rule evidence. The working
+offline sample is a four-step colored-block assembly. It uses known synthetic
+observations, not video understanding or live model inference.
 
-ReplayLab is an evidence-grounded visual task verification system: learn a small tabletop assembly from a demonstration, review the extracted instructions, then compare a learner's checkpoint image against approved observable requirements.
+Implementation was explicitly authorized before the scheduled kickoff on
+26 October 2026. Hackathon eligibility remains unconfirmed; see
+[official-source provenance](official-sources.md). The GitHub repository remains
+private. Live Meta account access and a public deployment have not been verified.
 
-The MVP is a controlled four-step assembly with distinguishable colored blocks, consistent lighting, and comparable camera angles. It does not establish arbitrary assembly understanding or verify invisible connections.
-
-## Planned system
+## Implemented data flow
 
 ```mermaid
 flowchart TD
-    Browser[React application] --> API[FastAPI REST API]
-    API --> Store[(SQLite metadata and local media)]
-    API --> Jobs[Background processing and status polling]
-    Jobs --> Video[FFmpeg and OpenCV: metadata and reference frames]
-    Video --> Reasoner[Reasoner provider: proposed structured task]
-    Reasoner --> Validation[Pydantic schema validation]
-    Validation --> Review[User review and approval]
-    Review --> Graph[Domain DAG and approved checkpoint constraints]
-    Graph --> Practice[Guided practice and checkpoint capture]
-    Practice --> Segmenter[Segmenter provider: normalized observations]
-    Segmenter --> Evidence[Visibility, quality, and camera comparability checks]
-    Graph --> Evaluator[Deterministic constraint evaluator]
-    Evidence --> Evaluator
-    Evaluator --> Result[PASS / FAIL / UNCERTAIN with rule evidence]
-    Result --> Explainer[Evidence-grounded explanation provider]
-    Result --> Browser
-    Explainer --> Browser
-    Providers[Explicit mock or verified Meta adapters] -.-> Reasoner
-    Providers -.-> Segmenter
-    Providers -.-> Explainer
+    UI[React and TypeScript UI] --> API[FastAPI REST API]
+    API --> DB[(SQLite projects and attempts)]
+    API --> Media[Local media and reference frames]
+    API --> Jobs[In-process background processing]
+    Jobs --> Video[FFprobe inspection and FFmpeg frame extraction]
+    Video --> Provider[Explicit mock or Meta provider]
+    Provider --> Task[Pydantic task and DAG validation]
+    Task --> Review[User edits and approval]
+    Review --> Practice[Dependency-gated practice]
+    Practice --> Observation[Normalized reference and checkpoint observations]
+    Observation --> Verify[Deterministic evidence and rule evaluation]
+    Verify --> Result[Verdict and rule diagnostics]
+    Result --> UI
+    Verify --> Explain[Existing evidence selection and deterministic rendering]
+    Explain --> UI
 ```
 
-All components above are proposed. The explanation provider receives the fixed verdict and structured evidence; it cannot change the verdict.
+## Code boundaries
 
-## Planned boundaries
-
-| Area | Responsibility |
+| Location | Implemented responsibility |
 | --- | --- |
-| `apps/web` | React, TypeScript, Vite, Tailwind CSS, React Flow, camera capture, evidence overlays, and visible provider status. |
-| `apps/api/app/api` | Validated REST requests, safe media access, errors, and job status. |
-| `apps/api/app/services/video` | Bounded upload inspection, frame extraction, timestamps, and processing cache. |
-| `apps/api/app/services/graph` | DAG validation, topological order, dependency-aware progression, and persistence. |
-| `apps/api/app/services/verification` | Normalized geometry, evidence sufficiency, rule evaluation, and verdict aggregation. |
-| `apps/api/app/services/inference` | Provider orchestration, caching, validated outputs, error handling, and provenance. |
-| `apps/api/app/providers` | Separate mock and Meta implementations of reasoner, segmenter, and explainer contracts. |
-| `apps/api/app/database` | SQLModel or SQLAlchemy models and SQLite persistence. |
-| `packages/contracts` | Shared contract definitions or generated frontend types derived from API schemas. |
-| `demo` | Clearly labeled demonstration assets and evaluation fixtures with attribution. |
+| `apps/web/src` | Project dashboard, video studio, editable task/React Flow graph, camera and image upload, observations, attempt history, evaluation, provider/consent controls |
+| `apps/api/app/main.py` | REST routes, upload handling, consent and approval gates, background work, media access, deletion, orchestration |
+| `apps/api/app/schemas.py`, `api_contracts.py` | Validated domain and HTTP payloads |
+| `apps/api/app/services/media.py` | Bounded FFprobe/FFmpeg work, actual frame extraction, image decoding, pixel hashing, local MP4 preparation, measured image-quality heuristic |
+| `apps/api/app/services/graph.py` | Dependency validation, cycles, topological order, available steps |
+| `apps/api/app/services/verification.py` | Normalized 2D constraints, evidence sufficiency, aggregation, corrections |
+| `apps/api/app/providers` | Fixed mock template/fixture observations and documented live Meta contracts |
+| `apps/api/app/core/store.py` | SQLAlchemy SQLite document storage for projects and attempts |
+| `apps/api/app/services/demo.py` | Synthetic images/video and registered known frame observations |
+| `demo/fixtures/evaluation.json` | Curated normalized-observation scenarios used by the evaluation service |
 
-These paths describe a future layout; they are not claims that the directories or functionality exist. Keep graph and verification logic independent of HTTP handlers, UI rendering, and provider SDKs.
+Projects retain video metadata, frames, task/approval state, completed steps, and
+processing status. Attempts retain the task revision, image, result, and reference
+observations. Editing a task resets approval and progress. Verification refuses a
+checkpoint from an older task revision. Only PASS advances dependency progress.
 
-## Planned contracts and persistence
+Background jobs run inside one API process and are polled by the UI. SQLite and
+Python locks support the local single-user application. Interrupted jobs become
+visible errors after restart; they are not automatically resumed by a durable
+queue. Run one API worker.
 
-- **Structured task:** title, objects, chronological steps, dependencies, source time intervals, reference frames, observable constraints, approval state, and model/provider provenance.
-- **Normalized observation:** object label, optional track identifier, normalized bounding box, optional mask, applicable quality information, timestamp, evidence source, and provider provenance. Preserve missing or unavailable quality information explicitly.
-- **Verification result:** step identifier, verdict, observations, individual rule results, evidence references, explanation, and provider mode.
-- **Persistent entities:** projects, videos, frames, tasks, steps, checkpoints, attempts, processing jobs, and verification results. Store media under generated identifiers with explicit deletion behavior.
+## Evidence policy
 
-Planned REST groups cover health, projects, upload/extraction, processing status, task editing, graphs, attempts, verification, evaluation, and deletion. Long-running processing returns a job identifier; the frontend polls status and shows actionable failures.
+Presence/count, above/below/left/right, proximity, alignment, and independently
+observed color are supported. Positions use normalized object centers; these are
+visible 2D requirements, not proof of physical attachment or hidden joints.
 
-## Verification policy
+Both images need adequate visibility and image quality, plus established view
+comparability. Missing quality/confidence stays unknown. Missing detections prove
+absence only with stronger coverage and a complete-detection declaration. Exact
+counts also reject ambiguous duplicate boxes. Tolerance boundaries can remain
+uncertain. See [evaluation](evaluation.md) for the thresholds and measured scope.
 
-Rules evaluate object presence/count, relative position, proximity/alignment, reliable color evidence, visibility, and camera comparability using normalized geometry.
+Any sufficiently evidenced failed rule yields FAIL. PASS requires every rule to
+pass. Other outcomes are UNCERTAIN, and individual uncertain rules remain visible
+even when a different rule establishes failure. Explanation output cannot replace
+the verdict or add unobserved facts.
 
-| Verdict | Required evidence |
-| --- | --- |
-| PASS | Every required constraint is sufficiently observable and satisfied. |
-| FAIL | Sufficient visible evidence establishes a specific required-constraint violation. |
-| UNCERTAIN | The evidence cannot support a decision, including occlusion, low-confidence detection, poor image quality, or incompatible viewpoints. |
+## Provider and trust boundaries
 
-A missed low-confidence detection must not automatically become FAIL. Absence needs adequate scene coverage. Evidence that supports one rule must not conceal uncertainty about another. Corrections identify observed objects and the approved expected relationship; explanations must not invent observations.
+Mock extraction is a fixed four-step template. Mock observations are retrieved by
+hashing decoded image pixels against registered generated fixtures; filenames and
+requested verdicts are not inputs. Unknown images have no fixture observations
+and remain uncertain. Only frames from the app-generated demonstration are
+registered as known source observations.
 
-## Provider modes and integration gate
+The Meta adapter implements documented Muse Spark and SAM calls, official mask
+parsing, validated proposals, cache, cleanup, and error handling. Its transport
+tests do not establish live account availability. Cloud calls require explicit
+consent. SAM does not supply visibility/completeness; the API separately records
+user view/visibility attestations and a local sharpness/exposure heuristic.
+[Model usage](model-usage.md) explains the exact contract and limitations.
 
-- `AI_PROVIDER=mock` supports an offline demonstration with deterministic extraction and known observations for explicitly labeled fixtures. Every affected screen and result must prominently disclose MOCK MODE and provenance. Mock observations are not live segmentation or evidence of model accuracy.
-- `AI_PROVIDER=meta` is planned for the brief's Muse Spark reasoning/explanation and SAM 3.1 segmentation requirements. Model availability, identifiers, endpoints, authentication, upload mechanisms, and response schemas must first be checked against current official documentation. These integrations are unimplemented and unverified.
-- Keep `MODEL_API_KEY` on the backend. Handle missing credentials, billing restrictions, authentication errors, rate limits, timeouts, malformed output, unsupported input, and outages visibly. Never silently replace a failed live call with mock output.
-- Without valid credentials, select and disclose mock mode. During a live session, provider errors remain explicit until the user chooses a supported recovery action.
-- Cache inference with input/model/configuration provenance. Usage logs must exclude credentials and private media content.
+Uploads use generated server filenames and bounded decoding. Default video limits
+are 100 MiB and 120 seconds; checkpoints allow 10 MiB. Media and SQLite state stay
+on the server until project deletion. Deletion also clears the shared inference
+cache; other projects may refill it. Generated synthetic demo data remains available. This local server has no public-user
+authentication or tenant isolation. Deployment must preserve those access and
+retention boundaries; see [deployment](deployment.md).
 
-Official references to verify before implementation: [quickstart](https://dev.meta.ai/docs/quickstart), [video understanding](https://dev.meta.ai/docs/video-understanding), [SAM overview](https://dev.meta.ai/docs/sam/overview), [SAM client libraries](https://dev.meta.ai/docs/sam/client-libraries), and [file handling](https://dev.meta.ai/docs/file-handling). These links are provided by the product brief; listing them does not certify API availability or schemas.
-
-## Privacy, security, and delivery constraints
-
-Validate media size, type, content, and duration; use generated filenames, bounded processing, controlled media access, configured CORS, and safe error responses. Camera capture happens only on user action. Explain cloud processing and retention before transmitting user media to an external provider. Support project/media deletion and document third-party licenses.
-
-The GitHub repository must remain **private**, following the user's latest instruction. Commit and push meaningful completed milestones. A public-repository submission requirement, if confirmed, is a future decision requiring explicit user authorization before visibility changes. Do not commit credentials, uploads, generated media, local databases, or unreviewed inference logs.
+Actual check results are recorded in [test results](test-results.md).

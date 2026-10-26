@@ -7,12 +7,13 @@
 - Commit and push meaningful, completed major updates to the configured GitHub remote. This preference authorizes milestone pushes during requested project work without repeated confirmation.
 - Do not force-push, rewrite shared history, or delete remote branches without explicit authorization.
 - Do not create background commit/push automation. Review and validate each milestone before pushing.
+- On 26 October 2026 the owner chose "Finish offline; leave live validation pending." Complete the offline application and retain the implemented Meta adapters without claiming successful live calls or asking again for a key during this task.
 
 ## Build timing and scope
 
 - The original brief is preserved in `docs/project-brief.md`; the owner's latest messages take precedence.
-- The initial repository setup predates the published kickoff. Keep pre-kickoff work to planning and repository administration.
-- Before implementing project-specific code, recheck the official event schedule and rules linked in `docs/official-sources.md`. Do not code before the official build window begins.
+- The initial repository setup predates the published kickoff.
+- On 26 October 2026 the owner explicitly chose: "Start coding now; eligibility can remain unconfirmed." This instruction authorizes implementation before kickoff and supersedes the original planning-only timing restriction. Preserve honest provenance; do not claim hackathon eligibility has been established.
 - Planned architecture and roadmap documents describe intended work, not completed features.
 
 ## Implementation standards

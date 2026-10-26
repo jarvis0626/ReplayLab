@@ -1,0 +1,29 @@
+services:
+  api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    init: true
+    environment:
+      DATA_DIR: /data
+      AI_PROVIDER: ${AI_PROVIDER:-mock}
+      MODEL_API_KEY: ${MODEL_API_KEY:-}
+      META_BASE_URL: ${META_BASE_URL:-https://api.meta.ai/v1}
+      CORS_ORIGINS: http://localhost:8080,http://127.0.0.1:8080
+    volumes:
+      - replaylab-data:/data
+    expose:
+      - '8010'
+  web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+    init: true
+    ports:
+      - '127.0.0.1:8080:80'
+    depends_on:
+      api:
+        condition: service_healthy
+
+volumes:
+  replaylab-data:

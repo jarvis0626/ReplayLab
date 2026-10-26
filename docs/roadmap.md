@@ -1,69 +1,52 @@
-# ReplayLab roadmap
+# ReplayLab roadmap and delivery status
 
-**Current state:** Repository preparation and planning only. No application features, model calls, screenshots, deployments, evaluation scores, or test results are complete.
+The local application and explicit mock vertical slice are implemented. Meta
+adapters are implemented and tested against mocked transport; live service
+availability is unverified. The repository remains private.
 
-The target is a working vertical slice for a controlled four-step colored-block assembly: upload a demonstration, review timestamped steps, inspect the action graph, capture an attempt, and receive an evidence-backed PASS, FAIL, or UNCERTAIN result.
+The owner explicitly authorized implementation before the scheduled kickoff on
+26 October 2026. This decision superseded the original planning-only build gate;
+it does not establish hackathon eligibility. Preserve the history in
+[official sources](official-sources.md) when preparing a submission.
 
-## Delivery rules
+## Implemented milestones
 
-- Verify the official hackathon build window before creating project-specific application code. Check the organizer's latest rules and deadline before submission.
-- Keep this repository private, as requested by the user. Do not make it public automatically. If submission rules require public access, explain that requirement and obtain authorization before changing visibility.
-- Commit and push major completed milestones with factual summaries and recorded validation. Do not describe a milestone as complete while its required behavior is missing.
-- Distinguish implemented behavior, mock fixtures, live provider behavior, and unverified integration work in documentation and the UI.
-- Use official Meta schemas and model identifiers only after checking current documentation. Do not fabricate provider methods, outputs, or successful live calls.
+| Milestone | Current behavior and evidence |
+| --- | --- |
+| Foundation | React/TypeScript/Vite frontend, FastAPI, SQLite project/attempt persistence, health/provider status, explicit mock mode |
+| Media and task review | Bounded real video inspection, four timestamped frames, processing/error status, structured task editing and approval |
+| Graph and practice | Validated DAG, missing-dependency/cycle rejection, React Flow view, prerequisite gates, webcam capture, image uploads, attempt history |
+| Verification | Evidence-gated presence/count/position/proximity/alignment/color rules, per-rule diagnostics, corrections, PASS/FAIL/UNCERTAIN, task-revision checks |
+| Offline demonstration | Generated assembly video/images, fixed mock proposal, pixel-matched known fixture observations; arbitrary images remain uncertain |
+| Meta integration code | Official documented models/endpoints, structured output validation, native SAM parser, normalized boxes/COCO masks, cache, retry/error handling, consent, file cleanup |
+| Reproducible evaluation | 25 curated normalized-observation scenarios, expected/predicted details and confusion matrix, packaged fixture JSON |
+| Documentation | Architecture, development, model usage, evaluation scope, demo walkthrough, and deployment preparation |
 
-## Phase 0: Preparation
+These claims describe source behavior and the validation recorded in
+[test results](test-results.md). A fixture or mocked-transport test is not a
+credentialed model call, measured live accuracy, public deployment, or organizer
+acceptance. Camera behavior additionally depends on the user's device/browser.
 
-**Planned deliverables:** Private repository, documented product scope, architecture, roadmap, repository hygiene, and confirmed build eligibility.
+## Remaining delivery work
 
-**Acceptance:** Repository visibility is verified as private; the initial commit contains planning material only; no secrets or private media are included; the official build start and implementation gate are recorded accurately.
+| Work | Completion criterion |
+| --- | --- |
+| Credentialed Meta validation | Authorized server key/account/billing, explicit media consent, inspected successful Muse and SAM calls, documented real latency and failure behavior |
+| Real-media evaluation | Independently labeled reference/checkpoint set; report detection quality and end-to-end verdicts separately from deterministic fixture agreement |
+| Hosted demo | Deployment credentials and chosen access policy; verify deployed health, media/fixture access, persistent disk, consent, and deletion |
+| Demo recording | Record the working three-minute walkthrough, review factual claims and provider labels, upload only when sharing is authorized |
+| Submission readiness | Verify current organizer requirements, eligibility, accepted links, and participant status; resolve any public-access requirement explicitly while keeping this repository private |
+| Production hardening | Authentication, tenant boundaries, durable job queue, multiworker concurrency, retention controls, and operational monitoring before public multiuser use |
 
-## Phase 1: Foundation
+The first three external items require account access, hosting, or additional
+media rather than a fabricated successful result. Do not substitute the offline
+sample for live Meta validation or describe a prepared script as a recorded demo.
 
-**Planned deliverables:** React/TypeScript frontend, FastAPI backend, SQLite metadata storage, navigation shell, health endpoint, provider interfaces, explicit mock status, and environment configuration.
+## Milestone publishing
 
-**Acceptance:** Frontend and backend start using documented commands; the API health check succeeds; basic project persistence survives a restart; absent credentials produce visibly labeled mock mode; relevant startup/API checks run and their actual outcomes are recorded.
-
-## Phase 2: Video and task understanding
-
-**Planned deliverables:** Safe uploads, real video playback and metadata, FFmpeg/OpenCV reference frames with timestamps, background jobs, validated task contracts, deterministic mock extraction, and editable task review.
-
-**Acceptance:** A permitted sample video produces real timestamped frames; corrupt or oversized media is rejected safely; processing failures are visible; extracted task output is schema-validated; users approve or correct steps before practice; data persists after reload.
-
-## Phase 3: Action graph and guided practice
-
-**Planned deliverables:** Domain DAG engine, React Flow graph, source evidence display, dependency-aware progression, webcam preview/capture, manual checkpoint uploads, and persisted attempts.
-
-**Acceptance:** Missing dependencies and cycles are rejected; topological order is valid; edits retain valid dependencies; steps cannot advance ahead of prerequisites; camera denial and unavailable devices have usable recovery paths; captured/uploaded checkpoints show beside their reference images.
-
-## Phase 4: Evidence-grounded verification
-
-**Planned deliverables:** Deterministic normalized-geometry rules; evidence sufficiency checks; PASS/FAIL/UNCERTAIN aggregation; object/rule diagnostics; available overlays; template corrections; and focused verification tests.
-
-**Acceptance:** Correct relationships pass, visible mismatches fail with a specific correction, and occlusion/poor visibility/camera mismatch yield uncertainty when evidence is insufficient. A low-confidence missing detection does not automatically fail. Verdicts come from observations and constraints, never filenames, buttons, or requested outcomes. Explanation output cannot override the verdict.
-
-## Phase 5: Meta integration
-
-**Planned deliverables:** Officially documented reasoning, segmentation, and grounded explanation adapters; real response normalization; provider provenance; inference cache; visible availability; and explicit failure handling.
-
-**Acceptance:** Current official identifiers and request/response contracts are documented before integration; API keys stay on the backend; malformed provider outputs are rejected; authentication, billing, rate-limit, timeout, and outage paths are handled. Successful live requests are claimed only after execution and inspection. If credentials or billing block validation, document exactly which adapter behavior remains unverified and preserve the clearly labeled offline workflow.
-
-## Phase 6: Evaluation and polish
-
-**Planned deliverables:** At least 12 labeled scenarios covering correct, incorrect, and ambiguous cases; evaluation diagnostics; frontend/backend checks; CI; responsive and accessible UI; privacy/error handling; and reproducible local setup.
-
-**Acceptance:** Record actual test commands and outcomes. Report expected versus predicted verdicts with case counts, sample size, and limitations. Keep fixture-based deterministic checks separate from live model measurements. Report a confusion matrix or metrics only when supported by the collected labels and results. Capture screenshots/GIFs only from working features.
-
-## Phase 7: Deployment and submission preparation
-
-**Planned deliverables:** Deployment guide, working demo data, actual model-usage description, factual three-minute demo script/video, license and asset attribution, verified submission links, and a readiness checklist.
-
-**Acceptance:** Reproduce the end-to-end flow from documented setup; verify deployed health and media behavior if deployed; disclose cloud processing and retention; verify video access and current organizer requirements. Resolve any public-repository requirement with the user before changing the private repository's visibility. Submit only capabilities and live calls that have been demonstrated.
-
-## Validation and milestone records
-
-For each implementation milestone, record the change, validation command(s), actual result, provider mode, known limitations, and commit identifier. Push meaningful milestones to the private GitHub repository. Keep secrets and user media out of commits.
-
-The first useful vertical slice should connect real upload/frame extraction to approved task constraints and checkpoint verification in explicit mock mode. Subsequent work replaces provider fixtures with verified live integrations while preserving deterministic verdicts and honest provenance.
-
-No implementation phase is marked complete by this document. Phase status should change only when the corresponding acceptance checks have actually been met.
+Review the diff and staged paths for scope, secrets, and runtime artifacts. Run
+the applicable checks and record actual results. Commit completed meaningful
+updates, push to the configured private remote without force, and verify the
+remote commit. The owner's existing instruction authorizes these milestone
+pushes; it does not authorize changing repository visibility or rewriting shared
+history. See [development](development.md).
