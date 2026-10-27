@@ -32,6 +32,7 @@ export function useScreenCapture(options: Options) {
   const pending = useRef(false);
   const abort = useRef<AbortController | null>(null);
   const fingerprint = useRef<Uint8ClampedArray | null>(null);
+  const lastAcceptedCapture = useRef(0);
   const scopeRef = useRef("");
 
   const stop = useCallback(() => {
@@ -44,6 +45,7 @@ export function useScreenCapture(options: Options) {
     streamRef.current = null;
     if (videoRef.current) videoRef.current.srcObject = null;
     fingerprint.current = null;
+    lastAcceptedCapture.current = 0;
     pending.current = false;
     if (active.current) {
       setSharing(false);
@@ -154,7 +156,10 @@ export function useScreenCapture(options: Options) {
     if (!thumbContext) return;
     thumbContext.drawImage(canvas, 0, 0, 160, 90);
     const pixels = thumbContext.getImageData(0, 0, 160, 90).data;
-    if (!force && fingerprint.current) {
+    const heartbeatDue =
+      Date.now() - lastAcceptedCapture.current >=
+      Math.max(20000, 2 * opts.interval);
+    if (!force && !heartbeatDue && fingerprint.current) {
       let changed = 0;
       for (let i = 0; i < pixels.length; i += 4)
         if (
@@ -185,8 +190,10 @@ export function useScreenCapture(options: Options) {
         !controller.signal.aborted
       ) {
         await opts.onCapture(blob, controller.signal, scopeRef.current);
-        if (!controller.signal.aborted && token === generation.current)
+        if (!controller.signal.aborted && token === generation.current) {
           fingerprint.current = pixels.slice();
+          lastAcceptedCapture.current = Date.now();
+        }
       }
     } catch (error) {
       if (

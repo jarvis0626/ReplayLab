@@ -332,7 +332,16 @@ def install_digital_routes(
         question = body.question.casefold()
         evidence = []
         warnings = instruction_warnings(body.question + " " + step.description)
-        if record:
+        finished = all(item.id in project["completed_step_ids"] for item in task.steps)
+        if finished:
+            answer = "All approved checkpoints are verified. There is no next eligible step. Completion records describe the previously observed states; they do not establish hidden application or filesystem state."
+            if record:
+                evidence = record["response"]["result"]["evidence"][:8]
+            else:
+                warnings.append(
+                    "No current screen evidence. This answer uses only recorded workflow progress."
+                )
+        elif record:
             last = record["response"]["result"]
             evidence = last["evidence"][:8]
             answer = last["explanation"]

@@ -138,6 +138,9 @@ def test_digital_demo_approval_and_four_actual_ocr_checkpoints(digital_client, d
         assert len(payload["completed_step_ids"]) == index + 1
     final = client.get(f"/api/projects/{project['id']}").json()
     assert final["completed_step_ids"] == [f"digital-step-{index}" for index in range(1, 5)]
+    coaching = client.post(f"/api/projects/{project['id']}/ask", json={"question": "What next?"}).json()
+    assert "All approved checkpoints are verified" in coaching["answer"]
+    assert "no next eligible step" in coaching["answer"]
     assert client.get(f"/api/projects/{project['id']}/attempts").json() == []
     after = {
         path.relative_to(client.app.state.settings.data_dir)

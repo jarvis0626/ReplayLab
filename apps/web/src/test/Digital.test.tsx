@@ -374,7 +374,9 @@ describe("digital screen privacy and lifecycle", () => {
     });
     expect(onUpdate).not.toHaveBeenCalled();
   });
-  it("skips unchanged frames instead of repeatedly sending duplicate screenshots", async () => {
+  it("skips duplicate frames, rechecks on a bounded heartbeat, and blocks heartbeat while paused", async () => {
+    let now = 1000000;
+    vi.spyOn(Date, "now").mockImplementation(() => now);
     let periodic = () => {};
     vi.spyOn(window, "setInterval").mockImplementation((handler, delay) => {
       if (typeof handler === "function" && delay === 4000)
@@ -420,6 +422,68 @@ describe("digital screen privacy and lifecycle", () => {
     });
     expect(api.screenCheck).toHaveBeenCalledOnce();
     expect(screen.getByText("2 unchanged frames skipped")).toBeInTheDocument();
+    now += 20001;
+    await act(async () => {
+      periodic();
+      await Promise.resolve();
+    });
+    await waitFor(() => expect(api.screenCheck).toHaveBeenCalledTimes(2));
+    await user.click(screen.getByRole("button", { name: "Pause" }));
+    now += 40000;
+    await act(async () => {
+      periodic();
+      await Promise.resolve();
+    });
+    expect(api.screenCheck).toHaveBeenCalledTimes(2);
+  });
+  it("does not repeat voice coaching for confidence-only evidence changes", async () => {
+    let now = 1000000;
+    vi.spyOn(Date, "now").mockImplementation(() => now);
+    captureDevice();
+    const context = {
+      drawImage: vi.fn(),
+      fillStyle: "",
+      fillRect: vi.fn(),
+      getImageData: () => ({ data: new Uint8ClampedArray(160 * 90 * 4) }),
+    };
+    vi.spyOn(HTMLCanvasElement.prototype, "getContext").mockReturnValue(
+      context as unknown as CanvasRenderingContext2D,
+    );
+    vi.spyOn(HTMLCanvasElement.prototype, "toBlob").mockImplementation(
+      (callback) =>
+        callback(new Blob(["canvas pixels"], { type: "image/png" })),
+    );
+    const user = userEvent.setup();
+    mount();
+    await user.click(
+      screen.getByRole("button", { name: "Enable voice guidance" }),
+    );
+    await user.click(
+      screen.getByRole("button", { name: "Choose screen or window" }),
+    );
+    await screen.findByText("SHARING");
+    const preview = screen.getByLabelText("Shared screen preview");
+    Object.defineProperty(preview, "videoWidth", {
+      configurable: true,
+      value: 1280,
+    });
+    Object.defineProperty(preview, "videoHeight", {
+      configurable: true,
+      value: 720,
+    });
+    fireEvent.loadedData(preview);
+    await waitFor(() => expect(speech.speak).toHaveBeenCalledOnce());
+    vi.mocked(api.screenCheck).mockResolvedValue({
+      ...check,
+      result: {
+        ...check.result,
+        evidence: ["Character confidence changed from 0.84 to 0.87."],
+      },
+    });
+    now += 11000;
+    await user.click(screen.getByRole("button", { name: "Recheck" }));
+    await waitFor(() => expect(api.screenCheck).toHaveBeenCalledTimes(2));
+    expect(speech.speak).toHaveBeenCalledOnce();
   });
 });
 

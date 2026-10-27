@@ -151,7 +151,15 @@ export function LiveScreenAssistant({
   useEffect(() => {
     if (!voice || paused || redacting || !check || !window.speechSynthesis)
       return;
-    const key = `${check.result.step_id}:${check.result.status}:${check.result.evidence.join("|")}`;
+    const key = JSON.stringify({
+      step: check.result.step_id,
+      status: check.result.status,
+      reason: check.result.reason,
+      explanation: check.result.explanation,
+      corrections: check.result.rule_results
+        .map((rule) => rule.correction)
+        .filter(Boolean),
+    });
     if (
       lastSpoken.current.key === key ||
       Date.now() - lastSpoken.current.at < 10000
