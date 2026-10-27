@@ -84,7 +84,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         yield
         store.engine.dispose()
 
-    api = FastAPI(title="ReplayLab API", version="0.1.0", lifespan=lifespan)
+    api = FastAPI(title="ReplayLab API", version="2.0.0", lifespan=lifespan)
     api.state.store = store
     api.state.settings = settings
     api.add_middleware(
@@ -108,7 +108,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         response = await call_next(request)
         response.headers["X-Content-Type-Options"] = "nosniff"
         response.headers["Referrer-Policy"] = "same-origin"
-        if request.url.path.startswith(("/api/media/", "/api/attempts/")):
+        if request.url.path.startswith("/api/"):
             response.headers["Cache-Control"] = "private, no-store"
         return response
 
@@ -156,7 +156,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             "configured": configured,
             "available": selected == "mock",
             "live_verified": False,
-            "message": "MOCK MODE — known synthetic fixtures only; uploaded media is not analyzed by a model."
+            "message": "MOCK reasoning — physical fixtures and local OCR for digital screens; no live Meta inference."
             if selected == "mock"
             else (
                 "Meta credentials configured. Live availability must be confirmed by an actual request."
@@ -186,8 +186,10 @@ def create_app(settings: Settings | None = None) -> FastAPI:
                 422, "Explicit cloud-processing consent is required before sending media to Meta."
             )
 
-    def new_project(name: str) -> dict:
-        document = Project(id=uuid4().hex, name=name, created_at=now(), status="new").model_dump(mode="json")
+    def new_project(name: str, modality: str = "physical") -> dict:
+        document = Project(
+            id=uuid4().hex, name=name, created_at=now(), status="new", modality=modality
+        ).model_dump(mode="json")
         (media_directory / document["id"]).mkdir(parents=True, exist_ok=True)
         return store.save_project(document)
 
@@ -248,11 +250,20 @@ def create_app(settings: Settings | None = None) -> FastAPI:
                 return
             try:
                 provider = provider_for(selected)
-                path = media_directory / project_id / project["video"]["url"].rsplit("/", 1)[-1]
-                if selected == "meta":
+                path = (
+                    media_directory / project_id / project["video"]["url"].rsplit("/", 1)[-1]
+                    if project["video"]
+                    else None
+                )
+                if selected == "meta" and path:
                     path = prepare_meta_video(path)
-                task = Task.model_validate(provider.extract_task(path, project["frames"]))
-                validate_task_media(task, project)
+                if project.get("modality", "physical") == "digital":
+                    from app.providers.digital_reasoner import extract_workflow
+
+                    task = extract_workflow(project, provider, selected, path)
+                else:
+                    task = Task.model_validate(provider.extract_task(path, project["frames"]))
+                validate_task_media(task, project, require_rules=task.modality == "physical")
                 store.mutate_project(
                     project_id,
                     lambda document: document.update(
@@ -284,13 +295,17 @@ def create_app(settings: Settings | None = None) -> FastAPI:
                 )
                 set_error(project_id, message)
 
-    def validate_task_media(task: Task, project: dict):
+    def validate_task_media(task: Task, project: dict, require_rules: bool = True):
+        if task.modality != project.get("modality", "physical"):
+            raise HTTPException(422, "Workflow modality must match its project.")
         frame_ids = {frame["id"] for frame in project["frames"]}
         for step in task.steps:
-            if not step.rules:
+            if require_rules and not (step.screen_rules if task.modality == "digital" else step.rules):
                 raise HTTPException(422, "Each step requires at least one observable checkpoint rule.")
-            if step.reference_frame_id not in frame_ids:
+            if step.reference_frame_id is not None and step.reference_frame_id not in frame_ids:
                 raise HTTPException(422, "Each step must reference an extracted frame from this project.")
+            if task.modality == "physical" and step.reference_frame_id is None:
+                raise HTTPException(422, "Physical steps require an extracted reference frame.")
             if project["video"] and step.timestamp_end > project["video"]["duration"] + 0.05:
                 raise HTTPException(422, "Step timestamps must be within the source video.")
 
@@ -299,7 +314,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         return {
             "status": "ok",
             "provider": provider_status(),
-            "version": "0.1.0",
+            "version": "2.0.0",
             "privacy": "Local single-user development server; no public authentication.",
         }
 
@@ -316,7 +331,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
 
     @api.post("/api/projects", response_model=Project, status_code=201)
     def create_project(body: ProjectCreate):
-        return new_project(body.name)
+        return new_project(body.name, body.modality)
 
     @api.post("/api/projects/demo", response_model=Project, status_code=201)
     def create_demo():
@@ -363,6 +378,11 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             if cache.parent == data_directory:
                 shutil.rmtree(cache, ignore_errors=True)
             store.delete_project(project_id)
+            if hasattr(api.state, "screen_sessions"):
+                api.state.screen_sessions.clear(project_id)
+            from app.services.screen_observation import clear_screen_cache
+
+            clear_screen_cache()
 
     async def save_upload(upload: UploadFile, path: Path, limit: int):
         total = 0
@@ -383,10 +403,16 @@ def create_app(settings: Settings | None = None) -> FastAPI:
 
     @api.post("/api/projects/{project_id}/video", response_model=Project, status_code=202)
     async def upload_video(
-        project_id: str, background_tasks: BackgroundTasks, file: Annotated[UploadFile, File()]
+        project_id: str,
+        background_tasks: BackgroundTasks,
+        file: Annotated[UploadFile, File()],
+        usage_rights_confirmed: Annotated[bool, Form()] = False,
     ):
         project = project_or_404(project_id)
         require_idle(project)
+        if project.get("modality") == "digital" and not usage_rights_confirmed:
+            await file.close()
+            raise HTTPException(422, "Confirm that you have appropriate rights to use this tutorial video.")
         if file.content_type not in VIDEO_MIME:
             await file.close()
             raise HTTPException(415, "Supported video types are MP4, MOV, WebM, and AVI.")
@@ -408,6 +434,14 @@ def create_app(settings: Settings | None = None) -> FastAPI:
                     "message": "Saving and validating uploaded media.",
                 },
             )
+            if project.get("modality") == "digital":
+                project["tutorial"] = project.get("tutorial") or {
+                    "kind": "upload",
+                    "title": original,
+                    "transcript_segments": [],
+                }
+                project["tutorial"]["usage_rights_confirmed"] = True
+                project["tutorial"]["uploaded_video_rights_confirmed"] = True
             store.save_project(project)
         try:
             await save_upload(file, media_directory / project_id / filename, settings.max_video_bytes)
@@ -422,7 +456,10 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         with store.lock:
             project = project_or_404(project_id)
             require_idle(project)
-            if not project["video"] or not project["frames"]:
+            digital_source = project.get("modality") == "digital" and (project.get("tutorial") or {}).get(
+                "transcript_segments"
+            )
+            if not digital_source and (not project["video"] or not project["frames"]):
                 raise HTTPException(409, "Upload and process a video before extracting steps.")
             selected = mode["value"]
             require_consent(selected, consent.cloud_consent)
@@ -447,10 +484,13 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         with store.lock:
             project = project_or_404(project_id)
             require_idle(project)
-            validate_task_media(task, project)
+            validate_task_media(task, project, require_rules=task.modality == "physical")
             task.provenance = {**task.provenance, "user_edited": True}
             project.update(task=task.model_dump(mode="json"), approved=False, completed_step_ids=[])
-            return store.save_project(project)
+            store.save_project(project)
+            if hasattr(api.state, "screen_sessions"):
+                api.state.screen_sessions.clear(project_id)
+            return project
 
     @api.patch("/api/projects/{project_id}/steps/{step_id}", response_model=Project)
     def update_step(project_id: str, step_id: str, changes: dict):
@@ -480,7 +520,10 @@ def create_app(settings: Settings | None = None) -> FastAPI:
                 raise HTTPException(409, "Extract and review a task before approval.")
             validate_task_media(Task.model_validate(project["task"]), project)
             project["approved"] = body.approved
-            return store.save_project(project)
+            store.save_project(project)
+            if hasattr(api.state, "screen_sessions"):
+                api.state.screen_sessions.clear(project_id)
+            return project
 
     @api.get("/api/projects/{project_id}/graph")
     def graph(project_id: str):
@@ -515,6 +558,9 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     ):
         project = project_or_404(project_id)
         require_idle(project)
+        if project.get("modality") == "digital":
+            await file.close()
+            raise HTTPException(409, "Use the screen assistant to verify digital workflows.")
         if not project["approved"] or not project["task"]:
             raise HTTPException(409, "Review and approve the task before creating a checkpoint.")
         task = Task.model_validate(project["task"])
@@ -698,6 +744,20 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             raise HTTPException(404, "Media not found.")
         return FileResponse(path)
 
+    from app.digital_api import install_digital_routes
+
+    install_digital_routes(
+        api,
+        settings=settings,
+        store=store,
+        media_directory=media_directory,
+        data_directory=data_directory,
+        mode=mode,
+        provider_for=provider_for,
+        project_or_404=project_or_404,
+        new_project=new_project,
+        require_idle=require_idle,
+    )
     return api
 
 

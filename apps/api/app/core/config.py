@@ -14,6 +14,8 @@ class Settings(BaseSettings):
     max_video_bytes: int = 100 * 1024 * 1024
     max_image_bytes: int = 10 * 1024 * 1024
     max_video_seconds: float = 120
+    screen_local_interval: float = Field(default=2.0, ge=0, le=60)
+    screen_meta_interval: float = Field(default=10.0, ge=0, le=120)
     cors_origins: str = (
         "http://localhost:5173,http://127.0.0.1:5173,http://localhost:4173,http://127.0.0.1:4173"
     )

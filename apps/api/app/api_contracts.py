@@ -11,6 +11,7 @@ class RequestModel(BaseModel):
 
 class ProjectCreate(RequestModel):
     name: str = Field(min_length=1, max_length=120)
+    modality: Literal["physical", "digital"] = "physical"
 
     @field_validator("name")
     @classmethod
@@ -61,6 +62,8 @@ class Project(BaseModel):
     completed_step_ids: list[str] = Field(default_factory=list)
     attempt_count: int = 0
     processing: dict = Field(default_factory=dict)
+    modality: Literal["physical", "digital"] = "physical"
+    tutorial: dict | None = None
 
 
 class Attempt(BaseModel):

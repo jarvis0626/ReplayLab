@@ -7,6 +7,8 @@ from typing import Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
+from app.digital_schemas import ScreenRule
+
 Status = Literal["pass", "fail", "uncertain"]
 RuleKind = Literal["presence", "count", "above", "below", "left", "right", "near", "aligned", "color"]
 BBox = tuple[float, float, float, float]
@@ -104,6 +106,8 @@ class Step(Contract):
     reference_frame_id: str | None = None
     object_labels: list[str] = Field(default_factory=list)
     rules: list[Rule] = Field(default_factory=list)
+    expected_state: str = Field(default="", max_length=3000)
+    screen_rules: list[ScreenRule] = Field(default_factory=list, max_length=50)
 
     @model_validator(mode="after")
     def valid_step(self) -> Step:
@@ -114,6 +118,9 @@ class Step(Contract):
         rule_ids = [rule.id for rule in self.rules]
         if len(rule_ids) != len(set(rule_ids)):
             raise ValueError("Rule identifiers must be unique within a step.")
+        screen_ids = [rule.id for rule in self.screen_rules]
+        if len(screen_ids) != len(set(screen_ids)):
+            raise ValueError("Screen rule identifiers must be unique within a step.")
         return self
 
 
@@ -125,6 +132,8 @@ class Task(Contract):
     steps: list[Step] = Field(min_length=1, max_length=100)
     provider_mode: str = "mock"
     provenance: dict[str, Any] = Field(default_factory=dict)
+    modality: Literal["physical", "digital"] = "physical"
+    interface_version: str | None = Field(default=None, max_length=120)
 
     @model_validator(mode="after")
     def valid_graph(self) -> Task:

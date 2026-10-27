@@ -2,7 +2,7 @@ FROM python:3.12-slim
 
 ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 DATA_DIR=/data AI_PROVIDER=mock
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends ffmpeg libglib2.0-0 \
+    && apt-get install -y --no-install-recommends ffmpeg libglib2.0-0 libgomp1 \
     && rm -rf /var/lib/apt/lists/* \
     && groupadd --gid 10001 replaylab \
     && useradd --uid 10001 --gid replaylab --create-home replaylab \

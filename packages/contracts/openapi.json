@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "ReplayLab API",
-    "version": "0.1.0"
+    "version": "2.0.0"
   },
   "paths": {
     "/api/health": {
@@ -861,6 +861,201 @@
           }
         }
       }
+    },
+    "/api/projects/digital-demo": {
+      "post": {
+        "summary": "Digital Demo",
+        "operationId": "digital_demo_api_projects_digital_demo_post",
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Project"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/projects/{project_id}/tutorial": {
+      "post": {
+        "summary": "Tutorial",
+        "operationId": "tutorial_api_projects__project_id__tutorial_post",
+        "parameters": [
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Project Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TutorialInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Project"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/projects/{project_id}/screen-session/clear": {
+      "post": {
+        "summary": "Clear Screen",
+        "operationId": "clear_screen_api_projects__project_id__screen_session_clear_post",
+        "parameters": [
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Project Id"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/projects/{project_id}/screen-check": {
+      "post": {
+        "summary": "Screen Check",
+        "operationId": "screen_check_api_projects__project_id__screen_check_post",
+        "parameters": [
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Project Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_screen_check_api_projects__project_id__screen_check_post"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScreenCheck"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/projects/{project_id}/ask": {
+      "post": {
+        "summary": "Ask",
+        "operationId": "ask_api_projects__project_id__ask_post",
+        "parameters": [
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Project Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AskInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -878,6 +1073,22 @@
           "approved"
         ],
         "title": "Approval"
+      },
+      "AskInput": {
+        "properties": {
+          "question": {
+            "type": "string",
+            "maxLength": 2000,
+            "minLength": 1,
+            "title": "Question"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "question"
+        ],
+        "title": "AskInput"
       },
       "Attempt": {
         "properties": {
@@ -981,12 +1192,65 @@
         ],
         "title": "Body_create_attempt_api_projects__project_id__attempts_post"
       },
+      "Body_screen_check_api_projects__project_id__screen_check_post": {
+        "properties": {
+          "file": {
+            "type": "string",
+            "contentMediaType": "application/octet-stream",
+            "title": "File"
+          },
+          "step_id": {
+            "type": "string",
+            "title": "Step Id"
+          },
+          "cloud_consent": {
+            "type": "boolean",
+            "title": "Cloud Consent",
+            "default": false
+          },
+          "source_scope": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 160
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source Scope"
+          },
+          "interface_version": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 120
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Interface Version"
+          }
+        },
+        "type": "object",
+        "required": [
+          "file",
+          "step_id"
+        ],
+        "title": "Body_screen_check_api_projects__project_id__screen_check_post"
+      },
       "Body_upload_video_api_projects__project_id__video_post": {
         "properties": {
           "file": {
             "type": "string",
             "contentMediaType": "application/octet-stream",
             "title": "File"
+          },
+          "usage_rights_confirmed": {
+            "type": "boolean",
+            "title": "Usage Rights Confirmed",
+            "default": false
           }
         },
         "type": "object",
@@ -1261,6 +1525,27 @@
             "additionalProperties": true,
             "type": "object",
             "title": "Processing"
+          },
+          "modality": {
+            "type": "string",
+            "enum": [
+              "physical",
+              "digital"
+            ],
+            "title": "Modality",
+            "default": "physical"
+          },
+          "tutorial": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tutorial"
           }
         },
         "type": "object",
@@ -1279,6 +1564,15 @@
             "maxLength": 120,
             "minLength": 1,
             "title": "Name"
+          },
+          "modality": {
+            "type": "string",
+            "enum": [
+              "physical",
+              "digital"
+            ],
+            "title": "Modality",
+            "default": "physical"
           }
         },
         "additionalProperties": false,
@@ -1448,6 +1742,415 @@
         ],
         "title": "RuleResult"
       },
+      "ScreenCheck": {
+        "properties": {
+          "result": {
+            "$ref": "#/components/schemas/ScreenResult"
+          },
+          "observation": {
+            "$ref": "#/components/schemas/ScreenObservation"
+          },
+          "completed_step_ids": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Completed Step Ids"
+          },
+          "current_step_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Current Step Id"
+          },
+          "upcoming_step_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Upcoming Step Id"
+          },
+          "screen_stored": {
+            "type": "boolean",
+            "title": "Screen Stored",
+            "default": false
+          },
+          "source_scope": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source Scope"
+          }
+        },
+        "type": "object",
+        "required": [
+          "result",
+          "observation",
+          "completed_step_ids",
+          "current_step_id",
+          "upcoming_step_id"
+        ],
+        "title": "ScreenCheck"
+      },
+      "ScreenElement": {
+        "properties": {
+          "text": {
+            "type": "string",
+            "maxLength": 4000,
+            "minLength": 1,
+            "title": "Text"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "text",
+              "window",
+              "dialog",
+              "button",
+              "path",
+              "error",
+              "selection"
+            ],
+            "title": "Role",
+            "default": "text"
+          },
+          "bbox": {
+            "anyOf": [
+              {
+                "prefixItems": [
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "number"
+                  }
+                ],
+                "type": "array",
+                "maxItems": 4,
+                "minItems": 4
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Bbox"
+          },
+          "confidence": {
+            "anyOf": [
+              {
+                "type": "number",
+                "maximum": 1.0,
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Confidence"
+          },
+          "source": {
+            "type": "string",
+            "title": "Source",
+            "default": "unknown"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "text"
+        ],
+        "title": "ScreenElement"
+      },
+      "ScreenObservation": {
+        "properties": {
+          "elements": {
+            "items": {
+              "$ref": "#/components/schemas/ScreenElement"
+            },
+            "type": "array",
+            "maxItems": 500,
+            "title": "Elements"
+          },
+          "visible_text": {
+            "type": "string",
+            "maxLength": 100000,
+            "title": "Visible Text",
+            "default": ""
+          },
+          "confidence": {
+            "anyOf": [
+              {
+                "type": "number",
+                "maximum": 1.0,
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Confidence"
+          },
+          "image_quality": {
+            "anyOf": [
+              {
+                "type": "number",
+                "maximum": 1.0,
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Image Quality"
+          },
+          "provider_mode": {
+            "type": "string",
+            "title": "Provider Mode",
+            "default": "mock"
+          },
+          "interface_version": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 120
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Interface Version"
+          },
+          "complete": {
+            "type": "boolean",
+            "title": "Complete",
+            "default": false
+          },
+          "provenance": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Provenance"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "title": "ScreenObservation"
+      },
+      "ScreenResult": {
+        "properties": {
+          "step_id": {
+            "type": "string",
+            "title": "Step Id"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "pass",
+              "fail",
+              "uncertain"
+            ],
+            "title": "Status"
+          },
+          "rule_results": {
+            "items": {
+              "$ref": "#/components/schemas/ScreenRuleResult"
+            },
+            "type": "array",
+            "title": "Rule Results"
+          },
+          "evidence": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Evidence"
+          },
+          "explanation": {
+            "type": "string",
+            "title": "Explanation"
+          },
+          "provider_mode": {
+            "type": "string",
+            "title": "Provider Mode"
+          },
+          "reason": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "completed",
+                  "mismatch",
+                  "insufficient_evidence",
+                  "interface_mismatch",
+                  "unexpected_dialog",
+                  "skipped_step",
+                  "unsafe_instruction"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reason"
+          },
+          "observed_step_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Observed Step Id"
+          },
+          "warnings": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Warnings"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "step_id",
+          "status",
+          "explanation",
+          "provider_mode"
+        ],
+        "title": "ScreenResult"
+      },
+      "ScreenRule": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Id"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "text_present",
+              "text_absent",
+              "window",
+              "path",
+              "selection",
+              "error_absent"
+            ],
+            "title": "Kind"
+          },
+          "expected": {
+            "type": "string",
+            "maxLength": 500,
+            "minLength": 1,
+            "title": "Expected"
+          },
+          "alternatives": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "maxItems": 30,
+            "title": "Alternatives"
+          },
+          "contradictions": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "maxItems": 30,
+            "title": "Contradictions"
+          },
+          "description": {
+            "type": "string",
+            "maxLength": 1500,
+            "title": "Description",
+            "default": ""
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "id",
+          "kind",
+          "expected"
+        ],
+        "title": "ScreenRule"
+      },
+      "ScreenRuleResult": {
+        "properties": {
+          "rule_id": {
+            "type": "string",
+            "title": "Rule Id"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "pass",
+              "fail",
+              "uncertain"
+            ],
+            "title": "Status"
+          },
+          "expected": {
+            "type": "string",
+            "title": "Expected"
+          },
+          "observed": {
+            "type": "string",
+            "title": "Observed"
+          },
+          "evidence": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Evidence"
+          },
+          "correction": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Correction"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "rule_id",
+          "status",
+          "expected",
+          "observed"
+        ],
+        "title": "ScreenRuleResult"
+      },
       "Step": {
         "properties": {
           "id": {
@@ -1510,6 +2213,20 @@
             },
             "type": "array",
             "title": "Rules"
+          },
+          "expected_state": {
+            "type": "string",
+            "maxLength": 3000,
+            "title": "Expected State",
+            "default": ""
+          },
+          "screen_rules": {
+            "items": {
+              "$ref": "#/components/schemas/ScreenRule"
+            },
+            "type": "array",
+            "maxItems": 50,
+            "title": "Screen Rules"
           }
         },
         "additionalProperties": false,
@@ -1564,6 +2281,27 @@
             "additionalProperties": true,
             "type": "object",
             "title": "Provenance"
+          },
+          "modality": {
+            "type": "string",
+            "enum": [
+              "physical",
+              "digital"
+            ],
+            "title": "Modality",
+            "default": "physical"
+          },
+          "interface_version": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 120
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Interface Version"
           }
         },
         "additionalProperties": false,
@@ -1574,6 +2312,48 @@
           "steps"
         ],
         "title": "Task"
+      },
+      "TutorialInput": {
+        "properties": {
+          "youtube_url": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 2048
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Youtube Url"
+          },
+          "transcript": {
+            "type": "string",
+            "maxLength": 50000,
+            "title": "Transcript",
+            "default": ""
+          },
+          "title": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 240
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Title"
+          },
+          "usage_rights_confirmed": {
+            "type": "boolean",
+            "title": "Usage Rights Confirmed",
+            "default": false
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "title": "TutorialInput"
       },
       "ValidationError": {
         "properties": {

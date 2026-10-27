@@ -131,8 +131,8 @@ def measured_quality(path: Path) -> float:
 
 
 def prepare_meta_video(path: Path) -> Path:
-    if path.suffix.lower() == ".mp4":
-        return path
+    # Normalize actual media regardless of the caller-supplied MIME/suffix. A
+    # valid WebM can be named .mp4, so the filename cannot establish its format.
     digest = hashlib.sha256(path.read_bytes()).hexdigest()[:32]
     destination = path.parent / f"video-{digest}.mp4"
     if destination.exists():
