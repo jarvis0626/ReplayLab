@@ -1,5 +1,21 @@
 # Recorded validation
 
+## ReplayLab 2.0 upgrade — 27 October 2026
+
+The integrated `npm.cmd run check` completed with **286 backend tests passed**, **32 frontend tests passed**, Ruff clean, and a successful TypeScript/Vite production build. This run includes the original physical workflow tests and the digital ingestion, OCR, verification, privacy, cache, and concurrency suites.
+
+After adding the small-change heartbeat and semantic voice deduplication, the frontend suite passed **33 tests** and rebuilt successfully. The affected digital API suite also passed **23 tests**, including completed-workflow coaching. The final application source passed [GitHub Actions on Ubuntu](https://github.com/jarvis0626/ReplayLab/actions/runs/40544143866), commit `59b0410`.
+
+The [actual digital browser walkthrough](digital-browser-qa.md) passed **19 assertion groups** using a real Chromium tab stream and local OCR: seven successful screen checks produced four PASS results, two evidence-backed FAIL results, and one interface-mismatch UNCERTAIN. It verified four-step completion, pause, ended capture tracks, no requests after stop, cleared Ask context, peak request concurrency of one, zero JavaScript errors, and desktop/tablet layout. Chromium's test-only source-selection flag chose the controlled CodeLab tab; no screen API stub or canned verdict was used.
+
+Actual local OCR was exercised on generated reference pixels and rendered CodeLab screenshots. Contract tests for Muse tutorial/screenshot adapters use mocked HTTP transport; they are not live Meta calls. Tests cover rights confirmation, strict YouTube references, timestamped/SRT transcripts, all four digital checkpoints, wrong destinations, unverified prerequisites, visible dialogs/errors, unclear frames, version mismatch/ambiguity, coach self-capture, redaction, denied/stopped sharing, stale results, and cached-progress invalidation.
+
+GitHub Actions passed on Ubuntu for the upgrade implementation and version-parser hardening: [verified 2.0 workflow](https://github.com/jarvis0626/ReplayLab/actions/runs/40541938683), commit `e808f7f`. The earlier integrated upgrade run also [passed](https://github.com/jarvis0626/ReplayLab/actions/runs/40541100391), commit `a4a778c`. Later changes are checked separately; these links do not claim a future run has completed.
+
+OpenAPI export and Docker Compose configuration validation passed. Docker image startup, public hosting, live Meta availability, and submission eligibility remain unverified. The owner explicitly retained offline operation and private repository visibility.
+
+## Original physical baseline — 26 October 2026
+
 Local validation was performed on 26 October 2026 using Windows, Python 3.12.3, Node.js 22.17.1, npm 10.9.2, and FFmpeg 8.0.1. These are executed checks, not planned checks.
 
 | Check | Observed result |

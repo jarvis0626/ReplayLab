@@ -23,6 +23,10 @@ contract-tested. **Live Meta validation is intentionally pending**, following th
 owner's instruction to finish offline. Failed live requests never become mock
 results. The GitHub repository remains **private**.
 
+![Actual ReplayLab 2 screen sharing with local OCR evidence](docs/assets/v2/screen-sharing-pass.png)
+
+[Actual digital browser validation and screenshots](docs/digital-browser-qa.md)
+
 ## Quick start
 
 Install **Node.js 22.12+**, **Python 3.11+**, and **FFmpeg** with `ffprobe` on PATH.
@@ -68,6 +72,11 @@ Capture never starts silently. Its scope and preview are visible. Optional voice
 uses browser `speechSynthesis`; Ask ReplayLab uses the reviewed workflow and recent
 screen evidence. The app never clicks target controls, executes commands, or
 installs software. See [digital workflows](docs/digital-workflows.md).
+
+Normal observation checks changed frames every four seconds locally, or twelve
+seconds in Meta mode. A bounded periodic recheck catches small UI changes that
+the thumbnail filter can miss. Identical captures reuse transient results;
+spoken guidance deduplicates the correction rather than OCR confidence changes.
 
 Digital projects also accept rights-confirmed uploaded tutorials, strict YouTube
 references for embedded playback, and timestamped pasted transcripts. ReplayLab
