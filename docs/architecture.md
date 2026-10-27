@@ -1,99 +1,109 @@
 # ReplayLab architecture
 
-ReplayLab implements a local workflow for a controlled tabletop task: process a
-demonstration, review a proposed task graph, approve observable rules, capture a
-checkpoint, and receive PASS, FAIL, or UNCERTAIN with rule evidence. The working
-offline sample is a four-step colored-block assembly. It uses known synthetic
-observations, not video understanding or live model inference.
+ReplayLab uses a shared reviewed workflow graph with separate physical and digital
+observation/verifier paths. Task modality is `physical` or `digital`; digital tasks
+add expected UI states, screen rules, and optional interface version. Dependency
+validation and approved progress are shared. Manual navigation does not complete a
+checkpoint; only a sufficiently evidenced PASS advances it.
 
-Implementation was explicitly authorized before the scheduled kickoff on
-26 October 2026. Hackathon eligibility remains unconfirmed; see
-[official-source provenance](official-sources.md). The GitHub repository remains
-private. Live Meta account access and a public deployment have not been verified.
-
-## Implemented data flow
+## Implemented flow
 
 ```mermaid
 flowchart TD
-    UI[React and TypeScript UI] --> API[FastAPI REST API]
-    API --> DB[(SQLite projects and attempts)]
-    API --> Media[Local media and reference frames]
-    API --> Jobs[In-process background processing]
-    Jobs --> Video[FFprobe inspection and FFmpeg frame extraction]
-    Video --> Provider[Explicit mock or Meta provider]
-    Provider --> Task[Pydantic task and DAG validation]
-    Task --> Review[User edits and approval]
-    Review --> Practice[Dependency-gated practice]
-    Practice --> Observation[Normalized reference and checkpoint observations]
-    Observation --> Verify[Deterministic evidence and rule evaluation]
-    Verify --> Result[Verdict and rule diagnostics]
-    Result --> UI
-    Verify --> Explain[Existing evidence selection and deterministic rendering]
-    Explain --> UI
+    Source[Rights-confirmed video or timestamped transcript] --> Proposal[Explicit local proposal or optional Muse adapter]
+    YouTube[Validated YouTube reference] --> Embed[Browser embed only; no download]
+    Source --> Media[Local inspection and reference frames]
+    Media --> Proposal
+    Proposal --> Schema[Pydantic task and DAG validation]
+    Schema --> Review[User edits and approval]
+    Review --> Graph[Shared dependency graph]
+    Graph --> Camera[Physical camera or checkpoint image]
+    Graph --> Screen[User-selected screen or screenshot]
+    Camera --> Objects[Fixture observations or optional SAM]
+    Objects --> Physical[Deterministic visible geometry rules]
+    Screen --> Mask[Browser preview masks]
+    Mask --> OCR[Actual local OCR and best-effort redaction]
+    OCR --> Digital[Deterministic screen rules]
+    OCR --> Muse[Optional consented Muse screenshot adapter]
+    Muse --> Digital
+    Physical --> Result[PASS / FAIL / UNCERTAIN with evidence]
+    Digital --> Result
+    Result --> Guidance[Written guidance, optional voice, grounded Ask]
 ```
 
-## Code boundaries
+YouTube references provide embedded playback and user-supplied metadata. They do
+not make unavailable video/caption content available to extraction. Uploaded
+tutorials and pasted source content are not automatically redacted by the screen
+privacy pipeline.
 
-| Location | Implemented responsibility |
+## Boundaries
+
+| Location | Responsibility |
 | --- | --- |
-| `apps/web/src` | Project dashboard, video studio, editable task/React Flow graph, camera and image upload, observations, attempt history, evaluation, provider/consent controls |
-| `apps/api/app/main.py` | REST routes, upload handling, consent and approval gates, background work, media access, deletion, orchestration |
-| `apps/api/app/schemas.py`, `api_contracts.py` | Validated domain and HTTP payloads |
-| `apps/api/app/services/media.py` | Bounded FFprobe/FFmpeg work, actual frame extraction, image decoding, pixel hashing, local MP4 preparation, measured image-quality heuristic |
-| `apps/api/app/services/graph.py` | Dependency validation, cycles, topological order, available steps |
-| `apps/api/app/services/verification.py` | Normalized 2D constraints, evidence sufficiency, aggregation, corrections |
-| `apps/api/app/providers` | Fixed mock template/fixture observations and documented live Meta contracts |
-| `apps/api/app/core/store.py` | SQLAlchemy SQLite document storage for projects and attempts |
-| `apps/api/app/services/demo.py` | Synthetic images/video and registered known frame observations |
-| `demo/fixtures/evaluation.json` | Curated normalized-observation scenarios used by the evaluation service |
+| `apps/web/src` | Both modalities, source review, graph editor, camera, `getDisplayMedia`, preview masks, coaching, optional speech |
+| `main.py`, `digital_api.py` | REST, consent/approval gates, uploads, ephemeral screen sessions, cache/rate/stale-request guards, orchestration |
+| `schemas.py`, `digital_schemas.py`, `api_contracts.py` | Shared workflow, physical observations, screen observations, rules, and HTTP contracts |
+| `services/graph.py` | DAG validation, ordering, prerequisites |
+| `services/media.py`, `tutorials.py` | Bounded local media processing, strict source references, timestamp parsing, local transcript proposals |
+| `services/verification.py` | Physical normalized geometry, quality, completeness, evidence |
+| `services/screen_observation.py` | Bundled RapidOCR/ONNX inference, visible text/boxes, best-effort redaction; no filesystem/application introspection |
+| `services/digital_verification.py` | Positive UI evidence, contradictions, errors/dialogs, uncertainty, version/prerequisite handling |
+| `providers/meta.py` | Muse physical task proposals, SAM, fixed-evidence explanation selection |
+| `providers/digital_reasoner.py`, `meta_screen.py` | Muse digital proposals and separately redacted screenshot observations; screens never use SAM |
+| `core/store.py` | SQLite project and physical attempt persistence |
+| `services/demo.py`, `digital_demo.py` | Labeled synthetic physical and CodeLab sources |
 
-Projects retain video metadata, frames, task/approval state, completed steps, and
-processing status. Attempts retain the task revision, image, result, and reference
-observations. Editing a task resets approval and progress. Verification refuses a
-checkpoint from an older task revision. Only PASS advances dependency progress.
+Paths in this table are relative to `apps/api/app` unless otherwise stated.
 
-Background jobs run inside one API process and are polled by the UI. SQLite and
-Python locks support the local single-user application. Interrupted jobs become
-visible errors after restart; they are not automatically resumed by a durable
-queue. Run one API worker.
+## Evidence and progress
 
-## Evidence policy
+Physical rules evaluate presence/count, position, proximity/alignment, and
+independently reliable color. Unknown confidence, poor visibility, and unsuitable
+camera views remain uncertain. Missing detections prove absence only with stronger
+coverage/completeness evidence. Fixtures are matched by decoded image pixels;
+unknown physical images remain uncertain in mock mode.
 
-Presence/count, above/below/left/right, proximity, alignment, and independently
-observed color are supported. Positions use normalized object centers; these are
-visible 2D requirements, not proof of physical attachment or hidden joints.
+Digital OCR reads actual pixels, including the simulated CodeLab UI. It is not
+fixture lookup. Missing expected text alone cannot establish failure. Known
+contradictions, qualified wrong active destinations, and visible unexpected
+errors/dialogs can establish a mismatch. Explicit interface-version differences
+produce uncertainty rather than invented user fault. Lexical UI evidence cannot
+prove hidden settings, installed software, or on-disk files.
 
-Both images need adequate visibility and image quality, plus established view
-comparability. Missing quality/confidence stays unknown. Missing detections prove
-absence only with stronger coverage and a complete-detection declaration. Exact
-counts also reject ambiguous duplicate boxes. Tolerance boundaries can remain
-uncertain. See [evaluation](evaluation.md) for the thresholds and measured scope.
+Tasks require review/approval. Edits reset approval/progress and invalidate stale
+screen evidence. Screen Stop invalidates pending captures so late results cannot
+complete a step. Cache identity includes workflow revision and relevant progress.
+The app never controls target applications. Ask uses workflow/recent evidence
+templates, and optional speech renders guidance without changing a verdict.
 
-Any sufficiently evidenced failed rule yields FAIL. PASS requires every rule to
-pass. Other outcomes are UNCERTAIN, and individual uncertain rules remain visible
-even when a different rule establishes failure. Explanation output cannot replace
-the verdict or add unobserved facts.
+## Persistence and privacy
 
-## Provider and trust boundaries
+SQLite retains projects, source metadata/transcripts, reviewed tasks, progress,
+and physical attempts. Tutorial videos, reference frames, and physical checkpoint
+images stay below the ignored data directory until project deletion. Deletion
+also clears shared inference caches; generated demo assets remain available.
 
-Mock extraction is a fixed four-step template. Mock observations are retrieved by
-hashing decoded image pixels against registered generated fixtures; filenames and
-requested verdicts are not inputs. Unknown images have no fixture observations
-and remain uncertain. Only frames from the app-generated demonstration are
-registered as known source observations.
+Raw digital screenshots are transient inputs: application code does not save them
+as media, database fields, or logs. Multipart middleware may buffer requests in
+memory or temporary files. Current project screen evidence has a ten-minute RAM
+TTL and is cleared on Stop; shared sanitized OCR/model caches are bounded and
+clear on deletion/restart. Redaction is best effort and cannot guarantee that all
+sensitive pixels were found. See [model usage](model-usage.md).
 
-The Meta adapter implements documented Muse Spark and SAM calls, official mask
-parsing, validated proposals, cache, cleanup, and error handling. Its transport
-tests do not establish live account availability. Cloud calls require explicit
-consent. SAM does not supply visibility/completeness; the API separately records
-user view/visibility attestations and a local sharpness/exposure heuristic.
-[Model usage](model-usage.md) explains the exact contract and limitations.
+Background source jobs and screen caches run in one process. SQLite plus locks
+supports the local single-user preview; use one API worker. Restarted jobs become
+visible errors instead of silently resuming in a durable queue. Public use needs
+authentication, isolation, persistent storage, and operational controls.
 
-Uploads use generated server filenames and bounded decoding. Default video limits
-are 100 MiB and 120 seconds; checkpoints allow 10 MiB. Media and SQLite state stay
-on the server until project deletion. Deletion also clears the shared inference
-cache; other projects may refill it. Generated synthetic demo data remains available. This local server has no public-user
-authentication or tenant isolation. Deployment must preserve those access and
-retention boundaries; see [deployment](deployment.md).
+## Provenance and remaining external checks
 
-Actual check results are recorded in [test results](test-results.md).
+The CodeLab source is a fixed synthetic mock tutorial; screen OCR is actual local
+inference. Physical mock extraction remains a four-block template. Meta adapters
+are implemented and tested with simulated transport, but all live validation is
+pending by owner choice. A failed Meta call never selects mock observations.
+
+The repository remains private. Early coding was explicitly authorized on
+26 October 2026 with eligibility unconfirmed. [Official sources](official-sources.md)
+preserve that history. [Test results](test-results.md) record actual validation;
+[deployment](deployment.md) distinguishes prepared configuration from a running
+public service.

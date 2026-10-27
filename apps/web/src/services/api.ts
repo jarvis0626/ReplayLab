@@ -5,6 +5,8 @@ import type {
   Graph,
   Health,
   Project,
+  Modality,
+  ScreenCheck,
   Task,
 } from "../types";
 
@@ -19,6 +21,8 @@ export async function request<T>(
   try {
     response = await fetch(`/api${path}`, { ...init, headers });
   } catch {
+    if (init.signal?.aborted)
+      throw new DOMException("Request canceled", "AbortError");
     throw new Error(
       "Cannot reach ReplayLab. Check that the API is running on port 8010.",
     );
@@ -43,13 +47,62 @@ export const api = {
   health: () => request<Health>("/health"),
   projects: () => request<Project[]>("/projects"),
   project: (id: string) => request<Project>(`/projects/${id}`),
-  create: (name: string) => post<Project>("/projects", { name }),
+  create: (name: string, modality: Modality = "physical") =>
+    post<Project>(
+      "/projects",
+      modality === "physical" ? { name } : { name, modality },
+    ),
   demo: () => post<Project>("/projects/demo", {}),
+  digitalDemo: () => post<Project>("/projects/digital-demo", {}),
+  tutorial: (
+    id: string,
+    data: {
+      youtube_url?: string;
+      transcript?: string;
+      title?: string;
+      usage_rights_confirmed: boolean;
+    },
+  ) => post<Project>(`/projects/${id}/tutorial`, data),
+  screenCheck: (
+    id: string,
+    stepId: string,
+    file: Blob,
+    consent: boolean,
+    interfaceVersion: string,
+    sourceScope: string,
+    signal?: AbortSignal,
+  ) => {
+    const body = new FormData();
+    body.append("file", file, "screen-check.png");
+    body.append("step_id", stepId);
+    body.append("cloud_consent", String(consent));
+    if (interfaceVersion) body.append("interface_version", interfaceVersion);
+    body.append("source_scope", sourceScope);
+    return request<ScreenCheck>(`/projects/${id}/screen-check`, {
+      method: "POST",
+      body,
+      signal,
+    });
+  },
+  clearScreenSession: (id: string) =>
+    post<void>(`/projects/${id}/screen-session/clear`, {}),
+  ask: (id: string, question: string, signal?: AbortSignal) =>
+    request<{
+      answer: string;
+      evidence: string[];
+      warnings: string[];
+      provider_mode: string;
+    }>(`/projects/${id}/ask`, {
+      method: "POST",
+      body: JSON.stringify({ question }),
+      signal,
+    }),
   remove: (id: string) =>
     request<void>(`/projects/${id}`, { method: "DELETE" }),
-  uploadVideo: (id: string, file: File) => {
+  uploadVideo: (id: string, file: File, usageRightsConfirmed = false) => {
     const body = new FormData();
     body.append("file", file);
+    body.append("usage_rights_confirmed", String(usageRightsConfirmed));
     return request<Project>(`/projects/${id}/video`, { method: "POST", body });
   },
   extract: (id: string, cloud_consent: boolean) =>

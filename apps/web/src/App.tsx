@@ -18,7 +18,7 @@ import {
   Video,
   X,
 } from "lucide-react";
-import type { Health, Project } from "./types";
+import type { Health, Modality, Project } from "./types";
 import { api } from "./services/api";
 import { Badge, ErrorBanner, Spinner } from "./components/ui";
 import { Dashboard } from "./pages/Dashboard";
@@ -26,6 +26,7 @@ import { Studio } from "./pages/Studio";
 import { TaskWorkspace } from "./pages/TaskWorkspace";
 import { Practice } from "./pages/Practice";
 import { EvaluationPage } from "./pages/Evaluation";
+import { LiveScreenAssistant } from "./pages/LiveScreenAssistant";
 
 type Tab = "studio" | "task" | "practice" | "evaluation";
 const tabs = [
@@ -45,6 +46,7 @@ export function App() {
   const [error, setError] = useState("");
   const [newProject, setNewProject] = useState(false);
   const [name, setName] = useState("");
+  const [modality, setModality] = useState<Modality>("physical");
   const [settings, setSettings] = useState(false);
   const [consent, setConsent] = useState(false);
   const updateProject = useCallback((value: Project) => {
@@ -65,6 +67,9 @@ export function App() {
     void reload();
   }, [reload]);
   useEffect(() => {
+    setConsent(false);
+  }, [project?.id]);
+  useEffect(() => {
     if (!project || project.status !== "processing") return;
     const timer = window.setInterval(() => {
       void api
@@ -74,11 +79,16 @@ export function App() {
     }, 1800);
     return () => clearInterval(timer);
   }, [project, updateProject]);
-  async function create(demo = false) {
+  async function create(demo: false | true | "digital" = false) {
     setBusy(true);
     setError("");
     try {
-      const value = demo ? await api.demo() : await api.create(name.trim());
+      const value =
+        demo === "digital"
+          ? await api.digitalDemo()
+          : demo
+            ? await api.demo()
+            : await api.create(name.trim(), modality);
       updateProject(value);
       setTab(demo ? "task" : "studio");
       setNewProject(false);
@@ -189,7 +199,7 @@ export function App() {
           </button>
           <div className="sidebar-footer">
             <span>ReplayLab</span>
-            <span>v0.1 · Research preview</span>
+            <span>v2.0 · Research preview</span>
           </div>
         </div>
       </aside>
@@ -245,6 +255,7 @@ export function App() {
             busy={busy}
             onNew={() => setNewProject(true)}
             onDemo={() => void create(true)}
+            onDigitalDemo={() => void create("digital")}
             onOpen={(id) => void open(id)}
             onDelete={(id) => void remove(id)}
             onRefresh={() => void reload()}
@@ -317,16 +328,26 @@ export function App() {
                 onPractice={() => setTab("practice")}
               />
             )}
-            {tab === "practice" && (
-              <Practice
-                project={project}
-                provider={provider}
-                consent={consent}
-                onUpdate={updateProject}
-                onError={setError}
-                onReview={() => setTab("task")}
-              />
-            )}
+            {tab === "practice" &&
+              (project.modality === "digital" ? (
+                <LiveScreenAssistant
+                  key={project.id}
+                  project={project}
+                  provider={provider}
+                  onUpdate={updateProject}
+                  onError={setError}
+                  onReview={() => setTab("task")}
+                />
+              ) : (
+                <Practice
+                  project={project}
+                  provider={provider}
+                  consent={consent}
+                  onUpdate={updateProject}
+                  onError={setError}
+                  onReview={() => setTab("task")}
+                />
+              ))}
             {tab === "evaluation" && (
               <EvaluationPage project={project} onError={setError} />
             )}
@@ -337,7 +358,7 @@ export function App() {
             <CircleDot size={12} />
             Evidence before confidence
           </span>
-          <span>Controlled tabletop tasks · Research preview</span>
+          <span>Physical + digital workflows · Research preview</span>
         </footer>
       </main>
 
@@ -386,6 +407,21 @@ export function App() {
               onChange={(e) => setName(e.target.value)}
               required
             />
+            <label className="modality-label" htmlFor="project-modality">
+              Workflow type
+            </label>
+            <select
+              id="project-modality"
+              value={modality}
+              onChange={(e) => setModality(e.target.value as Modality)}
+            >
+              <option value="physical">
+                Physical task · camera checkpoints
+              </option>
+              <option value="digital">
+                Digital workflow · live screen guidance
+              </option>
+            </select>
             <div className="modal-actions">
               <button
                 className="button secondary"

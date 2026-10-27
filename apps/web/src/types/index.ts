@@ -1,4 +1,29 @@
 export type Verdict = "pass" | "fail" | "uncertain";
+export type Modality = "physical" | "digital";
+export interface ScreenRule {
+  id: string;
+  kind:
+    | "text_present"
+    | "text_absent"
+    | "window"
+    | "path"
+    | "selection"
+    | "error_absent";
+  expected: string;
+  alternatives: string[];
+  contradictions: string[];
+  description: string;
+}
+export interface Tutorial {
+  kind: "youtube" | "transcript" | "demo";
+  youtube_id?: string | null;
+  title: string;
+  transcript_segments: { start: number; end: number; text: string }[];
+  embed_url?: string | null;
+  requires_rights_review?: boolean;
+  usage_rights_confirmed?: boolean;
+  instruction_warnings?: string[];
+}
 export interface Provider {
   mode: "mock" | "meta";
   configured: boolean;
@@ -41,6 +66,8 @@ export interface Step {
   reference_frame_id: string | null;
   object_labels: string[];
   rules: Rule[];
+  expected_state?: string;
+  screen_rules?: ScreenRule[];
 }
 export interface Task {
   id: string;
@@ -50,6 +77,7 @@ export interface Task {
   steps: Step[];
   provider_mode: string;
   provenance: Record<string, unknown>;
+  modality?: Modality;
 }
 export interface Project {
   id: string;
@@ -68,6 +96,51 @@ export interface Project {
   task: Task | null;
   approved: boolean;
   completed_step_ids: string[];
+  modality?: Modality;
+  tutorial?: Tutorial | null;
+}
+export interface ScreenObservation {
+  elements: {
+    text: string;
+    role: string;
+    bbox?: [number, number, number, number] | null;
+    confidence: number | null;
+    source: string;
+  }[];
+  visible_text: string;
+  confidence: number | null;
+  image_quality: number | null;
+  provider_mode: string;
+  interface_version?: string | null;
+  complete: boolean;
+  provenance: Record<string, unknown>;
+}
+export interface ScreenResult {
+  step_id: string;
+  status: Verdict;
+  rule_results: {
+    rule_id: string;
+    status: Verdict;
+    expected: string;
+    observed: string;
+    evidence: string[];
+    correction: string | null;
+  }[];
+  evidence: string[];
+  explanation: string;
+  provider_mode: string;
+  reason?: string | null;
+  observed_step_id?: string | null;
+  warnings: string[];
+}
+export interface ScreenCheck {
+  result: ScreenResult;
+  observation: ScreenObservation;
+  completed_step_ids: string[];
+  current_step_id?: string | null;
+  upcoming_step_id?: string | null;
+  screen_stored: boolean;
+  source_scope?: string;
 }
 export interface Observation {
   label: string;

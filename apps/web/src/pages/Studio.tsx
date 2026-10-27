@@ -12,6 +12,7 @@ import {
 import type { Project, Provider } from "../types";
 import { api } from "../services/api";
 import { Badge, ErrorBanner, formatTime, Spinner } from "../components/ui";
+import { TutorialSource } from "../components/TutorialSource";
 
 interface Props {
   project: Project;
@@ -32,6 +33,8 @@ export function Studio({
   const [busy, setBusy] = useState(false);
   const [dragging, setDragging] = useState(false);
   const [localError, setLocalError] = useState("");
+  const [usageRights, setUsageRights] = useState(false);
+  const digital = project.modality === "digital";
   const [selectedFrame, setSelectedFrame] = useState(
     project.frames[0]?.id ?? "",
   );
@@ -39,6 +42,12 @@ export function Studio({
   const video = useRef<HTMLVideoElement>(null);
   async function upload(file?: File) {
     if (!file) return;
+    if (digital && !usageRights) {
+      setLocalError(
+        "Confirm your usage rights before uploading a digital tutorial.",
+      );
+      return;
+    }
     setLocalError("");
     if (!/\.(mp4|mov|webm|avi)$/i.test(file.name)) {
       setLocalError("Choose an MP4, MOV, WebM, or AVI video.");
@@ -50,7 +59,7 @@ export function Studio({
     }
     setBusy(true);
     try {
-      onUpdate(await api.uploadVideo(project.id, file));
+      onUpdate(await api.uploadVideo(project.id, file, usageRights));
     } catch (e) {
       onError((e as Error).message);
     } finally {
@@ -91,6 +100,18 @@ export function Studio({
               dismiss={() => setLocalError("")}
             />
           )}
+          {digital && (
+            <label className="checkbox-row tutorial-upload-rights">
+              <input
+                type="checkbox"
+                checked={usageRights}
+                onChange={(e) => setUsageRights(e.target.checked)}
+              />
+              <span>
+                I have permission to upload and use this tutorial video.
+              </span>
+            </label>
+          )}
           {project.video ? (
             <div className="video-player">
               <video
@@ -111,7 +132,11 @@ export function Studio({
           ) : (
             <button
               className={`upload-zone ${dragging ? "dragging" : ""}`}
-              disabled={busy || project.status === "processing"}
+              disabled={
+                busy ||
+                project.status === "processing" ||
+                (digital && !usageRights)
+              }
               onClick={() => input.current?.click()}
               onDragOver={(e) => {
                 e.preventDefault();
@@ -169,6 +194,13 @@ export function Studio({
             )}
           </div>
         </section>
+        {digital && (
+          <TutorialSource
+            project={project}
+            onUpdate={onUpdate}
+            onError={onError}
+          />
+        )}
         <section className="panel keyframe-panel">
           <div className="panel-heading">
             <div>
@@ -256,7 +288,9 @@ export function Studio({
           <h3>Understand the task</h3>
           <p>
             {provider?.mode === "mock"
-              ? "Generate the labeled four-step sample structure. Your video supplies real frames; offline steps are fixed demonstration instructions."
+              ? digital
+                ? "Create an editable workflow using the labeled CodeLab template or supplied transcript. Offline extraction is not Muse Spark inference; review every visible UI rule."
+                : "Generate the labeled four-step sample structure. Your video supplies real frames; offline steps are fixed demonstration instructions."
               : "Send the demonstration to the configured Meta reasoner to propose structured steps and observable rules."}
           </p>
           {provider?.mode === "meta" && !consent && (
@@ -271,7 +305,7 @@ export function Studio({
           <button
             className="button primary full-width"
             disabled={
-              !project.video ||
+              (!project.video && !(digital && project.tutorial)) ||
               busy ||
               project.status === "processing" ||
               (provider?.mode === "meta" && !consent)

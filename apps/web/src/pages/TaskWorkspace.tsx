@@ -23,6 +23,7 @@ import {
 } from "lucide-react";
 import type { Graph, Project, Rule, Step, Task } from "../types";
 import { api } from "../services/api";
+import { ScreenRulesEditor } from "../components/ScreenRulesEditor";
 import {
   Badge,
   Empty,
@@ -43,6 +44,7 @@ export function TaskWorkspace({
   onError,
   onPractice,
 }: Props) {
+  const digital = project.modality === "digital";
   const [task, setTask] = useState<Task | null>(project.task);
   const [selectedId, setSelectedId] = useState(
     project.task?.steps[0]?.id ?? "",
@@ -99,7 +101,9 @@ export function TaskWorkspace({
               <strong>{step.title}</strong>
               <small>
                 {formatTime(step.timestamp_start)}–
-                {formatTime(step.timestamp_end)} · {step.rules.length} rules
+                {formatTime(step.timestamp_end)} ·{" "}
+                {digital ? (step.screen_rules?.length ?? 0) : step.rules.length}{" "}
+                rules
               </small>
             </div>
           ),
@@ -125,7 +129,7 @@ export function TaskWorkspace({
       },
     }));
     return { nodes, edges };
-  }, [graph, selectedId]);
+  }, [graph, selectedId, digital]);
   function changeStep(patch: Partial<Step>) {
     if (!task || !selected) return;
     setTask({
@@ -158,6 +162,8 @@ export function TaskWorkspace({
       reference_frame_id: project.frames[0]?.id ?? null,
       object_labels: [],
       rules: [],
+      screen_rules: [],
+      expected_state: "",
     };
     setTask({ ...task, steps: [...task.steps, step] });
     setSelectedId(step.id);
@@ -479,6 +485,18 @@ export function TaskWorkspace({
                   />
                 </label>
               </div>
+              {digital && (
+                <label>
+                  Expected visible UI state
+                  <textarea
+                    rows={3}
+                    value={selected.expected_state ?? ""}
+                    onChange={(e) =>
+                      changeStep({ expected_state: e.target.value })
+                    }
+                  />
+                </label>
+              )}
               <label>
                 Source reference
                 <select
@@ -542,137 +560,150 @@ export function TaskWorkspace({
                   <small className="muted">This is the only step.</small>
                 )}
               </fieldset>
-              <div className="rule-heading">
-                <span className="field-label">Observable rules</span>
-                <button
-                  className="icon-button"
-                  aria-label="Add checkpoint rule"
-                  onClick={() =>
-                    changeStep({
-                      rules: [
-                        ...selected.rules,
-                        {
-                          id: `rule-${crypto.randomUUID()}`,
-                          kind: "presence",
-                          subject: selected.object_labels[0] ?? "red block",
-                          tolerance: 0.05,
-                        },
-                      ],
-                    })
-                  }
-                >
-                  <Plus size={16} />
-                </button>
-              </div>
-              {!selected.rules.length && (
-                <p className="muted small">
-                  Add rules before approval. No rules means no verified
-                  completion.
-                </p>
+              {digital && (
+                <ScreenRulesEditor
+                  key={selected.id}
+                  rules={selected.screen_rules ?? []}
+                  onChange={(screen_rules) => changeStep({ screen_rules })}
+                />
               )}
-              {selected.rules.map((rule, i) => (
-                <div className="rule-editor" key={rule.id}>
-                  <div className="row-between">
-                    <span className="rule-index">RULE {i + 1}</span>
+              {!digital && (
+                <>
+                  <div className="rule-heading">
+                    <span className="field-label">Observable rules</span>
                     <button
                       className="icon-button"
-                      aria-label={`Remove rule ${i + 1}`}
+                      aria-label="Add checkpoint rule"
                       onClick={() =>
                         changeStep({
-                          rules: selected.rules.filter((r) => r.id !== rule.id),
+                          rules: [
+                            ...selected.rules,
+                            {
+                              id: `rule-${crypto.randomUUID()}`,
+                              kind: "presence",
+                              subject: selected.object_labels[0] ?? "red block",
+                              tolerance: 0.05,
+                            },
+                          ],
                         })
                       }
                     >
-                      <Trash2 size={13} />
+                      <Plus size={16} />
                     </button>
                   </div>
-                  <div className="field-grid">
-                    <label>
-                      Relationship
-                      <select
-                        value={rule.kind}
-                        onChange={(e) =>
-                          changeRule(rule.id, {
-                            kind: e.target.value as Rule["kind"],
-                          })
-                        }
-                      >
-                        {[
-                          "presence",
-                          "count",
-                          "above",
-                          "below",
-                          "left",
-                          "right",
-                          "near",
-                          "aligned",
-                          "color",
-                        ].map((kind) => (
-                          <option key={kind}>{kind}</option>
-                        ))}
-                      </select>
-                    </label>
-                    <label>
-                      Subject
-                      <input
-                        value={rule.subject}
-                        onChange={(e) =>
-                          changeRule(rule.id, { subject: e.target.value })
-                        }
-                      />
-                    </label>
-                  </div>
-                  {!["presence", "count", "color"].includes(rule.kind) && (
-                    <label>
-                      Target object
-                      <input
-                        value={rule.target ?? ""}
-                        onChange={(e) =>
-                          changeRule(rule.id, {
-                            target: e.target.value || null,
-                          })
-                        }
-                      />
-                    </label>
+                  {!selected.rules.length && (
+                    <p className="muted small">
+                      Add rules before approval. No rules means no verified
+                      completion.
+                    </p>
                   )}
-                  {["count", "color"].includes(rule.kind) && (
-                    <label>
-                      Expected value
-                      <input
-                        type={rule.kind === "count" ? "number" : "text"}
-                        value={
-                          rule.value === null || rule.value === undefined
-                            ? ""
-                            : String(rule.value)
-                        }
-                        onChange={(e) =>
-                          changeRule(rule.id, {
-                            value:
-                              rule.kind === "count"
-                                ? Number(e.target.value)
-                                : e.target.value,
-                          })
-                        }
-                      />
-                    </label>
-                  )}
-                  <label>
-                    Tolerance (normalized)
-                    <input
-                      type="number"
-                      step={0.01}
-                      min={0.01}
-                      max={0.5}
-                      value={rule.tolerance}
-                      onChange={(e) =>
-                        changeRule(rule.id, {
-                          tolerance: Number(e.target.value),
-                        })
-                      }
-                    />
-                  </label>
-                </div>
-              ))}
+                  {selected.rules.map((rule, i) => (
+                    <div className="rule-editor" key={rule.id}>
+                      <div className="row-between">
+                        <span className="rule-index">RULE {i + 1}</span>
+                        <button
+                          className="icon-button"
+                          aria-label={`Remove rule ${i + 1}`}
+                          onClick={() =>
+                            changeStep({
+                              rules: selected.rules.filter(
+                                (r) => r.id !== rule.id,
+                              ),
+                            })
+                          }
+                        >
+                          <Trash2 size={13} />
+                        </button>
+                      </div>
+                      <div className="field-grid">
+                        <label>
+                          Relationship
+                          <select
+                            value={rule.kind}
+                            onChange={(e) =>
+                              changeRule(rule.id, {
+                                kind: e.target.value as Rule["kind"],
+                              })
+                            }
+                          >
+                            {[
+                              "presence",
+                              "count",
+                              "above",
+                              "below",
+                              "left",
+                              "right",
+                              "near",
+                              "aligned",
+                              "color",
+                            ].map((kind) => (
+                              <option key={kind}>{kind}</option>
+                            ))}
+                          </select>
+                        </label>
+                        <label>
+                          Subject
+                          <input
+                            value={rule.subject}
+                            onChange={(e) =>
+                              changeRule(rule.id, { subject: e.target.value })
+                            }
+                          />
+                        </label>
+                      </div>
+                      {!["presence", "count", "color"].includes(rule.kind) && (
+                        <label>
+                          Target object
+                          <input
+                            value={rule.target ?? ""}
+                            onChange={(e) =>
+                              changeRule(rule.id, {
+                                target: e.target.value || null,
+                              })
+                            }
+                          />
+                        </label>
+                      )}
+                      {["count", "color"].includes(rule.kind) && (
+                        <label>
+                          Expected value
+                          <input
+                            type={rule.kind === "count" ? "number" : "text"}
+                            value={
+                              rule.value === null || rule.value === undefined
+                                ? ""
+                                : String(rule.value)
+                            }
+                            onChange={(e) =>
+                              changeRule(rule.id, {
+                                value:
+                                  rule.kind === "count"
+                                    ? Number(e.target.value)
+                                    : e.target.value,
+                              })
+                            }
+                          />
+                        </label>
+                      )}
+                      <label>
+                        Tolerance (normalized)
+                        <input
+                          type="number"
+                          step={0.01}
+                          min={0.01}
+                          max={0.5}
+                          value={rule.tolerance}
+                          onChange={(e) =>
+                            changeRule(rule.id, {
+                              tolerance: Number(e.target.value),
+                            })
+                          }
+                        />
+                      </label>
+                    </div>
+                  ))}
+                </>
+              )}
               <p className="editor-note">
                 The server validates missing dependencies, cycles, and
                 checkpoint rules when saving.

@@ -1,98 +1,148 @@
-# ReplayLab
+# ReplayLab 2.0
 
-**Teach once. Learn by doing.**
+**Learn visual workflows with evidence, one reviewed checkpoint at a time.**
 
-ReplayLab turns a controlled tabletop demonstration into reviewed task steps and a dependency graph, then checks practice images against approved visible requirements. Its deterministic verifier returns **PASS**, **FAIL**, or **UNCERTAIN**, with object observations, individual rule results, and corrective instructions.
+ReplayLab supports both physical camera tasks and digital screen workflows.
+Tutorials become editable steps in a shared dependency graph. After approval,
+separate deterministic verifiers return **PASS**, **FAIL**, or **UNCERTAIN**, with
+visible evidence and corrections. Manual navigation never marks a step complete.
 
-The local application is implemented. Real video upload, decoding, frame extraction, persistence, task editing, graph navigation, webcam capture, checkpoint uploads, and verification work together. Meta reasoning, SAM segmentation, and grounded explanation adapters are implemented and contract-tested; successful live calls remain unverified without credentials. The application makes mock provenance visible throughout.
+| Mode | Working offline example | Source of verification evidence |
+| --- | --- | --- |
+| Digital | Simulated CodeLab extension workflow | Actual screenshot pixels read by local RapidOCR/ONNX Runtime |
+| Physical | Controlled four-block tabletop assembly | Explicit known synthetic fixture observations; arbitrary photos remain uncertain in mock mode |
 
-![Actual ReplayLab task graph and reference evidence](docs/assets/screenshots/task-graph.png)
+The application includes real video processing, persistent projects, task editing,
+graph review, camera/image capture, opt-in screen sharing, local OCR, written
+coaching, optional browser speech, and grounded Ask ReplayLab answers. CodeLab is
+a browser simulation: it does not install software. Neither example establishes
+general workflow understanding or hidden physical/filesystem state.
 
-[Watch the actual three-minute silent demonstration](docs/assets/demo.mp4) · [Browser checks and screenshots](docs/browser-qa.md) · [Suggested narration](docs/demo-script.md)
+Meta adapters for Muse Spark and physical SAM 3.1 remain implemented and
+contract-tested. **Live Meta validation is intentionally pending**, following the
+owner's instruction to finish offline. Failed live requests never become mock
+results. The GitHub repository remains **private**.
 
 ## Quick start
 
-Install **Node.js 22.12+**, **Python 3.11+**, and **FFmpeg** including `ffprobe` on PATH. Python 3.12 is the tested version. Run these commands from the repository root.
-
-Windows PowerShell:
+Install **Node.js 22.12+**, **Python 3.11+**, and **FFmpeg** with `ffprobe` on PATH.
+Python 3.12 is the tested version. From the repository root:
 
 ```powershell
+# Windows PowerShell
 npm.cmd run setup
 npm.cmd run dev
 ```
 
-Linux:
-
 ```sh
+# Linux
 npm run setup
 npm run dev
 ```
 
-Open **http://127.0.0.1:5173**. API health is at http://127.0.0.1:8010/api/health and interactive API documentation at http://127.0.0.1:8010/docs. Setup creates the Python virtual environment and installs locked dependencies without activation. Ctrl+C stops the development services.
+Open **http://127.0.0.1:5173**. API health and interactive documentation are at
+http://127.0.0.1:8010/api/health and http://127.0.0.1:8010/docs. Setup creates
+`.venv`, installs the locked Python dependencies and frontend packages, and does
+not require environment activation. Ctrl+C stops the development services.
 
-## Try the offline demonstration
+Setup includes `rapidocr==3.10.0`, `onnxruntime==1.31.1`, and the OCR models bundled
+with RapidOCR. Screen recognition runs locally with explicit installed model
+paths; it does not download models or call a cloud service while capturing.
 
-1. Choose **Explore the sample project**. ReplayLab generates an eight-second synthetic assembly MP4 and extracts four actual reference frames using FFmpeg.
-2. Open **Demonstration** to watch the video and inspect its timeline.
-3. Open **Task & graph**. Inspect the source evidence, descriptions, dependencies, and checkpoint rules; edit as needed, then **Approve task**.
-4. Open **Guided practice**, choose **Load fixture**, and use **First checkpoint**. Verify it to complete the first step.
-5. At the second step, try **Blue block to the right** for a visible alignment failure or **Obstructed camera view** for uncertainty. Retry with **Second checkpoint**, then complete **Third checkpoint** and **Four-block reference**.
-6. Open **Evaluation** to inspect 25 labeled observation scenarios, actual predictions, and their confusion matrix.
+## Try the digital workflow
 
-The verifier computes its verdict from normalized observations and approved rules. Fixture images are recognized by decoded-pixel hashes; filenames and fixture buttons do not select a verdict. An unrecognized camera image or upload returns **UNCERTAIN** in mock mode.
+1. Choose **Try digital demo**. ReplayLab generates a labeled CodeLab tutorial
+   MP4, four reference screenshots, and a fixed mock task template.
+2. Review **Task & graph**: expected UI states, source evidence, rules, and
+   dependencies. Approve the task before verification.
+3. Open the screen assistant and **Open CodeLab sandbox** in a separate tab or
+   window. Choose that surface through the browser's screen/window picker.
+4. In CodeLab, open Extensions, search for **Replay Formatter**, open its details,
+   and use the simulated install control. Actual OCR checks the visible states;
+   verified PASS results advance progress.
+5. Try the Preferences pane, unexpected dialog, or different UI version to inspect
+   corrections or uncertainty. Pause or stop sharing whenever needed. A manual
+   screenshot upload is available when capture is unavailable.
 
-For your own uploaded video, frame extraction is real. Mock task extraction supplies a clearly labeled four-block template rather than interpreting that video. Review and edit it; use Meta mode for actual model understanding and segmentation after live access is validated.
+Capture never starts silently. Its scope and preview are visible. Optional voice
+uses browser `speechSynthesis`; Ask ReplayLab uses the reviewed workflow and recent
+screen evidence. The app never clicks target controls, executes commands, or
+installs software. See [digital workflows](docs/digital-workflows.md).
 
-## Mock and Meta providers
+Digital projects also accept rights-confirmed uploaded tutorials, strict YouTube
+references for embedded playback, and timestamped pasted transcripts. ReplayLab
+does not scrape/download YouTube videos or captions. Offline transcript extraction
+uses quoted labels as candidate rules and requires manual rules where evidence is
+missing. See [tutorial sources](docs/tutorial-sources.md).
 
-The default is `AI_PROVIDER=mock`. Offline extraction, segmentation fixtures, and template explanations require no API key and are labeled as mock.
+## Physical workflows remain available
 
-To configure live access, copy the example configuration:
+Choose **Explore the sample project** for the original assembly example. Watch
+the actual generated video and extracted frames, review/approve its task, then
+use **Guided practice** and **Load fixture**. First checkpoint passes; Blue block
+to the right demonstrates an alignment mismatch; Obstructed camera view remains
+uncertain. Continue with the matching second, third, and final fixtures.
 
-```powershell
-# Windows PowerShell
-Copy-Item .env.example apps/api/.env
-```
+Known physical fixtures are matched by decoded pixels, not filenames or requested
+verdicts. Uploaded videos supply real frames, while physical mock extraction is
+a fixed four-block template. Unknown camera images remain uncertain in this mode.
+The verifier checks visible 2D geometry, not invisible joints or attachment.
+
+![Original physical task graph, still supported](docs/assets/screenshots/task-graph.png)
+
+[Original three-minute silent physical walkthrough](docs/assets/demo.mp4) ·
+[Physical browser QA](docs/browser-qa.md) · [Suggested narration](docs/demo-script.md)
+
+## Privacy and providers
+
+The default `AI_PROVIDER=mock` needs no API key. Digital mock proposals and actual
+local OCR are labeled separately. Physical SAM and digital Muse screenshot
+observation use distinct adapters. No successful live Meta calls are claimed.
+
+Live preview masks cover selected rectangles before transmission. Local OCR
+redacts detected emails and key-like text in observations and before optional
+Meta screenshot requests. Redaction is best effort; choose the narrowest sharing
+surface. Uploaded screenshot files do not inherit preview masks. Tutorial videos
+and pasted transcripts are not automatically sanitized by screen redaction.
+
+The application does not persist raw screen captures in project media or its
+database. Sanitized screen results use bounded RAM caches, and the current project
+session expires after ten minutes or is cleared on Stop. HTTP frameworks may
+buffer request bodies transiently. Tutorial media, transcripts, workflows,
+physical attempts, and progress remain local until project deletion.
+
+Cloud extraction and Meta screen processing require explicit in-app consent.
+Screenshots are sent inline with `store:false` requested; uploaded tutorial files
+instead request one-hour expiry plus immediate deletion. Those controls do not
+guarantee zero provider retention. [Model usage](docs/model-usage.md) records the
+contracts, data flow, and limits.
+
+## Checks and deployment
 
 ```sh
-# Linux
-cp .env.example apps/api/.env
-```
-
-Set `MODEL_API_KEY` in that local server file, restart the API, then select **Meta** in provider settings. Credentials stay on the server. Explicit in-app consent is required before media is sent to Meta. Authentication, billing, rate-limit, timeout, malformed-response, and outage errors stay visible; a failed live call never silently becomes a mock result.
-
-The adapters use the documented Muse Spark `muse-spark-1.3` and SAM `sam-3.1` contracts, including Meta's official SAM parser. SAM does not establish scene completeness or camera comparability. The UI records user viewpoint/visibility attestations separately from model confidence, and missing evidence remains uncertain. See [model usage and remaining live checks](docs/model-usage.md).
-
-## Validation and development
-
-```sh
-npm run check       # backend tests + Ruff, frontend tests + production build
-npm run contracts   # regenerate packages/contracts/openapi.json
+npm run check       # backend tests/Ruff, frontend tests, production build
+npm run contracts   # regenerate the shared OpenAPI snapshot
 npm run build       # frontend production build
-```
-
-Use `npm.cmd` in PowerShell if script execution policy blocks `npm.ps1`. [Recorded validation](docs/test-results.md) distinguishes local checks, browser QA, fixture evaluation, and unverified external integrations. GitHub Actions runs backend/frontend checks on pushes and pull requests.
-
-The 25-case evaluation measures deterministic behavior on curated normalized observations. Its result is not an estimate of live SAM accuracy, arbitrary task understanding, or real-world assembly performance. The MVP verifies visible 2D states in a controlled colored-block task; it cannot verify invisible physical connections.
-
-## Deployment and data
-
-```sh
 docker compose up --build
 ```
 
-With Docker running, this configuration serves the production frontend and API through http://localhost:8080 with persistent local storage. Docker image startup must be validated on a running engine; no public deployment is claimed. See [deployment instructions](docs/deployment.md).
+Use `npm.cmd` if PowerShell blocks `npm.ps1`. Actual results are recorded in
+[test results](docs/test-results.md); curated physical evaluation is described in
+[evaluation](docs/evaluation.md). Test agreement is not live model accuracy.
 
-Uploads, frames, attempts, and derived results are stored locally until the project is deleted. Project deletion also clears the shared inference cache. Generated synthetic fixtures remain available. Meta file uploads request one-hour expiration and immediate cleanup after use; a cleanup problem is disclosed. See [privacy and integration details](docs/model-usage.md). The development API is a single-user service without public account authentication; external hosting needs an authentication gateway and HTTPS.
+Docker configuration serves the application at localhost:8080 with persistent
+storage when run on a working Docker engine. Container startup and public hosting
+remain unverified. This is a local single-user service without public account
+authentication; see [deployment](docs/deployment.md).
 
 ## Project documents
 
-- [Architecture](docs/architecture.md) and [implementation roadmap](docs/roadmap.md)
-- [Development workflow](docs/development.md) and [API contracts](packages/contracts/README.md)
-- [Evaluation and limitations](docs/evaluation.md)
-- [Three-minute demo script](docs/demo-script.md) and [demo fixtures](demo/README.md)
-- [Test results](docs/test-results.md) and [browser QA](docs/browser-qa.md)
-- [Original brief](docs/project-brief.md) and [official sources/provenance](docs/official-sources.md)
-- [License](LICENSE) and [third-party attribution](docs/attribution.md)
+- [Architecture](docs/architecture.md), [development](docs/development.md), and [roadmap](docs/roadmap.md)
+- [Digital workflows](docs/digital-workflows.md) and [tutorial sources](docs/tutorial-sources.md)
+- [Model usage](docs/model-usage.md), [API contracts](packages/contracts/README.md), and [test results](docs/test-results.md)
+- [Original brief](docs/project-brief.md), [official-source provenance](docs/official-sources.md), [license](LICENSE), and [attribution](docs/attribution.md)
 
-The GitHub repository remains **private** per the owner's instruction. Major completed updates are committed and pushed. The owner explicitly authorized coding before the scheduled kickoff, with hackathon eligibility left unconfirmed; no submission eligibility or public-submission readiness is claimed.
+The owner authorized coding before the scheduled kickoff on 26 October 2026 and
+left hackathon eligibility unconfirmed. The original physical implementation and
+its recorded evidence remain preserved. Major completed updates are reviewed and
+pushed to the private repository; no public-submission readiness is implied.

@@ -1,97 +1,100 @@
 # Development and GitHub workflow
 
-ReplayLab runs as a local single-user FastAPI server and React/Vite application.
-Use the mock provider for the reproducible sample; an API key is not required.
-The repository is private, and meaningful completed milestones should be reviewed,
-tested, committed, and pushed without rewriting shared history.
+ReplayLab runs locally with FastAPI, SQLite, and React/Vite. Both physical and
+digital examples work without a Meta key. Digital local OCR is separate from
+labeled mock task proposals and physical fixture lookup.
 
-Implementation before kickoff was explicitly authorized by the owner on
-26 October 2026. Eligibility remains unconfirmed; the original planning-only gate
-no longer blocks coding. [Official sources](official-sources.md) preserve that
-provenance.
+## Requirements and setup
 
-## Requirements and configuration
-
-Use Python 3.11+ and a supported Node.js release: 22.12+ on the 22.x line or 24.x.
-Install FFmpeg and FFprobe on PATH. Both are used for actual video processing and
-sample generation. The frontend lockfile pins the installed dependency graph;
-Python dependencies are listed in `apps/api/requirements.txt`.
-
-The repository-root [README](../README.md) is the entry point for setup/start
-commands and any convenience scripts. The equivalent manual workflow follows.
-The API should run from `apps/api` so its `.env` file is found.
-
-Windows PowerShell, from the repository root:
+Install Node.js 22.12+, Python 3.11+ (tested with 3.12), and FFmpeg/FFprobe on PATH.
+From the repository root:
 
 ```powershell
-python -m venv .venv
-.\.venv\Scripts\python.exe -m pip install -r apps/api/requirements.txt
-Copy-Item .env.example apps/api/.env
-npm --prefix apps/web ci
+# Windows PowerShell
+npm.cmd run setup
+npm.cmd run dev
 ```
 
-Bash, from the repository root:
-
-```bash
-python3 -m venv .venv
-.venv/bin/python -m pip install -r apps/api/requirements.txt
-cp .env.example apps/api/.env
-npm --prefix apps/web ci
+```sh
+# Linux/macOS
+npm run setup
+npm run dev
 ```
 
-Copy the example only on first setup; preserve an existing local configuration.
-It defaults to `AI_PROVIDER=mock`. `MODEL_API_KEY` is server-only; never add it to
-frontend environment variables. Runtime storage defaults to `apps/api/data` and
-can be moved with `DATA_DIR`.
+Setup creates `.venv`, installs `apps/api/requirements.lock` when available, and
+runs frontend `npm ci`. It checks Python/Node and FFmpeg availability. It does not
+activate the environment or copy credentials. OCR adds larger binary/model
+dependencies: RapidOCR 3.10.0 and ONNX Runtime 1.31.1. The RapidOCR wheel supplies
+the three local ONNX models; capture-time inference uses installed paths and
+requires no runtime model download.
 
-## Run and verify
+`npm run dev` starts the API at 127.0.0.1:8010 and Vite at 127.0.0.1:5173, with
+`/api` proxied to FastAPI. Ctrl+C stops both services. Health and interactive API
+docs are `/api/health` and `/docs` on port 8010. Run one API worker: screen sessions,
+provider selection, and locks are process-local.
 
-Run the API from `apps/api` with the virtual environment's Python:
+The default is `AI_PROVIDER=mock`. For local configuration, copy `.env.example`
+to `apps/api/.env` only if it does not already exist. Keep `MODEL_API_KEY` on the
+server and out of frontend variables. Source-mode data defaults to `apps/api/data`;
+`DATA_DIR` can move it. Screen check intervals are separately configurable through
+`SCREEN_LOCAL_INTERVAL` and `SCREEN_META_INTERVAL`.
+
+For a manual API terminal, run the environment's Python from `apps/api`:
 
 ```text
 python -m uvicorn app.main:app --host 127.0.0.1 --port 8010
 ```
 
-Use `.venv/Scripts/python.exe` on Windows or `.venv/bin/python` on Unix from the
-repository root, adjusting the relative path after changing directories. A second
-terminal runs `npm --prefix apps/web run dev` from the root. Open
-`http://127.0.0.1:5173`; Vite forwards `/api` to `http://127.0.0.1:8010`.
-Health and interactive API docs are `/api/health` and `/docs` on port 8010.
-Run one API worker because processing locks and provider selection are local to
-that process.
+Use `../../.venv/Scripts/python.exe` on Windows or `../../.venv/bin/python` on Unix
+when already inside `apps/api`. A separate root terminal can run
+`npm --prefix apps/web run dev`.
 
-From `apps/api`, run with the environment's Python:
+## Checks and contracts
 
 ```text
-python -m pytest -q
-python -m ruff check app tests
+npm run check
+npm run contracts
+npm run build
 ```
 
-From the repository root:
+Checks include backend pytest/Ruff, frontend tests, TypeScript checking, and the
+production build. Contract export regenerates `packages/contracts/openapi.json`
+using temporary storage. API-only checks from `apps/api` are `python -m pytest -q`
+and `python -m ruff check app tests` with the virtual environment's Python.
 
-```text
-npm --prefix apps/web test
-npm --prefix apps/web run build
-```
+Tests use actual local OCR on generated pixel images and controlled observations
+for edge/concurrency cases. Meta transport tests make no live requests. Review
+[test results](test-results.md) for measured outcomes and
+[evaluation](evaluation.md) for the separate curated physical observation set.
 
-The build includes TypeScript checking. See [test results](test-results.md) for
-the actual commands and outcomes, and [evaluation](evaluation.md) for the
-observation-fixture measurement. Tests do not need a live Meta key.
+## Workflows and private data
 
-## Local data and provider changes
+Use [digital workflows](digital-workflows.md) for the CodeLab sandbox and screen
+assistant. Choose its separate tab/window in the browser picker, keeping the
+coach outside the capture. Camera/screen sharing requires localhost or HTTPS.
+Sharing, optional voice, pause, and stop are controlled by the user. Uploaded
+tutorials require usage-rights confirmation; YouTube references never trigger
+server downloads or caption scraping.
 
-The API stores projects/attempts in SQLite and source videos, extracted frames,
-and checkpoint images below its data directory. Those files remain until project
-deletion. Deletion removes the project's media and stored project/attempt records;
-it also clears the shared inference cache. Shared synthetic demo assets remain available. Runtime data is
-ignored by Git. Avoid committing screenshots containing private user media.
+Source videos/transcripts, task state, reference frames, progress, and physical
+attempts persist until project deletion. Raw screen images are not application
+media/database records. Sanitized screen results stay in bounded RAM caches;
+current project screen evidence expires after ten minutes and clears on Stop.
+The HTTP framework can transiently buffer multipart uploads, so this is not a
+guarantee of zero disk traces. Project deletion clears inference/screen caches;
+shared generated demo assets remain available.
 
-Provider settings choose mock or Meta explicitly. Switching to Meta requires a
-server key and consent before extraction or verification sends media. Missing or
-failed credentials produce a visible error, not a mock fallback. Live provider
-tests are a separate opt-in operation; follow [model usage](model-usage.md).
+Preview masks and OCR redaction are best effort. Uploaded screenshot files do
+not inherit live-preview masks. Source tutorial videos/transcripts are not
+automatically sanitized by that pipeline. Do not commit private media, keys,
+screen captures, runtime databases, caches, dependencies, or build products.
 
-## Reviewed milestone workflow
+The owner chose to finish offline and leave live Meta validation pending. Retain
+the implemented adapters and visible error paths without claiming live success or
+requesting a key as a completion prerequisite. [Model usage](model-usage.md)
+documents optional provider behavior and consent boundaries.
+
+## Reviewed milestone publishing
 
 ```text
 git status --short
@@ -104,8 +107,12 @@ git push
 git status --short --branch
 ```
 
-Replace the placeholder with actual reviewed paths and run applicable checks
-before committing. Verify the remote branch reached the intended commit. Do not
-force-push, change repository visibility, delete remote branches, commit secrets,
-or install background commit/push automation. Keep local environment files,
-dependency folders, build output, uploads, databases, and caches out of commits.
+Replace the placeholder with scoped reviewed paths and run applicable checks
+before committing. Verify the remote commit. The owner's standing instruction
+authorizes meaningful completed milestone pushes; do not force-push, rewrite
+shared history, remove remote branches, change visibility, or install background
+commit automation.
+
+The repository remains private. Coding before kickoff was explicitly authorized
+on 26 October 2026; eligibility remains unconfirmed. Preserve the original brief
+and [official-source provenance](official-sources.md).

@@ -1,52 +1,56 @@
-# ReplayLab roadmap and delivery status
+# ReplayLab delivery status
 
-The local application and explicit mock vertical slice are implemented. Meta
-adapters are implemented and tested against mocked transport; live service
-availability is unverified. The repository remains private.
+ReplayLab 2.0 implements both the original physical workflow and an offline digital
+vertical slice: tutorial source, reviewed task graph, user-authorized screen
+capture, actual local OCR, deterministic verification, and corrective guidance.
+The CodeLab tutorial/application is synthetic and explicitly labeled; OCR is
+actual local inference rather than fixture lookup or Muse output.
 
-The owner explicitly authorized implementation before the scheduled kickoff on
-26 October 2026. This decision superseded the original planning-only build gate;
-it does not establish hackathon eligibility. Preserve the history in
-[official sources](official-sources.md) when preparing a submission.
+## Implemented scope
 
-## Implemented milestones
-
-| Milestone | Current behavior and evidence |
+| Area | Current behavior |
 | --- | --- |
-| Foundation | React/TypeScript/Vite frontend, FastAPI, SQLite project/attempt persistence, health/provider status, explicit mock mode |
-| Media and task review | Bounded real video inspection, four timestamped frames, processing/error status, structured task editing and approval |
-| Graph and practice | Validated DAG, missing-dependency/cycle rejection, React Flow view, prerequisite gates, webcam capture, image uploads, attempt history |
-| Verification | Evidence-gated presence/count/position/proximity/alignment/color rules, per-rule diagnostics, corrections, PASS/FAIL/UNCERTAIN, task-revision checks |
-| Offline demonstration | Generated assembly video/images, fixed mock proposal, pixel-matched known fixture observations; arbitrary images remain uncertain |
-| Meta integration code | Official documented models/endpoints, structured output validation, native SAM parser, normalized boxes/COCO masks, cache, retry/error handling, consent, file cleanup |
-| Reproducible evaluation | 25 curated normalized-observation scenarios, expected/predicted details and confusion matrix, packaged fixture JSON |
-| Documentation | Architecture, development, model usage, evaluation scope, demo walkthrough, and deployment preparation |
+| Shared workflows | Physical/digital modality, timestamps, source references, editable prerequisites, approval, dependency-aware progress |
+| Physical path | Original camera/image capture, four-block mock source and pixel-matched fixtures, evidence-gated geometry, retained SAM adapter |
+| Digital sources | Rights-confirmed uploaded videos, strict YouTube metadata/embed references without scraping/downloads, bounded timestamp/SRT transcripts |
+| Digital proposals | Fixed CodeLab mock template or quoted-label transcript candidates; manual rules where evidence is absent |
+| Screen assistant | Explicit `getDisplayMedia`, visible scope/preview, pause/stop, change-aware capture, screenshot upload, browser masks |
+| Observations | Bundled local RapidOCR/ONNX models, actual visible text/boxes, confidence, best-effort redaction; optional separate Muse screenshot adapter |
+| Verification | Positive evidence and contradictions, dialog/error handling, interface uncertainty, skipped-prerequisite review, stale-result/cache invalidation |
+| Coaching | Evidence-backed written corrections, user-enabled deduplicated speech, grounded Ask templates, navigation without fabricated completion |
+| Privacy | No application persistence of raw screen images; bounded sanitized RAM results, project-session expiry/clear, explicit cloud consent |
+| Validation | Parser, media, OCR, provider, graph, verifier, privacy, API/concurrency, and frontend checks; actual outcomes in test results |
 
-These claims describe source behavior and the validation recorded in
-[test results](test-results.md). A fixture or mocked-transport test is not a
-credentialed model call, measured live accuracy, public deployment, or organizer
-acceptance. Camera behavior additionally depends on the user's device/browser.
+The earlier physical screenshot set and three-minute silent recording remain
+available as evidence of that version's working workflow. New digital browser
+evidence must be recorded from the application before being claimed; source or
+component tests alone do not establish browser/device behavior.
 
-## Remaining delivery work
+## Intentionally pending external work
 
-| Work | Completion criterion |
+| Work | Required evidence |
 | --- | --- |
-| Credentialed Meta validation | Authorized server key/account/billing, explicit media consent, inspected successful Muse and SAM calls, documented real latency and failure behavior |
-| Real-media evaluation | Independently labeled reference/checkpoint set; report detection quality and end-to-end verdicts separately from deterministic fixture agreement |
-| Hosted demo | Deployment credentials and chosen access policy; verify deployed health, media/fixture access, persistent disk, consent, and deletion |
-| Demo recording | Record the working three-minute walkthrough, review factual claims and provider labels, upload only when sharing is authorized |
-| Submission readiness | Verify current organizer requirements, eligibility, accepted links, and participant status; resolve any public-access requirement explicitly while keeping this repository private |
-| Production hardening | Authentication, tenant boundaries, durable job queue, multiworker concurrency, retention controls, and operational monitoring before public multiuser use |
+| Live Meta validation | Authorized consented requests inspected for actual model results, account access, errors, and latency; left pending by owner choice |
+| Broader evaluation | Independently labeled real tutorials/screens and physical attempts; false passes/failures, uncertainty, and detection measurements |
+| Container/public hosting | Actual engine/host startup, health, persistent disk, OCR models, capture/consent, and deletion checked |
+| External publication | Authorized demo-video hosting/submission links; no public deployment or uploaded-video claim from local artifacts alone |
+| Production use | Authentication, tenant isolation, durable queue, operational monitoring, and reviewed retention controls |
+| Submission | Current organizer requirements and eligibility reviewed; any public-repository requirement requires an explicit owner decision |
 
-The first three external items require account access, hosting, or additional
-media rather than a fabricated successful result. Do not substitute the offline
-sample for live Meta validation or describe a prepared script as a recorded demo.
+No key is required to complete the authorized offline scope. Retain implemented
+Meta paths and truthful availability errors without asking again for credentials
+or silently substituting mock output.
 
-## Milestone publishing
+## Provenance and publishing
 
-Review the diff and staged paths for scope, secrets, and runtime artifacts. Run
-the applicable checks and record actual results. Commit completed meaningful
-updates, push to the configured private remote without force, and verify the
-remote commit. The owner's existing instruction authorizes these milestone
-pushes; it does not authorize changing repository visibility or rewriting shared
-history. See [development](development.md).
+The private repository and original physical implementation remain preserved.
+The owner authorized pre-kickoff coding on 26 October 2026 with eligibility
+unconfirmed, then chose to finish offline. [Official sources](official-sources.md)
+and the [original brief](project-brief.md) preserve that history; neither confirms
+submission eligibility.
+
+Review scoped changes/secrets/artifacts, run meaningful checks, record actual
+results in [test results](test-results.md), then commit and push completed major
+updates to the configured private remote. Verify the remote commit. Do not
+force-push, change visibility, delete remote branches, or create background push
+automation. [Development](development.md) describes the working commands.

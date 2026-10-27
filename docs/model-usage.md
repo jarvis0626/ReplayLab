@@ -1,122 +1,148 @@
-# Model integration and provenance
+# Model integration, evidence, and data flow
 
-ReplayLab separates model suggestions, observed geometry, and deterministic
-verification. The default mock provider uses explicitly labeled fixtures. Live
-requests use the server-side Meta credential and require consent at the API/UI
-boundary before uploaded media is sent to Meta. A failed live call is surfaced;
-it never silently becomes a mock result.
+ReplayLab separates task proposals, visible observations, deterministic verdicts,
+and guidance. The owner chose **finish offline; leave live validation pending**.
+Both offline examples and local OCR are implemented; no successful live Meta
+request is claimed. Failed Meta requests remain visible and never become mock
+results.
 
-## Verified contracts
+## Provider responsibilities
 
-The live adapter uses the official [Meta Model API](https://dev.meta.ai/docs/quickstart):
-
-| Purpose | Model and transport | How ReplayLab uses the response |
+| Function | Implemented provider | Evidence boundary |
 | --- | --- | --- |
-| Propose a task graph from a reference MP4 | `muse-spark-1.3`, `POST https://api.meta.ai/v1/responses` | Strict JSON Schema output; local Pydantic, graph, and object-label validation; human approval still required |
-| Locate objects in a checkpoint/reference image | `sam-3.1`, the same Responses endpoint | Official SAM parser, source-pixel boxes, decoded masks, and optional reported confidence |
-| Prioritize evidence for an explanation | `muse-spark-1.3`, strict JSON Schema output | The model selects existing evidence IDs; the application renders existing fact strings and retains the deterministic verdict |
+| Physical offline proposal | Fixed four-block mock template | Not an interpretation of an arbitrary video |
+| Digital offline proposal | Fixed CodeLab template or timestamped transcript segmentation | Quoted labels are candidate rules requiring review; absent labels need manual rules |
+| Physical offline observations | Registered decoded-pixel fixture lookup | Explicit synthetic geometry; unknown images remain uncertain |
+| Digital local observations | RapidOCR 3.10.0 with ONNX Runtime 1.31.1 | Actual screenshot pixels, OCR confidence/boxes, best-effort redaction; no hidden application state |
+| Optional tutorial understanding | Muse Spark `muse-spark-1.3` | Validated proposals through Responses, requiring human approval |
+| Optional digital screenshot understanding | Separate Muse screenshot adapter | Redacted inline image; returns observations, not verdicts; never uses SAM |
+| Optional physical segmentation | `sam-3.1` | Official SAM parser normalizes boxes/masks/confidence |
+| Guidance | Deterministic corrections/Ask templates, optional fixed-evidence selection and browser speech | Cannot override verdicts or invent observations |
 
-Authentication is `Authorization: Bearer <MODEL_API_KEY>`. Credentials remain on
-the server and are excluded from cache files and browser responses. The adapter
-does not require the OpenAI SDK: `httpx` sends the documented HTTP requests.
-Python dependencies include Pillow, Pydantic, and `meta-sam-parser==0.1.0`.
+Local OCR uses the three models installed with the RapidOCR wheel through explicit
+paths. Missing OCR dependencies/models produce unavailable/uncertain behavior;
+capture-time code does not fetch replacements. OCR scores measure recognition,
+not the probability that a workflow or physical action is complete.
 
-## Video proposals
+## Meta contracts
 
-Videos are uploaded with `POST /v1/files`, multipart `purpose=user_data`, and
-referenced by `input_file.file_id` in the Responses request. The API supports
-MP4 video for Muse understanding. ReplayLab uses `store:false`; this disables
-stored Responses state and does not itself delete an uploaded file.
-The adapter rejects non-MP4 paths before upload; conversion must happen locally
-before invoking it, rather than relabeling bytes from a different container.
+The adapters use `https://api.meta.ai/v1`, Bearer authentication with the
+server-only `MODEL_API_KEY`, and `POST /responses`. Muse structured responses use
+`text.format` with `type:json_schema`, a schema/name, and strict validation. Local
+Pydantic/domain checks still reject invalid proposals and observations.
+[Quickstart](https://dev.meta.ai/docs/quickstart),
+[Responses schemas](https://dev.meta.ai/docs/api-reference/responses/schemas).
 
-The uploaded file has an expiration of one hour. The adapter also attempts
-`DELETE /v1/files/{file_id}` in a `finally` block, including when proposal parsing
-fails. A successful task records a cleanup failure in provenance; expiration
-remains the fallback. If a network failure occurs after an upload reaches Meta
-but before its ID reaches ReplayLab, the expiration still bounds retention.
+Tutorials, screenshots, captions, and visible text are untrusted input data.
+Provider instructions prohibit treating them as agent/system instructions,
+executing commands, revealing credentials, reconstructing redacted text, or
+certifying completion. The verifier uses approved rules and observed evidence.
 
-The model must return timestamps in seconds, unique step IDs, dependencies,
-object labels, and supported rule types. ReplayLab rejects invalid graphs or
-undeclared labels and maps each step to the sampled reference frame closest to
-its end timestamp. Four sampled frames cannot guarantee that a short action's
-exact final state is represented; users must review the proposed frame and rules.
+### Uploaded videos and pasted transcripts
 
-[Video understanding](https://dev.meta.ai/docs/video-understanding/) ·
-[File handling and expiration](https://dev.meta.ai/docs/file-handling) ·
-[Structured output](https://dev.meta.ai/docs/structured-output)
+Rights-confirmed videos are inspected and sampled locally. Non-MP4 inputs are
+prepared as MP4 before Meta video understanding. File upload uses multipart
+`purpose=user_data`; Muse receives an `input_file.file_id`. Uploaded files request
+one-hour expiration, and cleanup attempts `DELETE /files/{id}` in `finally`.
+Cleanup failures are surfaced in proposal provenance. A timeout before an upload
+ID arrives cannot be cleaned up by ID; requested expiration remains the fallback.
+[Video understanding](https://dev.meta.ai/docs/video-understanding/),
+[file handling](https://dev.meta.ai/docs/file-handling).
 
-## SAM observations
+Digital Muse extraction accepts supplied transcript text and/or an authorized
+uploaded tutorial. YouTube references are not downloaded and do not supply hidden
+caption content. Offline parsing is deterministic and is not labeled Muse.
+Timestamps, graph structure, expected states, and rule schemas are validated.
+Four sampled frames may miss a brief final state; users must inspect the evidence.
 
-Each request supplies one short noun phrase and one image data URL. Different
-object concepts use separate requests. Metadata values are strings:
-`include_confidence:"true"` and `mask_encoding:"one_bit"`. The current adapter
-uses the documented non-streaming response path and requires completed output.
+**Screen redaction does not sanitize source videos or pasted transcripts.**
+Review that content before explicit cloud-extraction consent. Source metadata,
+transcripts, and reviewed tasks are persistent local project data.
 
-SAM returns special-token text, **not JSON**. The official Python public API is
-`image_segmentation_format().create_parser()` followed by `push()` and
-`finish(CompletedOutcome())`; it is imported from `meta_sam_parser`. The package
-also provides `parse_responses_stream` for async streams. It does not export
-`parse_image_stream` or `parse_video_stream`.
+### Digital screenshot path
 
-The adapter validates masks and rejects malformed records, incomplete output,
-unrecognized plain text, and source dimensions inconsistent with the actual
-oriented image. Inclusive wire coordinates become half-open boxes in the
-official parser. Boxes are then normalized to the actual image dimensions.
-Masks use official compressed COCO RLE with a box-local raster, normalized box
-bounds, and `coordinate_space:"box_local"`; their `size` is the local mask's
-height and width, not the complete source image dimensions.
+Screen sharing starts only through a user-triggered `getDisplayMedia` picker;
+the app shows the browser-reported scope and preview. Browser rectangles mask
+selected live-preview regions before upload. They are coordinate-based and need
+review after layout changes. Manually chosen screenshot files do not inherit
+those masks.
 
-Missing confidence stays `None`. A completed empty response is a valid result
-with zero matches. Detection alone cannot establish that every object was
-visible or found. The adapter leaves visibility, coverage, quality, and view
-comparability unknown, with `detection_complete:false`. Separate measurements
-and explicit user attestations may enrich those fields in the API layer.
-Absence and exact counts require stronger completeness evidence than SAM alone
-provides. SAM does not independently measure a color attribute; named color
-prompts are not converted into calibrated color observations.
+Local OCR replaces detected emails/key-like text in observations. Before optional
+Meta transmission it blacks out the corresponding detected image regions and
+strips image metadata. If the privacy OCR scan is unavailable, the Meta screen
+request is refused. Redaction is best effort: unrecognized text, undetected
+secrets, faces, and other private content can remain. Share a narrow target window
+and keep the coach outside it; self-captures cannot establish their own success.
 
-[SAM prompts](https://dev.meta.ai/docs/sam/segmenting) ·
-[Wire grammar](https://dev.meta.ai/docs/sam/reading-segmentation) ·
-[Official Python parser](https://github.com/meta-models/meta-sam/blob/main/python/README.md)
+With separate explicit screen cloud consent, the Muse screenshot adapter sends an
+`input_image.image_url` data URL and requests **`store:false`**. It does not use
+Files upload and has **no one-hour file-expiration mechanism**. That flag requests
+no stored Responses state, not zero provider retention; provider processing and
+retention terms still apply. Missing credentials, auth/billing errors, refusals,
+or outages do not select local/mock results silently.
 
-## Errors, explanation boundaries, and local caching
+Digital rules require qualified positive UI evidence. Missing expected text alone
+is uncertain. Visible known contradictions, unexpected dialogs/errors, or a
+qualified wrong active destination can establish failure. Explicit version
+differences remain possible tutorial mismatch. No visible-label predicate proves
+filesystem contents, physical installation, or hidden settings.
 
-Authentication, billing, access restrictions, malformed media, missing resources,
-and size-limit errors return server-safe messages. Rate limiting, selected
-temporary server errors, and transport timeouts use at most three attempts with
-backoff. `Retry-After` is honored up to 60 seconds; larger delays are surfaced
-immediately for a later retry. A provider 504 is surfaced rather than blindly
-repeating the same expensive request. Raw provider diagnostics are not returned
-to users.
+### Physical SAM path
 
-An explanation request cannot change the computed status. Unknown evidence IDs,
-changed status, unexpected fields, and failed requests retain the original
-deterministic explanation. The adapter records explanation provenance separately
-as `last_explanation_provenance`. No unrestricted model narration is rendered.
+Each SAM call supplies one noun phrase and an image. Metadata strings request
+`include_confidence:"true"` and `mask_encoding:"one_bit"`. The adapter uses the
+documented non-streaming output and requires completed responses.
 
-Successful proposals and normalized observations are cached only in the ignored
-runtime data directory. SHA-256 keys include the operation, exact media bytes,
-model, schema/parser identity, and prompts. Cached proposals are validated again
-and mapped to the current project's frame IDs. Corrupt caches are ignored. Cache
-payloads contain derived private observations and descriptions. Deleting a project
-clears the shared inference cache conservatively; other projects can refill their cache entries.
-Do not treat runtime cache files as shareable fixtures.
+SAM emits special-token text, not JSON. `meta-sam-parser==0.1.0` decodes it through
+`image_segmentation_format().create_parser()`, `push`, and
+`finish(CompletedOutcome())`. Inclusive wire corners become half-open boxes,
+normalized to actual oriented image dimensions. Masks use official compressed
+COCO RLE, with box-local size/bounds rather than whole-frame raster coordinates.
+Malformed records and mismatched dimensions are rejected.
 
-[Error handling](https://dev.meta.ai/docs/error-handling) ·
-[Responses schemas](https://dev.meta.ai/docs/api-reference/responses/schemas)
+Missing confidence stays unknown. Empty completed output is a valid zero-match
+result, not proof of absence. SAM does not establish visibility/completeness,
+camera comparability, or an independent calibrated color measurement. The API
+records user view/visibility attestations and a separate image-quality heuristic;
+insufficient evidence remains uncertain.
+[SAM prompts](https://dev.meta.ai/docs/sam/segmenting),
+[output grammar](https://dev.meta.ai/docs/sam/reading-segmentation),
+[official Python parser](https://github.com/meta-models/meta-sam/blob/main/python/README.md).
+
+## Caching, retention, and controls
+
+The screen endpoint does not create screenshot media, attempt images, database
+screen blobs, or screen-content logs. Request bytes/canvas frames remain transient;
+HTTP frameworks can buffer multipart input in temporary files. This is not a
+guarantee of zero disk traces from an operating system, proxy, or HTTP stack.
+
+Sanitized OCR and Meta screen observations use bounded process-memory caches.
+The latest project screen session expires after ten minutes and clears on Stop;
+stopped generations cannot commit late results. Shared OCR/model caches have
+bounded entries and clear on project deletion or process restart. Screen response
+cache identity includes task revision and relevant completed-step history, so
+earlier skipped-step evidence is reevaluated after prerequisite progress.
+
+Physical observations and tutorial proposals have a separate ignored disk cache
+keyed by media/model/schema/configuration. These derived descriptions can still
+be private. Project deletion clears shared inference caches conservatively; shared
+synthetic demo assets remain available. Source videos, transcripts, reference
+frames, physical attempts, and workflow progress persist until project deletion.
+
+Rate limits and bounded retries apply separately to provider requests and screen
+analysis. Error messages omit raw upstream diagnostics. Deterministic guidance
+retains its verdict if optional explanation selection fails; Ask uses only the
+reviewed workflow and current session evidence. Optional speech is user-enabled
+and deduplicated; it does not perform target actions.
 
 ## Validation status
 
-Provider tests use `httpx.MockTransport`; they make no external requests. They
-cover request shapes, structured proposal validation, upload cleanup, caching,
-auth/billing/access errors, retries, refusals, incomplete output, actual official
-SAM mask parsing, normalized coordinates, unknown quality, and evidence-only
-explanations. The SAM payload in those tests is a public Meta parser example,
-not a ReplayLab accuracy measurement.
+Transport tests simulate Meta responses and cover structured contracts, errors,
+redaction boundaries, parsing, adapter separation, and cleanup. Local OCR tests
+read actual generated image pixels; API tests exercise actual reference OCR and
+controlled concurrency/privacy cases. These do not measure live Muse/SAM accuracy
+or establish account entitlement, billing, latency, or provider retention.
 
-No credentialed Meta smoke test or live media accuracy study has been completed.
-Account entitlement, billing, observed latency, and model behavior on the user's
-media remain unverified until live requests are run with an authorized key and
-explicit media consent. Unit tests establish adapter behavior against documented
-contracts, not successful operation of an external account.
+Actual check results are in [test results](test-results.md). Live Meta validation
+remains pending by owner choice; public hosting and container runtime verification
+are separate from implemented configuration.

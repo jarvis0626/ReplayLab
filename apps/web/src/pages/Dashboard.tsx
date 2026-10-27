@@ -25,6 +25,7 @@ interface Props {
   busy: boolean;
   onNew: () => void;
   onDemo: () => void;
+  onDigitalDemo?: () => void;
   onOpen: (id: string) => void;
   onDelete: (id: string) => void;
   onRefresh: () => void;
@@ -35,6 +36,7 @@ export function Dashboard({
   busy,
   onNew,
   onDemo,
+  onDigitalDemo,
   onOpen,
   onDelete,
   onRefresh,
@@ -53,13 +55,31 @@ export function Dashboard({
             <span>Learn by doing.</span>
           </h1>
           <p>
-            Turn physical demonstrations into guided practice.
+            Turn physical and digital demonstrations into guided practice.
             <br className="desktop-break" /> Every step connected to evidence.
           </p>
         </div>
         <button className="button primary" onClick={onNew}>
           <Plus size={17} />
           New project
+        </button>
+      </div>
+      <div className="digital-demo-callout">
+        <div>
+          <Badge variant="cyan">NEW · DIGITAL WORKFLOWS</Badge>
+          <h3>Learn a workflow. Share a window. Get grounded guidance.</h3>
+          <p>
+            Try the controlled CodeLab extension demo with real screen pixels
+            and local OCR. Physical task practice stays available.
+          </p>
+        </div>
+        <button
+          className="button secondary"
+          onClick={onDigitalDemo}
+          disabled={busy}
+        >
+          Try digital demo
+          <ArrowUpRight size={16} />
         </button>
       </div>
       <div className="hero-workbench">
