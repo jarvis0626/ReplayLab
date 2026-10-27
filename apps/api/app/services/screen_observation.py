@@ -189,18 +189,27 @@ def _local_observation(image_bytes: bytes) -> ScreenObservation:
             )
         visible_text = "\n".join(item.text for item in elements)
         known_scores = [item.confidence for item in elements if item.confidence is not None]
-        version_text = None
+        # OCR can merge the title with adjacent workspace text. Extract a bounded
+        # app/version token without requiring the whole line to be the title.
+        # Conflicting reliable versions do not establish a current interface.
+        version_candidates = {}
         for item in elements:
             if item.confidence is None or item.confidence < 0.75:
                 continue
+            code_lab_versions = re.findall(
+                r"(?<![\w])CodeLab\s*(\d+(?:\.\d+){1,3})(?![\w.])",
+                item.text,
+                re.IGNORECASE,
+            )
             version = re.search(r"\binterface version\s*[:=]\s*([^\n]{1,120})", item.text, re.IGNORECASE)
-            code_lab = re.fullmatch(r"CodeLab\s*(\d+(?:\.\d+){1,3})", item.text, re.IGNORECASE)
-            if version:
-                version_text = version.group(1).strip()
-                break
-            if code_lab:
-                version_text = "CodeLab " + code_lab.group(1)
-                break
+            if code_lab_versions:
+                for number in code_lab_versions:
+                    candidate = "CodeLab " + number
+                    version_candidates[candidate.casefold()] = candidate
+            elif version:
+                candidate = version.group(1).strip()
+                version_candidates[candidate.casefold()] = candidate
+        version_text = next(iter(version_candidates.values())) if len(version_candidates) == 1 else None
         result = ScreenObservation(
             elements=elements,
             visible_text=visible_text,
@@ -218,6 +227,7 @@ def _local_observation(image_bytes: bytes) -> ScreenObservation:
                 "redaction_applied": True,
                 "redacted_regions": redacted_count,
                 "screenshots_stored": False,
+                "interface_version_ambiguous": len(version_candidates) > 1,
                 "self_capture": is_coach_capture(visible_text),
                 "quality_source": "Screenshot contrast and sharpness heuristic; not calibrated model confidence",
                 "redaction_limits": "Best effort for detected email addresses and key-like text; review the selected sharing scope.",

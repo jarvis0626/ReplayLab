@@ -141,6 +141,15 @@ def test_interface_version_difference_does_not_blame_user():
     assert "not evidence of a user mistake" in result.explanation
 
 
+def test_matching_checkpoint_cannot_pass_with_conflicting_reliable_interface_versions():
+    observation = observed(
+        "Extensions", "CodeLab 1.0", "CodeLab 2.0", provenance={"interface_version_ambiguous": True}
+    )
+    result = verify_screen(step(), observation)
+    assert result.status == "uncertain" and result.reason == "interface_mismatch"
+    assert "single comparable target" in result.explanation
+
+
 def test_unverified_prerequisites_are_uncertain_not_proven_omission():
     first = step()
     second = step("second", [ScreenRule(id="r", kind="text_present", expected="Installed")], ["first"])

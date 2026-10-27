@@ -232,6 +232,15 @@ def verify_screen(step, observation: ScreenObservation, workflow=None, completed
             explanation="The shared image shows the ReplayLab coach. Share the separate target application window so its instructions cannot prove their own completion.",
             warnings=warnings,
         )
+    if observation.provenance.get("interface_version_ambiguous") is True:
+        return ScreenResult(
+            step_id=step.id,
+            status="uncertain",
+            provider_mode=observation.provider_mode,
+            reason="interface_mismatch",
+            explanation="Multiple reliable interface versions are visible. Select a single comparable target window and recheck before claiming completion or a mismatch.",
+            warnings=warnings,
+        )
     expected_version = getattr(workflow, "interface_version", None) if workflow else None
     if (
         expected_version

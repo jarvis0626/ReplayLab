@@ -121,6 +121,59 @@ def test_explicit_demo_interface_header_yields_observed_version(monkeypatch):
     assert observe_screen(image_bytes()).interface_version == "CodeLab 1.0"
 
 
+@pytest.mark.parametrize(
+    "text",
+    [
+        "CodeLab 2.0 practice-workspace",
+        "practice-workspace CodeLab 2.0 SIMULATED WORKSPACE",
+        "CodeLab2.0 | Sandbox simulation - no system changes",
+        "Interface version: CodeLab 2.0 practice-workspace",
+    ],
+)
+def test_merged_header_extracts_bounded_visible_version(monkeypatch, text):
+    output = SimpleNamespace(
+        txts=[text], boxes=np.array([[[20, 20], [900, 20], [900, 80], [20, 80]]]), scores=[0.99]
+    )
+    monkeypatch.setattr("app.services.screen_observation._get_ocr", lambda: lambda image: output)
+    observation = observe_screen(image_bytes())
+    assert observation.interface_version == "CodeLab 2.0"
+    assert observation.provenance["interface_version_ambiguous"] is False
+
+
+def test_low_confidence_merged_version_is_not_promoted_to_interface_evidence(monkeypatch):
+    output = SimpleNamespace(
+        txts=["CodeLab 2.0 practice-workspace"],
+        boxes=np.array([[[20, 20], [900, 20], [900, 80], [20, 80]]]),
+        scores=[0.5],
+    )
+    monkeypatch.setattr("app.services.screen_observation._get_ocr", lambda: lambda image: output)
+    assert observe_screen(image_bytes()).interface_version is None
+
+
+@pytest.mark.parametrize("same_line", [True, False])
+def test_conflicting_reliable_versions_remain_unknown(monkeypatch, same_line):
+    texts = ["CodeLab 1.0 practice-workspace CodeLab 2.0"] if same_line else ["CodeLab 1.0", "CodeLab 2.0 practice-workspace"]
+    output = SimpleNamespace(
+        txts=texts,
+        boxes=np.array([[[20, 20], [900, 20], [900, 80], [20, 80]]] * len(texts)),
+        scores=[0.99] * len(texts),
+    )
+    monkeypatch.setattr("app.services.screen_observation._get_ocr", lambda: lambda image: output)
+    observation = observe_screen(image_bytes())
+    assert observation.interface_version is None
+    assert observation.provenance["interface_version_ambiguous"] is True
+
+
+def test_version_token_boundaries_do_not_match_a_different_name_or_suffix(monkeypatch):
+    output = SimpleNamespace(
+        txts=["MyCodeLab 2.0 CodeLab 2.0preview"],
+        boxes=np.array([[[20, 20], [900, 20], [900, 80], [20, 80]]]),
+        scores=[0.99],
+    )
+    monkeypatch.setattr("app.services.screen_observation._get_ocr", lambda: lambda image: output)
+    assert observe_screen(image_bytes()).interface_version is None
+
+
 def test_redaction_uses_oriented_ocr_coordinates_and_strips_metadata():
     image = Image.new("RGB", (120, 240), "white")
     exif = image.getexif()
