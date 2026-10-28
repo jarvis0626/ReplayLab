@@ -133,7 +133,9 @@ def measured_quality(path: Path) -> float:
 def prepare_meta_video(path: Path) -> Path:
     # Normalize actual media regardless of the caller-supplied MIME/suffix. A
     # valid WebM can be named .mp4, so the filename cannot establish its format.
-    digest = hashlib.sha256(path.read_bytes()).hexdigest()[:32]
+    # Include the conversion policy so old silent cache entries are not reused
+    # after adding embedded audio preservation for video understanding.
+    digest = hashlib.sha256(b"meta-mp4-audio-v2\0" + path.read_bytes()).hexdigest()[:32]
     destination = path.parent / f"video-{digest}.mp4"
     if destination.exists():
         return destination
@@ -147,6 +149,10 @@ def prepare_meta_video(path: Path) -> Path:
                 "error",
                 "-i",
                 str(path),
+                "-map",
+                "0:v:0",
+                "-map",
+                "0:a:0?",
                 "-c:v",
                 "libx264",
                 "-preset",
@@ -155,7 +161,10 @@ def prepare_meta_video(path: Path) -> Path:
                 "24",
                 "-pix_fmt",
                 "yuv420p",
-                "-an",
+                "-c:a",
+                "aac",
+                "-b:a",
+                "128k",
                 "-movflags",
                 "+faststart",
                 "-threads",

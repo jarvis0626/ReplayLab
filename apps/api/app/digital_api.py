@@ -19,6 +19,9 @@ from app.api_contracts import Project
 from app.digital_schemas import ScreenObservation, ScreenResult
 from app.schemas import Task
 from app.services.media import MediaError, decode_image, inspect_video
+from app.services.thresholds import configured_thresholds
+from app.services.verification_records import build_verification
+from app.verification_contracts import WorkflowVerification
 
 
 class TutorialInput(BaseModel):
@@ -42,6 +45,7 @@ class ScreenCheck(BaseModel):
     upcoming_step_id: str | None
     screen_stored: bool = False
     source_scope: str | None = None
+    verification: WorkflowVerification | None = None
 
 
 class ScreenSessions:
@@ -176,7 +180,15 @@ def install_digital_routes(
         cloud_consent: Annotated[bool, Form()] = False,
         source_scope: Annotated[str | None, Form(max_length=160)] = None,
         interface_version: Annotated[str | None, Form(max_length=120)] = None,
+        retain_evidence: Annotated[bool, Form()] = False,
     ):
+        # Anchor cancellation to receipt of this request. Sampling after an
+        # asynchronous upload read would let a stopped upload adopt the next
+        # session generation and later complete or retain a checkpoint.
+        with sessions.lock:
+            generation = getattr(request.state, "screen_generation", None)
+            if generation is None:
+                generation = sessions.generations.get(project_id, 0)
         project = digital_project(project_id)
         if not project["approved"] or not project["task"]:
             await file.close()
@@ -212,9 +224,11 @@ def install_digital_routes(
         except MediaError as exc:
             raise HTTPException(422, str(exc)) from None
         task_revision = hashlib.sha256(json.dumps(project["task"], sort_keys=True).encode()).hexdigest()
-        key_prefix = (hashlib.sha256(content).hexdigest(), task_revision, step_id, selected)
+        key_prefix = (hashlib.sha256(content).hexdigest(), task_revision, step_id, selected, retain_evidence)
         key = (*key_prefix, tuple(project["completed_step_ids"]))
         with sessions.lock:
+            if sessions.generations.get(project_id, 0) != generation:
+                raise HTTPException(409, "Screen sharing was stopped; the pending capture was discarded.")
             previous = sessions.last(project_id)
             if previous and previous.get("key") == key:
                 return previous["response"]
@@ -231,7 +245,6 @@ def install_digital_routes(
                     "Screen checks are rate limited. Wait a moment and retry.",
                     headers={"Retry-After": str(math.ceil(interval))},
                 )
-            generation = sessions.generations.get(project_id, 0)
             sessions.inflight.add(project_id)
             sessions.started[project_id] = time.monotonic()
 
@@ -241,7 +254,22 @@ def install_digital_routes(
             from app.services.tutorials import instruction_warnings
             from app.services.screen_observation import redact_text
 
+            started = time.perf_counter()
             observation = observe_screen(content, selected, provider, cloud_consent=cloud_consent)
+            # Optional language generation must never hold the project/session
+            # locks: Stop and workflow edits remain responsive during a call.
+            # The authoritative decision below is recomputed against fresh progress.
+            guidance = None
+            proposed_result = None
+            if selected == "meta":
+                from app.providers.grounded_explanation import explain_verification
+
+                with sessions.lock:
+                    if sessions.generations.get(project_id, 0) != generation:
+                        raise HTTPException(409, "Screen sharing was stopped; the pending capture was discarded.")
+                with configured_thresholds(settings):
+                    proposed_result = verify_screen(step, observation, task, project["completed_step_ids"])
+                guidance = explain_verification(provider.provider, step, proposed_result)
             with store.lock, sessions.lock:
                 fresh = project_or_404(project_id)
                 fresh_revision = hashlib.sha256(
@@ -257,7 +285,15 @@ def install_digital_routes(
                     raise HTTPException(
                         409, "The workflow changed during analysis. Review it and capture again."
                     )
-                result = verify_screen(step, observation, task, fresh["completed_step_ids"])
+                with configured_thresholds(settings):
+                    result = verify_screen(step, observation, task, fresh["completed_step_ids"])
+                explanation_provider = "deterministic_template"
+                # A changed progression invalidates a previously planned narrative.
+                if guidance is not None and result == proposed_result:
+                    result.explanation = guidance.text
+                    explanation_provider = guidance.provider_mode
+                    if guidance.warning:
+                        result.warnings.append(guidance.warning)
                 result.warnings = list(
                     dict.fromkeys(
                         result.warnings + instruction_warnings(step.description + " " + step.expected_state)
@@ -277,6 +313,14 @@ def install_digital_routes(
                 current = eligible[0].id if eligible else None
                 remaining = [item for item in task.steps if item.id not in fresh["completed_step_ids"]]
                 upcoming = next((item.id for item in remaining if item.id != current), None)
+                verification = build_verification(
+                    fresh, task, step, result, task_revision=task_revision,
+                    latency_ms=(time.perf_counter() - started) * 1000,
+                    retained=retain_evidence, observation=observation, selected_mode=selected,
+                    explanation_provider=explanation_provider,
+                )
+                if retain_evidence:
+                    store.save_verification(verification.model_dump(mode="json"))
                 response = ScreenCheck(
                     result=result,
                     observation=observation,
@@ -284,6 +328,7 @@ def install_digital_routes(
                     current_step_id=current,
                     upcoming_step_id=upcoming,
                     source_scope=redact_text(source_scope) if source_scope else None,
+                    verification=verification,
                 )
                 if len(sessions.records) >= 64 and project_id not in sessions.records:
                     oldest = min(sessions.records, key=lambda item: sessions.records[item]["time"])

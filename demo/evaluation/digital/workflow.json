@@ -1,0 +1,173 @@
+{
+  "id": "codelab-evaluation-workflow-v1",
+  "title": "Install a simulated CodeLab extension",
+  "description": "Labeled synthetic CodeLab workflow. Steps are a fixed local template, not video analysis. No extension is actually installed.",
+  "objects": [],
+  "steps": [
+    {
+      "id": "digital-step-1",
+      "title": "Open the Extensions Marketplace",
+      "description": "Open the \"Extensions Marketplace\" panel in CodeLab.",
+      "dependencies": [],
+      "timestamp_start": 0.0,
+      "timestamp_end": 3.0,
+      "reference_frame_id": "reference-1",
+      "object_labels": [],
+      "rules": [],
+      "expected_state": "Extensions Marketplace",
+      "screen_rules": [
+        {
+          "id": "digital-step-1-text-1",
+          "kind": "text_present",
+          "expected": "Extensions Marketplace",
+          "alternatives": [],
+          "contradictions": [
+            "Preferences"
+          ],
+          "description": "Verify this visible CodeLab simulation label with actual screen observations."
+        }
+      ]
+    },
+    {
+      "id": "digital-step-2",
+      "title": "Find Replay Formatter",
+      "description": "Search for \"Replay Formatter\" and inspect \"Search results\".",
+      "dependencies": [
+        "digital-step-1"
+      ],
+      "timestamp_start": 3.0,
+      "timestamp_end": 6.0,
+      "reference_frame_id": "reference-2",
+      "object_labels": [],
+      "rules": [],
+      "expected_state": "Search results; Replay Formatter",
+      "screen_rules": [
+        {
+          "id": "digital-step-2-text-1",
+          "kind": "text_present",
+          "expected": "Search results",
+          "alternatives": [],
+          "contradictions": [
+            "Preferences"
+          ],
+          "description": "Verify this visible CodeLab simulation label with actual screen observations."
+        },
+        {
+          "id": "digital-step-2-text-2",
+          "kind": "text_present",
+          "expected": "Replay Formatter",
+          "alternatives": [],
+          "contradictions": [
+            "Preferences"
+          ],
+          "description": "Verify this visible CodeLab simulation label with actual screen observations."
+        }
+      ]
+    },
+    {
+      "id": "digital-step-3",
+      "title": "Review the extension details",
+      "description": "Open \"Extension details\" for \"Replay Formatter\" and locate \"Install extension\".",
+      "dependencies": [
+        "digital-step-2"
+      ],
+      "timestamp_start": 6.0,
+      "timestamp_end": 9.0,
+      "reference_frame_id": "reference-3",
+      "object_labels": [],
+      "rules": [],
+      "expected_state": "Extension details; Replay Formatter; Install extension",
+      "screen_rules": [
+        {
+          "id": "digital-step-3-text-1",
+          "kind": "text_present",
+          "expected": "Extension details",
+          "alternatives": [],
+          "contradictions": [
+            "Preferences"
+          ],
+          "description": "Verify this visible CodeLab simulation label with actual screen observations."
+        },
+        {
+          "id": "digital-step-3-text-2",
+          "kind": "text_present",
+          "expected": "Replay Formatter",
+          "alternatives": [],
+          "contradictions": [
+            "Preferences"
+          ],
+          "description": "Verify this visible CodeLab simulation label with actual screen observations."
+        },
+        {
+          "id": "digital-step-3-text-3",
+          "kind": "text_present",
+          "expected": "Install extension",
+          "alternatives": [],
+          "contradictions": [
+            "Preferences"
+          ],
+          "description": "Verify this visible CodeLab simulation label with actual screen observations."
+        }
+      ]
+    },
+    {
+      "id": "digital-step-4",
+      "title": "Confirm installed and enabled",
+      "description": "Use the simulated install control, then confirm \"Installed\" and \"Enabled\".",
+      "dependencies": [
+        "digital-step-3"
+      ],
+      "timestamp_start": 9.0,
+      "timestamp_end": 12.0,
+      "reference_frame_id": "reference-4",
+      "object_labels": [],
+      "rules": [],
+      "expected_state": "Replay Formatter; Installed; Enabled",
+      "screen_rules": [
+        {
+          "id": "digital-step-4-text-1",
+          "kind": "text_present",
+          "expected": "Replay Formatter",
+          "alternatives": [],
+          "contradictions": [
+            "Preferences"
+          ],
+          "description": "Verify this visible CodeLab simulation label with actual screen observations."
+        },
+        {
+          "id": "digital-step-4-text-2",
+          "kind": "text_present",
+          "expected": "Installed",
+          "alternatives": [],
+          "contradictions": [
+            "Preferences",
+            "Install extension"
+          ],
+          "description": "Verify this visible CodeLab simulation label with actual screen observations."
+        },
+        {
+          "id": "digital-step-4-text-3",
+          "kind": "text_present",
+          "expected": "Enabled",
+          "alternatives": [],
+          "contradictions": [
+            "Preferences",
+            "Disabled"
+          ],
+          "description": "Verify this visible CodeLab simulation label with actual screen observations."
+        }
+      ]
+    }
+  ],
+  "provider_mode": "mock",
+  "provenance": {
+    "provider": "fixed synthetic transcript template",
+    "synthetic": true,
+    "inferred_from_video": false,
+    "inferred_from_screen": false,
+    "requires_approval": true,
+    "source_is_untrusted_evidence": true
+  },
+  "modality": "digital",
+  "interface_version": "CodeLab 1.0"
+}

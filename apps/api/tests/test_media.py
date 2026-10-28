@@ -25,7 +25,8 @@ def test_spoofed_image_format_is_not_decoded_as_supported_type():
         decode_image(encoded.tobytes())
 
 
-def test_meta_video_normalizes_real_container_instead_of_trusting_suffix(tmp_path):
+@pytest.mark.parametrize("with_audio", [False, True])
+def test_meta_video_normalizes_real_container_instead_of_trusting_suffix(tmp_path, with_audio):
     actual = tmp_path / "source.webm"
     subprocess.run(
         [
@@ -37,6 +38,7 @@ def test_meta_video_normalizes_real_container_instead_of_trusting_suffix(tmp_pat
             "lavfi",
             "-i",
             "color=c=blue:s=96x64:r=4:d=1",
+            *(["-f", "lavfi", "-i", "sine=frequency=440:duration=1", "-c:a", "libopus"] if with_audio else []),
             "-c:v",
             "libvpx-vp9",
             "-threads",
@@ -70,4 +72,8 @@ def test_meta_video_normalizes_real_container_instead_of_trusting_suffix(tmp_pat
     metadata = json.loads(result.stdout)
     assert "mp4" in metadata["format"]["format_name"]
     assert metadata["streams"][0]["codec_name"] == "h264"
+    if with_audio:
+        assert any(item["codec_name"] == "aac" for item in metadata["streams"])
+    else:
+        assert len(metadata["streams"]) == 1
     assert prepare_meta_video(disguised) == normalized

@@ -16,6 +16,9 @@ class Settings(BaseSettings):
     max_video_seconds: float = 120
     screen_local_interval: float = Field(default=2.0, ge=0, le=60)
     screen_meta_interval: float = Field(default=10.0, ge=0, le=120)
+    verification_min_confidence: float = Field(default=0.75, ge=0.5, le=1)
+    verification_digital_quality: float = Field(default=0.4, ge=0.1, le=1)
+    verification_physical_quality: float = Field(default=0.65, ge=0.1, le=1)
     cors_origins: str = (
         "http://localhost:5173,http://127.0.0.1:5173,http://localhost:4173,http://127.0.0.1:4173"
     )

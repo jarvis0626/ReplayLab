@@ -14,6 +14,7 @@ COPY apps/api/requirements.lock ./requirements.lock
 RUN python -m pip install --no-cache-dir -r requirements.lock
 COPY --chown=replaylab:replaylab apps/api/ /app/apps/api/
 COPY --chown=replaylab:replaylab demo/fixtures/evaluation.json /app/demo/fixtures/evaluation.json
+COPY --chown=replaylab:replaylab demo/evaluation/digital/ /app/demo/evaluation/digital/
 
 USER replaylab
 EXPOSE 8010

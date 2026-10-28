@@ -1,5 +1,16 @@
 # Development and GitHub workflow
 
+ReplayLab 3.0 adds shared decision/feedback contracts and a captured digital
+evaluation. See [implementation status](IMPLEMENTATION_STATUS.md) and
+[digital evaluation](digital-evaluation.md). The latter can be replayed without
+a browser using `.venv\Scripts\python.exe scripts/evaluate-digital.py`.
+
+The optional policy variables in `.env.example` set minimum observation
+confidence and image-quality gates. They are heuristic policy values, not
+calibrated probabilities. Defaults remain compatible with existing workflows.
+Per-capture digital evidence retention is off until explicitly selected in the
+screen assistant; no digital screenshot images are saved by that feature.
+
 ReplayLab runs locally with FastAPI, SQLite, and React/Vite. Both physical and
 digital examples work without a Meta key. Digital local OCR is separate from
 labeled mock task proposals and physical fixture lookup.

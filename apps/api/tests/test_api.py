@@ -69,9 +69,14 @@ def test_full_demo_verification_and_dependency_progression(client, demo):
         response = client.post(f"/api/attempts/{attempt['id']}/verify", json={})
         assert response.status_code == 200, response.text
         assert response.json()["result"]["status"] == "pass", response.json()
+        shared = response.json()["verification"]
+        assert shared["verdict"] == "pass" and shared["modality"] == "physical"
+        assert shared["workflow_id"] == demo["id"] and shared["retained"] is True
+        assert shared["constraints"] and shared["evidence_references"] and shared["latency_ms"] >= 0
     finished = client.get(f"/api/projects/{demo['id']}").json()
     assert finished["completed_step_ids"] == ["step-1", "step-2", "step-3", "step-4"]
     assert len(client.get(f"/api/projects/{demo['id']}/attempts").json()) == 4
+    assert len(client.get(f"/api/projects/{demo['id']}/verifications").json()) == 4
 
 
 def test_real_mismatch_and_obstruction_are_distinct(client, demo):

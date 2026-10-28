@@ -5,6 +5,7 @@ import logging
 import re
 import shutil
 import threading
+import time
 from contextlib import asynccontextmanager
 from datetime import datetime, timezone
 from pathlib import Path
@@ -34,6 +35,8 @@ from app.services.media import (
     prepare_meta_video,
 )
 from app.services.verification import verify
+from app.services.thresholds import configured_thresholds
+from app.services.verification_records import build_verification
 
 logger = logging.getLogger("replaylab")
 VIDEO_MIME = {
@@ -84,7 +87,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         yield
         store.engine.dispose()
 
-    api = FastAPI(title="ReplayLab API", version="2.0.0", lifespan=lifespan)
+    api = FastAPI(title="ReplayLab API", version="3.0.0", lifespan=lifespan)
     api.state.store = store
     api.state.settings = settings
     api.add_middleware(
@@ -97,6 +100,13 @@ def create_app(settings: Settings | None = None) -> FastAPI:
 
     @api.middleware("http")
     async def request_limits(request: Request, call_next):
+        # FastAPI parses multipart before entering a route. Anchor cancellation
+        # before that parse so Stop also invalidates a capture still uploading.
+        screen_request = re.fullmatch(r"/api/projects/([a-f0-9]{32})/screen-check", request.url.path)
+        sessions = getattr(api.state, "screen_sessions", None)
+        if request.method == "POST" and screen_request and sessions is not None:
+            with sessions.lock:
+                request.state.screen_generation = sessions.generations.get(screen_request.group(1), 0)
         length = request.headers.get("content-length")
         limit = (
             settings.max_video_bytes + 2 * 1024 * 1024
@@ -314,7 +324,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         return {
             "status": "ok",
             "provider": provider_status(),
-            "version": "2.0.0",
+            "version": "3.0.0",
             "privacy": "Local single-user development server; no public authentication.",
         }
 
@@ -616,17 +626,17 @@ def create_app(settings: Settings | None = None) -> FastAPI:
                 raise HTTPException(
                     409, "The task changed after this checkpoint. Review, approve, and capture a new attempt."
                 )
-            step = next(
-                item for item in Task.model_validate(project["task"]).steps if item.id == attempt["step_id"]
-            )
+            task = Task.model_validate(project["task"])
+            step = next(item for item in task.steps if item.id == attempt["step_id"])
             if not set(step.dependencies).issubset(project["completed_step_ids"]):
                 raise HTTPException(409, "Complete the prerequisites before verifying this step.")
             selected = mode["value"]
             require_consent(selected, consent.cloud_consent)
             provider = provider_for(selected)
-            attempt.update(status="verifying", error=None)
+            attempt.update(status="verifying", error=None, result=None, verification=None)
             store.save_attempt(attempt)
             try:
+                started = time.perf_counter()
                 frame = next(frame for frame in project["frames"] if frame["id"] == step.reference_frame_id)
                 reference_path = media_directory / project_id / frame["url"].rsplit("/", 1)[-1]
                 current_path = media_directory / project_id / attempt["image_url"].rsplit("/", 1)[-1]
@@ -653,7 +663,8 @@ def create_app(settings: Settings | None = None) -> FastAPI:
                             user_visibility_attestation=consent.visibility_confirmed,
                             quality_source="Laplacian sharpness and exposure heuristic; not calibrated model confidence",
                         )
-                result = verify(step, reference, current)
+                with configured_thresholds(settings):
+                    result = verify(step, reference, current)
                 result.explanation = provider.explain(result)
                 with store.lock:
                     fresh = project_or_404(project_id)
@@ -666,9 +677,18 @@ def create_app(settings: Settings | None = None) -> FastAPI:
                             409,
                             "The task changed during verification. Review, approve, and capture a new checkpoint.",
                         )
+                    verification = build_verification(
+                        fresh, task, step, result, task_revision=attempt["task_revision"],
+                        latency_ms=(time.perf_counter() - started) * 1000,
+                        retained=True, selected_mode=selected,
+                        explanation_provider="meta_grounded" if getattr(
+                            provider, "last_explanation_provenance", {}
+                        ).get("provider") == "meta" else "deterministic_template",
+                    )
                     attempt.update(
                         status="verified",
                         result=result.model_dump(mode="json"),
+                        verification=verification.model_dump(mode="json"),
                         reference_observations=[
                             item.model_dump(mode="json") for item in reference.observations
                         ],
@@ -683,6 +703,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
                         },
                     )
                     store.save_attempt(attempt)
+                    store.save_verification(verification.model_dump(mode="json"))
                     if result.status == "pass":
 
                         def complete(document):
@@ -758,6 +779,12 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         new_project=new_project,
         require_idle=require_idle,
     )
+    from app.v3_api import install_verification_routes
+
+    install_verification_routes(api, store=store, project_or_404=project_or_404)
+    from app.evaluation_api import register_evaluation_routes
+
+    register_evaluation_routes(api)
     return api
 
 

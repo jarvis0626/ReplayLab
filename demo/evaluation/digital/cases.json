@@ -1,0 +1,309 @@
+{
+  "name": "ReplayLab CodeLab controlled browser challenge v1",
+  "captured_at": "2026-10-28T14:10:07.205780+00:00",
+  "label_provenance": "Coding-agent-authored challenge labels fixed in label-plan.json before capture and before OCR inference; not independent human annotation.",
+  "capture_metadata": {
+    "browser": "Chromium",
+    "browser_version": "148.0.7778.96",
+    "device_scale_factor": 1
+  },
+  "cases": [
+    {
+      "id": "correct-market",
+      "title": "Marketplace is visibly open",
+      "category": "correct",
+      "state": "market",
+      "reference_step_id": "digital-step-1",
+      "completed_step_ids": [],
+      "expected": "pass",
+      "capture_options": {},
+      "screenshot": "case-correct-market.png",
+      "screenshot_sha256": "24001a5681c63db9b452661cb6c9950973a54e331ba1449c22678096ad2f11cf"
+    },
+    {
+      "id": "correct-search",
+      "title": "The requested package appears in search results",
+      "category": "correct",
+      "state": "search",
+      "reference_step_id": "digital-step-2",
+      "completed_step_ids": [
+        "digital-step-1"
+      ],
+      "expected": "pass",
+      "capture_options": {},
+      "screenshot": "case-correct-search.png",
+      "screenshot_sha256": "ba58b53148e6972510d13788c5873d262de8fe9afc999e32efed67ac8ce38d30"
+    },
+    {
+      "id": "correct-details",
+      "title": "Package details and install control are visible",
+      "category": "correct",
+      "state": "details",
+      "reference_step_id": "digital-step-3",
+      "completed_step_ids": [
+        "digital-step-1",
+        "digital-step-2"
+      ],
+      "expected": "pass",
+      "capture_options": {},
+      "screenshot": "case-correct-details.png",
+      "screenshot_sha256": "41f2ce777fdb46a0a01f3111c1ee66b9fe4db8abbfad6cc70fc36badaf5c0ec1"
+    },
+    {
+      "id": "correct-installed",
+      "title": "Package is visibly installed and enabled",
+      "category": "correct",
+      "state": "installed",
+      "reference_step_id": "digital-step-4",
+      "completed_step_ids": [
+        "digital-step-1",
+        "digital-step-2",
+        "digital-step-3"
+      ],
+      "expected": "pass",
+      "capture_options": {},
+      "screenshot": "case-correct-installed.png",
+      "screenshot_sha256": "f17a073d3ab1b2ed31f80481377d326d5b1ebc9f54d4bfc8f62d9c13efda0cc5"
+    },
+    {
+      "id": "correct-tablet",
+      "title": "Marketplace at a tablet viewport",
+      "category": "correct",
+      "state": "market",
+      "reference_step_id": "digital-step-1",
+      "completed_step_ids": [],
+      "expected": "pass",
+      "capture_options": {
+        "width": 1024
+      },
+      "screenshot": "case-correct-tablet.png",
+      "screenshot_sha256": "73213cdb37d1a1c4b82e4c92498a71aa314099b795790e92cbb1955541f42c70"
+    },
+    {
+      "id": "wrong-settings-market",
+      "title": "Settings contradicts the marketplace checkpoint",
+      "category": "incorrect",
+      "state": "settings",
+      "reference_step_id": "digital-step-1",
+      "completed_step_ids": [],
+      "expected": "fail",
+      "capture_options": {},
+      "screenshot": "case-wrong-settings-market.png",
+      "screenshot_sha256": "536a6fcfbbf34a6df16505d019cb6b71dc6ef222d23bc070e8db6a47d0547ac1"
+    },
+    {
+      "id": "wrong-settings-search",
+      "title": "Settings contradicts the package search checkpoint",
+      "category": "incorrect",
+      "state": "settings",
+      "reference_step_id": "digital-step-2",
+      "completed_step_ids": [
+        "digital-step-1"
+      ],
+      "expected": "fail",
+      "capture_options": {
+        "width": 1280
+      },
+      "screenshot": "case-wrong-settings-search.png",
+      "screenshot_sha256": "00a0fe871b6b3c3b413489028854f40d0361ed2a9aefa97dfa9e9f0af55d246d"
+    },
+    {
+      "id": "wrong-dialog-market",
+      "title": "Permission error interrupts the marketplace",
+      "category": "incorrect",
+      "state": "market",
+      "reference_step_id": "digital-step-1",
+      "completed_step_ids": [],
+      "expected": "fail",
+      "capture_options": {
+        "dialog": true
+      },
+      "screenshot": "case-wrong-dialog-market.png",
+      "screenshot_sha256": "7f007f33d43c15a111b00a82c546f2ed1a8fa5fa29422261aa8faf0264e552de"
+    },
+    {
+      "id": "wrong-not-installed",
+      "title": "Install control contradicts an installed checkpoint",
+      "category": "incorrect",
+      "state": "details",
+      "reference_step_id": "digital-step-4",
+      "completed_step_ids": [
+        "digital-step-1",
+        "digital-step-2",
+        "digital-step-3"
+      ],
+      "expected": "fail",
+      "capture_options": {},
+      "screenshot": "case-wrong-not-installed.png",
+      "screenshot_sha256": "41f2ce777fdb46a0a01f3111c1ee66b9fe4db8abbfad6cc70fc36badaf5c0ec1"
+    },
+    {
+      "id": "wrong-dialog-details",
+      "title": "Permission error interrupts extension details",
+      "category": "incorrect",
+      "state": "details",
+      "reference_step_id": "digital-step-3",
+      "completed_step_ids": [
+        "digital-step-1",
+        "digital-step-2"
+      ],
+      "expected": "fail",
+      "capture_options": {
+        "dialog": true
+      },
+      "screenshot": "case-wrong-dialog-details.png",
+      "screenshot_sha256": "09abcdf4817750113903ca2932e0a0b837fdf0e420e82d69517613bce8207efa"
+    },
+    {
+      "id": "ambiguous-welcome",
+      "title": "Welcome screen does not establish the requested panel",
+      "category": "ambiguous",
+      "state": "welcome",
+      "reference_step_id": "digital-step-1",
+      "completed_step_ids": [],
+      "expected": "uncertain",
+      "capture_options": {},
+      "screenshot": "case-ambiguous-welcome.png",
+      "screenshot_sha256": "96f7ac2883c02326b172e4eb76d69045ed918aa3ab9b9b71e740b9edc961bfec"
+    },
+    {
+      "id": "ambiguous-empty-search",
+      "title": "Unrelated empty results cannot prove the requested package",
+      "category": "ambiguous",
+      "state": "empty-search",
+      "reference_step_id": "digital-step-2",
+      "completed_step_ids": [
+        "digital-step-1"
+      ],
+      "expected": "uncertain",
+      "capture_options": {},
+      "screenshot": "case-ambiguous-empty-search.png",
+      "screenshot_sha256": "a255e6e2e8911a525599e15eb48077d7e8938e9cead1e34c7a8b69107e60cbd6"
+    },
+    {
+      "id": "ambiguous-obscured",
+      "title": "An opaque privacy region hides the relevant content",
+      "category": "ambiguous",
+      "state": "market",
+      "reference_step_id": "digital-step-1",
+      "completed_step_ids": [],
+      "expected": "uncertain",
+      "capture_options": {
+        "mask": true
+      },
+      "screenshot": "case-ambiguous-obscured.png",
+      "screenshot_sha256": "286d07f64b6716bd1a32fa45c2b206f727be47e97ab15c9b59901b9ab6b832b7"
+    },
+    {
+      "id": "ambiguous-cropped",
+      "title": "Only application chrome is visible",
+      "category": "ambiguous",
+      "state": "market",
+      "reference_step_id": "digital-step-1",
+      "completed_step_ids": [],
+      "expected": "uncertain",
+      "capture_options": {
+        "crop": true
+      },
+      "screenshot": "case-ambiguous-cropped.png",
+      "screenshot_sha256": "86505298920c892317e2c094080b78a998364f75a5afc8ab83746e0575107dec"
+    },
+    {
+      "id": "ambiguous-blurred",
+      "title": "Strong blur makes target labels unreadable",
+      "category": "ambiguous",
+      "state": "details",
+      "reference_step_id": "digital-step-3",
+      "completed_step_ids": [
+        "digital-step-1",
+        "digital-step-2"
+      ],
+      "expected": "uncertain",
+      "capture_options": {
+        "blur": true
+      },
+      "screenshot": "case-ambiguous-blurred.png",
+      "screenshot_sha256": "04faad49e18e90ad0f695e6a818ddd2ca25e453d41847cd8d01cc5d3d20095d4"
+    },
+    {
+      "id": "version-market",
+      "title": "A visible different version makes marketplace comparison uncertain",
+      "category": "interface_difference",
+      "state": "market",
+      "reference_step_id": "digital-step-1",
+      "completed_step_ids": [],
+      "expected": "uncertain",
+      "capture_options": {
+        "version": true
+      },
+      "screenshot": "case-version-market.png",
+      "screenshot_sha256": "02baf98708fcd10857e3b159f5e5279c391bf2a8eacd14f6fe899448805d92d7"
+    },
+    {
+      "id": "version-search",
+      "title": "A visible different version makes search comparison uncertain",
+      "category": "interface_difference",
+      "state": "search",
+      "reference_step_id": "digital-step-2",
+      "completed_step_ids": [
+        "digital-step-1"
+      ],
+      "expected": "uncertain",
+      "capture_options": {
+        "version": true
+      },
+      "screenshot": "case-version-search.png",
+      "screenshot_sha256": "8525d2166db2fc99be21b49849db563923630afbd0bed139af90f1be315b85fc"
+    },
+    {
+      "id": "version-details",
+      "title": "A visible different version makes details comparison uncertain",
+      "category": "interface_difference",
+      "state": "details",
+      "reference_step_id": "digital-step-3",
+      "completed_step_ids": [
+        "digital-step-1",
+        "digital-step-2"
+      ],
+      "expected": "uncertain",
+      "capture_options": {
+        "version": true
+      },
+      "screenshot": "case-version-details.png",
+      "screenshot_sha256": "6700189f5460e3cc95b319bf1dde74c37bd9435e78bb8b1b2dc0e8be68482399"
+    },
+    {
+      "id": "version-installed",
+      "title": "A visible different version makes installed comparison uncertain",
+      "category": "interface_difference",
+      "state": "installed",
+      "reference_step_id": "digital-step-4",
+      "completed_step_ids": [
+        "digital-step-1",
+        "digital-step-2",
+        "digital-step-3"
+      ],
+      "expected": "uncertain",
+      "capture_options": {
+        "version": true
+      },
+      "screenshot": "case-version-installed.png",
+      "screenshot_sha256": "ca173b1b38f20de032dfb8b51c809eee42cad7db3b9d3a3ba8c4f7f471080f89"
+    },
+    {
+      "id": "version-settings",
+      "title": "Version difference prevents attributing a menu mismatch to the user",
+      "category": "interface_difference",
+      "state": "settings",
+      "reference_step_id": "digital-step-1",
+      "completed_step_ids": [],
+      "expected": "uncertain",
+      "capture_options": {
+        "version": true,
+        "width": 1280
+      },
+      "screenshot": "case-version-settings.png",
+      "screenshot_sha256": "74accfddd2886afd1958ea4dbdf1f0cb408f420d268473121021791d712e3e2f"
+    }
+  ]
+}

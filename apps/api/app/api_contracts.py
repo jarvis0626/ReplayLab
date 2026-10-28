@@ -3,6 +3,7 @@ from typing import Literal
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from app.schemas import Task, VerificationResult
+from app.verification_contracts import WorkflowVerification
 
 
 class RequestModel(BaseModel):
@@ -78,3 +79,4 @@ class Attempt(BaseModel):
     reference_observations: list[dict] = Field(default_factory=list)
     analysis: dict = Field(default_factory=dict)
     task_revision: str
+    verification: WorkflowVerification | None = None

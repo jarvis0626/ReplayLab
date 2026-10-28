@@ -23,3 +23,5 @@ apps/api/data
 artifacts
 .artifacts
 screenshots
+!demo/evaluation/digital/screenshots/
+!demo/evaluation/digital/screenshots/*.png

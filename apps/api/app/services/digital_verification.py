@@ -7,11 +7,8 @@ import unicodedata
 
 from app.digital_schemas import ScreenObservation, ScreenResult, ScreenRule, ScreenRuleResult
 from app.services.graph import available_steps, validate_graph
+from app.services.thresholds import evidence_thresholds
 from app.services.screen_observation import is_coach_capture, redact_text
-
-MIN_CONFIDENCE = 0.75
-MIN_QUALITY = 0.4
-
 
 def _normalized(value: str) -> str:
     value = unicodedata.normalize("NFKC", value).casefold().replace("\\", "/")
@@ -50,7 +47,7 @@ def _reliable(observation: ScreenObservation):
     return [
         item
         for item in observation.elements
-        if item.confidence is not None and item.confidence >= MIN_CONFIDENCE
+        if item.confidence is not None and item.confidence >= evidence_thresholds().confidence
     ]
 
 
@@ -232,6 +229,32 @@ def verify_screen(step, observation: ScreenObservation, workflow=None, completed
             explanation="The shared image shows the ReplayLab coach. Share the separate target application window so its instructions cannot prove their own completion.",
             warnings=warnings,
         )
+    quality_issues = []
+    if observation.image_quality is None or observation.image_quality < evidence_thresholds().digital_quality:
+        quality_issues.append("The screenshot has insufficient or unknown image quality.")
+    if observation.confidence is None or observation.confidence < evidence_thresholds().confidence:
+        quality_issues.append("Screen recognition confidence is insufficient or unknown.")
+    if quality_issues:
+        results = [
+            ScreenRuleResult(
+                rule_id=rule.id,
+                status="uncertain",
+                expected=redact_text(rule.expected),
+                observed="Screen evidence does not meet the quality and confidence gates.",
+                evidence=quality_issues,
+            )
+            for rule in rules
+        ]
+        return ScreenResult(
+            step_id=step.id,
+            status="uncertain",
+            rule_results=results,
+            evidence=quality_issues,
+            explanation=" ".join(quality_issues) + " Capture a clear target window and retry.",
+            provider_mode=observation.provider_mode,
+            reason="insufficient_evidence",
+            warnings=warnings,
+        )
     if observation.provenance.get("interface_version_ambiguous") is True:
         return ScreenResult(
             step_id=step.id,
@@ -256,32 +279,6 @@ def verify_screen(step, observation: ScreenObservation, workflow=None, completed
             evidence=[
                 f"Tutorial interface version {redact_text(expected_version)}; observed version {redact_text(observation.interface_version)}."
             ],
-            warnings=warnings,
-        )
-    quality_issues = []
-    if observation.image_quality is None or observation.image_quality < MIN_QUALITY:
-        quality_issues.append("The screenshot has insufficient or unknown image quality.")
-    if observation.confidence is None or observation.confidence < MIN_CONFIDENCE:
-        quality_issues.append("Screen recognition confidence is insufficient or unknown.")
-    if quality_issues:
-        results = [
-            ScreenRuleResult(
-                rule_id=rule.id,
-                status="uncertain",
-                expected=redact_text(rule.expected),
-                observed="Screen evidence does not meet the quality and confidence gates.",
-                evidence=quality_issues,
-            )
-            for rule in rules
-        ]
-        return ScreenResult(
-            step_id=step.id,
-            status="uncertain",
-            rule_results=results,
-            evidence=quality_issues,
-            explanation=" ".join(quality_issues) + " Capture a clear target window and retry.",
-            provider_mode=observation.provider_mode,
-            reason="insufficient_evidence",
             warnings=warnings,
         )
     results = [_evaluate(rule, observation) for rule in rules]

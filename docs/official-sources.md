@@ -1,5 +1,38 @@
 # Official source verification
 
+## ReplayLab 3.0 API recheck — 28 October 2026
+
+Rechecked the official [models](https://dev.meta.ai/docs/models),
+[quickstart](https://dev.meta.ai/docs/quickstart),
+[structured output](https://dev.meta.ai/docs/structured-output),
+[image understanding](https://dev.meta.ai/docs/image-understanding),
+[video understanding](https://dev.meta.ai/docs/video-understanding), and
+[file handling](https://dev.meta.ai/docs/file-handling) documentation.
+The existing `muse-spark-1.3`, `https://api.meta.ai/v1`, Bearer authentication,
+Responses strict `text.format`, inline image URL, and uploaded MP4 `input_file`
+contracts remain documented. File expiration requests use `created_at` with a
+minimum of 3,600 seconds; cleanup uses the Files delete endpoint.
+
+Rechecked [SAM prompts](https://dev.meta.ai/docs/sam/segmenting) and
+[reading segmentation](https://dev.meta.ai/docs/sam/reading-segmentation).
+`sam-3.1` uses the Responses API, and its output remains the special-token
+segmentation grammar. Non-streaming requests are explicitly supported; streaming
+is recommended for long clips. Missing confidence and zero matches must not be
+promoted into completeness evidence.
+
+These are documentation and offline transport checks. They do not establish
+account availability, credit balance, successful live inference, or model
+accuracy. Live validation remains pending by the owner's instruction.
+
+The new digital explanation adapter sends only redacted decision evidence and
+approved correction options. Muse selects a strictly validated sentence plan;
+the application renders its facts locally. Unsupported evidence IDs, changed
+verdicts, extra narration, or provider failure retain visibly identified
+deterministic guidance. Screenshot observation failures still fail visibly and
+never become mock inference.
+
+## Original planning verification
+
 Checked on 26 October 2026 at approximately 17:35 IST (12:05 UTC).
 
 ## Hackathon schedule

@@ -39,8 +39,10 @@ def clear_screen_cache():
     with _lock:
         _cache.clear()
     from app.providers.meta_screen import clear_meta_screen_cache
+    from app.providers.grounded_explanation import clear_explanation_cache
 
     clear_meta_screen_cache()
+    clear_explanation_cache()
 
 
 def redact_text(text: str) -> str:

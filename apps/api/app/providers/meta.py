@@ -126,6 +126,7 @@ class MetaProvider:
     def _request(self, method: str, path: str, **kwargs: Any) -> dict[str, Any]:
         """Retry only transient failures; never expose raw upstream messages."""
         for attempt in range(3):
+            request_started = time.perf_counter()
             try:
                 headers = {"Authorization": f"Bearer {self._api_key}"}
                 if self._client is None:
@@ -143,7 +144,10 @@ class MetaProvider:
 
             status = response.status_code
             operation = "responses" if path == "/responses" else "files"
-            logger.info("provider=meta operation=%s status=%s attempt=%s", operation, status, attempt + 1)
+            logger.info(
+                "provider=meta operation=%s status=%s attempt=%s latency_ms=%.3f",
+                operation, status, attempt + 1, (time.perf_counter() - request_started) * 1000,
+            )
             if status == 429 or status in (500, 502, 503):
                 if attempt < 2:
                     time.sleep(max(self._retry_after(response), 0.5 * (2**attempt)) + random.random() * 0.2)

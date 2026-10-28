@@ -324,6 +324,14 @@ def test_meta_screen_route_uses_screenshot_adapter_not_physical_sam(
     monkeypatch.setattr("app.providers.meta.MetaProvider.observe", physical_sam_must_not_run)
     monkeypatch.setattr("app.providers.meta.MetaProvider._request", no_network)
     monkeypatch.setattr("app.providers.meta_screen.MetaScreenProvider.observe", screenshot_adapter)
+    # Explanation planning is a separate consented Muse operation. Keep this
+    # screenshot-routing regression offline and exercise its transport elsewhere.
+    from app.providers.grounded_explanation import explain_verification
+
+    monkeypatch.setattr(
+        "app.providers.grounded_explanation.explain_verification",
+        lambda provider, step, result: explain_verification(None, step, result),
+    )
     response = capture(client, project, cloud_consent="true")
     assert response.status_code == 200, response.text
     assert response.json()["result"]["status"] == "pass"
@@ -364,6 +372,89 @@ def test_prerequisite_progress_invalidates_earlier_skipped_capture_cache(
     repeated = capture(client, project, index=1, content=second_image)
     assert repeated.json() == second.json()
     assert len(calls) == 3
+
+
+@pytest.mark.parametrize("change", ["stop", "prerequisite"])
+def test_pending_meta_guidance_cannot_block_stop_or_reuse_stale_progress(
+    digital_client, digital_project, monkeypatch, change
+):
+    from app.providers.grounded_explanation import GroundedExplanation
+
+    client, project = digital_client, digital_project
+    approve(client, project)
+    client.app.state.settings.model_api_key = "test-key-not-a-real-credential"
+    client.post("/api/provider", json={"mode": "meta"})
+    entered, release = threading.Event(), threading.Event()
+    monkeypatch.setattr(
+        "app.services.screen_observation.observe_screen",
+        lambda *args, **kwargs: evidence("Search results", "Replay Formatter").model_copy(
+            update={"provider_mode": "meta"}
+        ),
+    )
+
+    def blocking_guidance(provider, step, result):
+        assert result.status == "uncertain"  # prerequisites absent in the initial snapshot
+        entered.set()
+        assert release.wait(10)
+        return GroundedExplanation(
+            text="Stale guidance must never be rendered.", provider_mode="meta_grounded_plan",
+            evidence_ids=(), status=result.status, latency_ms=1,
+        )
+
+    monkeypatch.setattr("app.providers.grounded_explanation.explain_verification", blocking_guidance)
+    with ThreadPoolExecutor(max_workers=1) as executor:
+        future = executor.submit(capture, client, project, index=1, cloud_consent="true", retain_evidence="true")
+        try:
+            assert entered.wait(10)
+            if change == "stop":
+                # This request needs the session lock and must finish while the
+                # explanation worker remains blocked, proving no global lock is held.
+                assert client.post(f"/api/projects/{project['id']}/screen-session/clear").status_code == 204
+            else:
+                store = client.app.state.store
+                with store.lock:
+                    fresh = store.project(project["id"])
+                    fresh["completed_step_ids"] = ["digital-step-1"]
+                    store.save_project(fresh)
+            release.set()
+            response = future.result(timeout=10)
+        finally:
+            release.set()
+    if change == "stop":
+        assert response.status_code == 409
+        assert client.get(f"/api/projects/{project['id']}/verifications").json() == []
+        assert client.app.state.screen_sessions.last(project["id"]) is None
+    else:
+        assert response.status_code == 200, response.text
+        body = response.json()
+        assert body["result"]["status"] == "pass"
+        assert body["verification"]["provider"]["explanation"] == "deterministic_template"
+        assert "Stale guidance" not in response.text
+        assert body["completed_step_ids"] == ["digital-step-1", "digital-step-2"]
+
+
+def test_failed_meta_explanation_retains_actual_meta_observation_and_explicit_template(
+    digital_client, digital_project, monkeypatch
+):
+    client, project = digital_client, digital_project
+    approve(client, project)
+    client.app.state.settings.model_api_key = "test-key-not-a-real-credential"
+    client.post("/api/provider", json={"mode": "meta"})
+    monkeypatch.setattr(
+        "app.services.screen_observation.observe_screen",
+        lambda *args, **kwargs: evidence("Extensions Marketplace").model_copy(update={"provider_mode": "meta"}),
+    )
+
+    def unavailable(*args, **kwargs):
+        raise ProviderError("Meta billing needs attention.", "billing", 402)
+
+    monkeypatch.setattr("app.providers.meta.MetaProvider._request", unavailable)
+    response = capture(client, project, cloud_consent="true")
+    assert response.status_code == 200, response.text
+    body = response.json()
+    assert body["result"]["provider_mode"] == "meta" and body["result"]["status"] == "pass"
+    assert body["verification"]["provider"]["explanation"] == "deterministic_template"
+    assert any("Meta explanation unavailable" in warning for warning in body["result"]["warnings"])
 
 
 def test_failed_screen_calls_are_rate_limited(digital_client, digital_project, monkeypatch):

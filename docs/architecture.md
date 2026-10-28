@@ -6,6 +6,13 @@ add expected UI states, screen rules, and optional interface version. Dependency
 validation and approved progress are shared. Manual navigation does not complete a
 checkpoint; only a sufficiently evidenced PASS advances it.
 
+ReplayLab 3.0 adds the same `WorkflowVerification` envelope to physical attempts
+and digital screen checks, preserving their existing result fields. It projects
+the deterministic verdict, expected/observed conditions, constraints, evidence,
+uncertainty, correction, provider details, revision, and processing time. The
+shared `/workflow` endpoint combines the reviewed task, sources, DAG order,
+completion state, and current-revision records.
+
 ## Implemented flow
 
 ```mermaid
@@ -51,6 +58,10 @@ privacy pipeline.
 | `providers/meta.py` | Muse physical task proposals, SAM, fixed-evidence explanation selection |
 | `providers/digital_reasoner.py`, `meta_screen.py` | Muse digital proposals and separately redacted screenshot observations; screens never use SAM |
 | `core/store.py` | SQLite project and physical attempt persistence |
+| `verification_contracts.py`, `services/verification_records.py` | Common physical/digital decision projection |
+| `v3_api.py`, `services/thresholds.py` | Workflow inspection, evidence history, correction reports, request-scoped evidence policy |
+| `providers/grounded_explanation.py` | Consent-gated Muse evidence/correction selection, locally rendered prose, bounded RAM cache |
+| `services/digital_evaluation.py`, `evaluation_api.py` | Frozen browser-pixel challenge set, real local OCR replay, measured statistics |
 | `services/demo.py`, `digital_demo.py` | Labeled synthetic physical and CodeLab sources |
 
 Paths in this table are relative to `apps/api/app` unless otherwise stated.
@@ -89,6 +100,21 @@ memory or temporary files. Current project screen evidence has a ten-minute RAM
 TTL and is cleared on Stop; shared sanitized OCR/model caches are bounded and
 clear on deletion/restart. Redaction is best effort and cannot guarantee that all
 sensitive pixels were found. See [model usage](model-usage.md).
+
+Digital evidence is transient by default. Explicit per-capture opt-in retains
+relevant redacted `WorkflowVerification` text in SQLite, capped at the newest
+100 decisions per workflow. Full screenshots and full OCR transcripts are not
+retained through that path. A distinct explicit feedback action saves a redacted
+note and expected verdict, capped at 100 reports. Physical attempts retain their
+existing media and shared records. Deleting a project deletes both new tables'
+rows. Task revisions leave honest history but exclude stale records from the
+current workflow view. Reporting an error never changes a verdict or progress.
+
+Evidence policy uses `VERIFICATION_MIN_CONFIDENCE`,
+`VERIFICATION_DIGITAL_QUALITY`, and `VERIFICATION_PHYSICAL_QUALITY`, with unchanged
+defaults 0.75, 0.4, and 0.65. Context-local policy isolates concurrent requests.
+OCR confidence and image heuristics are not calibrated completion probabilities.
+Quality gates precede version diagnosis.
 
 Background source jobs and screen caches run in one process. SQLite plus locks
 supports the local single-user preview; use one API worker. Restarted jobs become

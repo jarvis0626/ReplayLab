@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "ReplayLab API",
-    "version": "2.0.0"
+    "version": "3.0.0"
   },
   "paths": {
     "/api/health": {
@@ -1056,6 +1056,256 @@
           }
         }
       }
+    },
+    "/api/projects/{project_id}/verifications": {
+      "get": {
+        "summary": "Verifications",
+        "operationId": "verifications_api_projects__project_id__verifications_get",
+        "parameters": [
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Project Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/WorkflowVerification"
+                  },
+                  "title": "Response Verifications Api Projects  Project Id  Verifications Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/projects/{project_id}/workflow": {
+      "get": {
+        "summary": "Workflow",
+        "operationId": "workflow_api_projects__project_id__workflow_get",
+        "parameters": [
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Project Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/projects/{project_id}/verifications/{verification_id}/feedback": {
+      "post": {
+        "summary": "Feedback",
+        "operationId": "feedback_api_projects__project_id__verifications__verification_id__feedback_post",
+        "parameters": [
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Project Id"
+            }
+          },
+          {
+            "name": "verification_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Verification Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VerificationFeedbackInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VerificationFeedback"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/projects/{project_id}/verification-feedback": {
+      "get": {
+        "summary": "Feedback Reports",
+        "operationId": "feedback_reports_api_projects__project_id__verification_feedback_get",
+        "parameters": [
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Project Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/VerificationFeedback"
+                  },
+                  "title": "Response Feedback Reports Api Projects  Project Id  Verification Feedback Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/evaluation/digital": {
+      "get": {
+        "summary": "Digital Evaluation Report",
+        "operationId": "digital_evaluation_report_api_evaluation_digital_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/evaluation/digital/run": {
+      "post": {
+        "summary": "Digital Evaluation Run",
+        "operationId": "digital_evaluation_run_api_evaluation_digital_run_post",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/evaluation/digital/assets/{filename}": {
+      "get": {
+        "summary": "Digital Evaluation Asset",
+        "operationId": "digital_evaluation_asset_api_evaluation_digital_assets__filename__get",
+        "parameters": [
+          {
+            "name": "filename",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Filename"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -1160,6 +1410,16 @@
           "task_revision": {
             "type": "string",
             "title": "Task Revision"
+          },
+          "verification": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/WorkflowVerification"
+              },
+              {
+                "type": "null"
+              }
+            ]
           }
         },
         "type": "object",
@@ -1231,6 +1491,11 @@
               }
             ],
             "title": "Interface Version"
+          },
+          "retain_evidence": {
+            "type": "boolean",
+            "title": "Retain Evidence",
+            "default": false
           }
         },
         "type": "object",
@@ -1286,6 +1551,108 @@
         "additionalProperties": false,
         "type": "object",
         "title": "Consent"
+      },
+      "ConstraintEvaluation": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "kind": {
+            "type": "string",
+            "title": "Kind"
+          },
+          "verdict": {
+            "type": "string",
+            "enum": [
+              "pass",
+              "fail",
+              "uncertain"
+            ],
+            "title": "Verdict"
+          },
+          "expected": {
+            "type": "string",
+            "title": "Expected"
+          },
+          "observed": {
+            "type": "string",
+            "title": "Observed"
+          },
+          "evidence": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Evidence"
+          },
+          "correction": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Correction"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "id",
+          "kind",
+          "verdict",
+          "expected",
+          "observed"
+        ],
+        "title": "ConstraintEvaluation"
+      },
+      "EvidenceReference": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "visible_observation",
+              "reference_frame",
+              "constraint"
+            ],
+            "title": "Kind"
+          },
+          "text": {
+            "type": "string",
+            "title": "Text"
+          },
+          "source": {
+            "type": "string",
+            "title": "Source"
+          },
+          "timestamp": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Timestamp"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "id",
+          "kind",
+          "text",
+          "source"
+        ],
+        "title": "EvidenceReference"
       },
       "FrameInfo": {
         "properties": {
@@ -1794,6 +2161,16 @@
               }
             ],
             "title": "Source Scope"
+          },
+          "verification": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/WorkflowVerification"
+              },
+              {
+                "type": "null"
+              }
+            ]
           }
         },
         "type": "object",
@@ -2395,6 +2772,95 @@
         ],
         "title": "ValidationError"
       },
+      "VerificationFeedback": {
+        "properties": {
+          "expected_verdict": {
+            "type": "string",
+            "enum": [
+              "pass",
+              "fail",
+              "uncertain"
+            ],
+            "title": "Expected Verdict"
+          },
+          "notes": {
+            "type": "string",
+            "maxLength": 1000,
+            "title": "Notes",
+            "default": ""
+          },
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "verification_id": {
+            "type": "string",
+            "title": "Verification Id"
+          },
+          "created_at": {
+            "type": "string",
+            "title": "Created At"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "expected_verdict",
+          "id",
+          "verification_id",
+          "created_at"
+        ],
+        "title": "VerificationFeedback"
+      },
+      "VerificationFeedbackInput": {
+        "properties": {
+          "expected_verdict": {
+            "type": "string",
+            "enum": [
+              "pass",
+              "fail",
+              "uncertain"
+            ],
+            "title": "Expected Verdict"
+          },
+          "notes": {
+            "type": "string",
+            "maxLength": 1000,
+            "title": "Notes",
+            "default": ""
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "expected_verdict"
+        ],
+        "title": "VerificationFeedbackInput"
+      },
+      "VerificationProvider": {
+        "properties": {
+          "mode": {
+            "type": "string",
+            "title": "Mode"
+          },
+          "observation": {
+            "type": "string",
+            "title": "Observation"
+          },
+          "explanation": {
+            "type": "string",
+            "title": "Explanation"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "mode",
+          "observation",
+          "explanation"
+        ],
+        "title": "VerificationProvider"
+      },
       "VerificationResult": {
         "properties": {
           "step_id": {
@@ -2482,6 +2948,154 @@
           "original_name"
         ],
         "title": "VideoInfo"
+      },
+      "WorkflowVerification": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "workflow_id": {
+            "type": "string",
+            "title": "Workflow Id"
+          },
+          "task_id": {
+            "type": "string",
+            "title": "Task Id"
+          },
+          "step_id": {
+            "type": "string",
+            "title": "Step Id"
+          },
+          "modality": {
+            "type": "string",
+            "enum": [
+              "physical",
+              "digital"
+            ],
+            "title": "Modality"
+          },
+          "verdict": {
+            "type": "string",
+            "enum": [
+              "pass",
+              "fail",
+              "uncertain"
+            ],
+            "title": "Verdict"
+          },
+          "expected_conditions": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Expected Conditions"
+          },
+          "observed_conditions": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Observed Conditions"
+          },
+          "constraints": {
+            "items": {
+              "$ref": "#/components/schemas/ConstraintEvaluation"
+            },
+            "type": "array",
+            "title": "Constraints"
+          },
+          "evidence_references": {
+            "items": {
+              "$ref": "#/components/schemas/EvidenceReference"
+            },
+            "type": "array",
+            "title": "Evidence References"
+          },
+          "uncertainty_reasons": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Uncertainty Reasons"
+          },
+          "correction": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Correction"
+          },
+          "explanation": {
+            "type": "string",
+            "title": "Explanation"
+          },
+          "provider": {
+            "$ref": "#/components/schemas/VerificationProvider"
+          },
+          "mismatch_classification": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "expected_ui_not_found",
+                  "unexpected_ui_state",
+                  "possible_version_mismatch",
+                  "confirmed_version_mismatch",
+                  "insufficient_visual_evidence"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Mismatch Classification"
+          },
+          "latency_ms": {
+            "type": "number",
+            "minimum": 0.0,
+            "title": "Latency Ms"
+          },
+          "created_at": {
+            "type": "string",
+            "title": "Created At"
+          },
+          "task_revision": {
+            "type": "string",
+            "title": "Task Revision"
+          },
+          "retained": {
+            "type": "boolean",
+            "title": "Retained",
+            "default": false
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "id",
+          "workflow_id",
+          "task_id",
+          "step_id",
+          "modality",
+          "verdict",
+          "expected_conditions",
+          "observed_conditions",
+          "constraints",
+          "evidence_references",
+          "uncertainty_reasons",
+          "correction",
+          "explanation",
+          "provider",
+          "latency_ms",
+          "created_at",
+          "task_revision"
+        ],
+        "title": "WorkflowVerification"
       }
     }
   }

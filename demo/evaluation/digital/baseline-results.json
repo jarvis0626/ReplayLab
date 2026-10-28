@@ -1,0 +1,1310 @@
+{
+  "dataset": "ReplayLab CodeLab controlled browser challenge v1",
+  "provider_mode": "local_ocr",
+  "evaluation_kind": "controlled_browser_pixels",
+  "measured_at": "2026-10-28T14:11:57.468094+00:00",
+  "target_size": 20,
+  "sample_size": 20,
+  "correct": 20,
+  "accuracy": 1.0,
+  "decisive_accuracy": 1.0,
+  "decisive_predictions": 10,
+  "false_certainty_rate": 0.0,
+  "false_certainty_count": 0,
+  "uncertain_ground_truth_count": 10,
+  "uncertainty_recall": 1.0,
+  "decisive_misclassifications": 0,
+  "latency_ms": {
+    "sample_size": 20,
+    "median": 2170.34,
+    "p95": 2928.84,
+    "min": 1489.41,
+    "max": 2991.81
+  },
+  "confusion_matrix": {
+    "pass": {
+      "pass": 5,
+      "fail": 0,
+      "uncertain": 0
+    },
+    "fail": {
+      "pass": 0,
+      "fail": 5,
+      "uncertain": 0
+    },
+    "uncertain": {
+      "pass": 0,
+      "fail": 0,
+      "uncertain": 10
+    }
+  },
+  "confusion_matrix_axes": {
+    "rows": "expected",
+    "columns": "predicted"
+  },
+  "metric_definitions": {
+    "accuracy": "Correct three-class verdicts / all completed cases.",
+    "decisive_accuracy": "Correct PASS or FAIL predictions / all PASS or FAIL predictions, including predictions on UNCERTAIN ground truth.",
+    "false_certainty_rate": "PASS or FAIL predictions on UNCERTAIN ground truth / all UNCERTAIN ground-truth cases.",
+    "uncertainty_recall": "UNCERTAIN predictions on UNCERTAIN ground truth / all UNCERTAIN ground-truth cases.",
+    "decisive_misclassifications": "PASS ground truth predicted FAIL plus FAIL ground truth predicted PASS; excludes abstentions and uncertain ground truth.",
+    "p95": "Nearest-rank 95th percentile of completed-case processing latency."
+  },
+  "details": [
+    {
+      "id": "correct-market",
+      "title": "Marketplace is visibly open",
+      "category": "correct",
+      "expected": "pass",
+      "predicted": "pass",
+      "correct": true,
+      "explanation": "All 1 approved screen constraint(s) are supported by visible UI evidence.",
+      "evidence": [
+        "Visible text: Extensions Marketplace (confidence 1.00, source local_ocr)."
+      ],
+      "processing_latency_ms": 2783.61,
+      "screenshot_url": "/api/evaluation/digital/assets/case-correct-market.png",
+      "screenshot_sha256": "24001a5681c63db9b452661cb6c9950973a54e331ba1449c22678096ad2f11cf",
+      "reference_step_id": "digital-step-1",
+      "expected_conditions": [
+        "Extensions Marketplace"
+      ],
+      "observed_conditions": [
+        "ReplayLab CodeLab",
+        "Interactive simulation \u00b7 no actual software changes",
+        "Reset sandbox",
+        "</>",
+        "CodeLab 1.0",
+        "practice-workspace",
+        "Change Ul version",
+        "Show unexpected dialog",
+        "\u53e3",
+        "\u65e5",
+        "Extensions Marketplace",
+        "Explorer",
+        "\u65e5",
+        "Find a package by name",
+        "Extensions",
+        "A space for your tools.",
+        "Search for the package named in your tutorial.",
+        "Settings",
+        "CodeLab 1.0",
+        "Local sandbox - Changes are simulated",
+        "-T-8"
+      ],
+      "rule_results": [
+        {
+          "rule_id": "digital-step-1-text-1",
+          "status": "pass",
+          "expected": "Extensions Marketplace",
+          "observed": "Expected text Extensions Marketplace is reliably visible.",
+          "evidence": [
+            "Visible text: Extensions Marketplace (confidence 1.00, source local_ocr)."
+          ],
+          "correction": null
+        }
+      ],
+      "interface_version": "CodeLab 1.0",
+      "reason": "completed",
+      "failure_notes": []
+    },
+    {
+      "id": "correct-search",
+      "title": "The requested package appears in search results",
+      "category": "correct",
+      "expected": "pass",
+      "predicted": "pass",
+      "correct": true,
+      "explanation": "All 2 approved screen constraint(s) are supported by visible UI evidence.",
+      "evidence": [
+        "Visible text: Search results (confidence 1.00, source local_ocr).",
+        "Visible text: Replay Formatter (confidence 1.00, source local_ocr)."
+      ],
+      "processing_latency_ms": 1489.41,
+      "screenshot_url": "/api/evaluation/digital/assets/case-correct-search.png",
+      "screenshot_sha256": "ba58b53148e6972510d13788c5873d262de8fe9afc999e32efed67ac8ce38d30",
+      "reference_step_id": "digital-step-2",
+      "expected_conditions": [
+        "Search results",
+        "Replay Formatter"
+      ],
+      "observed_conditions": [
+        "ReplayLab CodeLab",
+        "Interactive simulation \u00b7 no actual software changes",
+        "Reset sandbox",
+        "</>",
+        "CodeLab 1.0",
+        "practice-workspace",
+        "Change Ul version",
+        "Show unexpected dialog",
+        "\u53e3",
+        "\u65e5",
+        "Search results",
+        "Explorer",
+        "\u65e5",
+        "Replay Formatter",
+        "Extensions",
+        "Replay Formatter",
+        "RF",
+        "A consistent style for your practice files.",
+        "View details \u2192",
+        "ReplayLab \u00b7 Sandbox package",
+        "Settings",
+        "CodeLab 1.0",
+        "Local sandbox - Changes are simulated",
+        "-T-8"
+      ],
+      "rule_results": [
+        {
+          "rule_id": "digital-step-2-text-1",
+          "status": "pass",
+          "expected": "Search results",
+          "observed": "Expected text Search results is reliably visible.",
+          "evidence": [
+            "Visible text: Search results (confidence 1.00, source local_ocr)."
+          ],
+          "correction": null
+        },
+        {
+          "rule_id": "digital-step-2-text-2",
+          "status": "pass",
+          "expected": "Replay Formatter",
+          "observed": "Expected text Replay Formatter is reliably visible.",
+          "evidence": [
+            "Visible text: Replay Formatter (confidence 1.00, source local_ocr).",
+            "Visible text: Replay Formatter (confidence 1.00, source local_ocr)."
+          ],
+          "correction": null
+        }
+      ],
+      "interface_version": "CodeLab 1.0",
+      "reason": "completed",
+      "failure_notes": []
+    },
+    {
+      "id": "correct-details",
+      "title": "Package details and install control are visible",
+      "category": "correct",
+      "expected": "pass",
+      "predicted": "pass",
+      "correct": true,
+      "explanation": "All 3 approved screen constraint(s) are supported by visible UI evidence.",
+      "evidence": [
+        "Visible text: Extension details (confidence 1.00, source local_ocr).",
+        "Visible text: Replay Formatter (confidence 1.00, source local_ocr).",
+        "Visible text: Install extension (confidence 1.00, source local_ocr)."
+      ],
+      "processing_latency_ms": 2456.99,
+      "screenshot_url": "/api/evaluation/digital/assets/case-correct-details.png",
+      "screenshot_sha256": "41f2ce777fdb46a0a01f3111c1ee66b9fe4db8abbfad6cc70fc36badaf5c0ec1",
+      "reference_step_id": "digital-step-3",
+      "expected_conditions": [
+        "Extension details",
+        "Replay Formatter",
+        "Install extension"
+      ],
+      "observed_conditions": [
+        "ReplayLab CodeLab",
+        "Interactive simulation \u00b7 no actual software changes",
+        "Reset sandbox",
+        "</>",
+        "CodeLab 1.0",
+        "practice-workspace",
+        "Change Ul version",
+        "Show unexpected dialog",
+        "\u53e3",
+        "Extension details",
+        "Explorer",
+        "Replay Formatter",
+        "\u65e5",
+        "RF",
+        "Extensions",
+        "Consistent formatting, one practice file at a time.",
+        "ReplayLab \u00b7 Verified sandbox publisher",
+        "Install extension",
+        "Simple tools. Clear results.",
+        "This package demonstrates a visible installation workflow in a controlled practice environment.",
+        "ReplayLab observes only the screen you choose to share. It does not click buttons or install software for",
+        "you.",
+        "Settings",
+        "CodeLab 1.0",
+        "Local sandbox - Changes are simulated",
+        "-T8"
+      ],
+      "rule_results": [
+        {
+          "rule_id": "digital-step-3-text-1",
+          "status": "pass",
+          "expected": "Extension details",
+          "observed": "Expected text Extension details is reliably visible.",
+          "evidence": [
+            "Visible text: Extension details (confidence 1.00, source local_ocr)."
+          ],
+          "correction": null
+        },
+        {
+          "rule_id": "digital-step-3-text-2",
+          "status": "pass",
+          "expected": "Replay Formatter",
+          "observed": "Expected text Replay Formatter is reliably visible.",
+          "evidence": [
+            "Visible text: Replay Formatter (confidence 1.00, source local_ocr)."
+          ],
+          "correction": null
+        },
+        {
+          "rule_id": "digital-step-3-text-3",
+          "status": "pass",
+          "expected": "Install extension",
+          "observed": "Expected text Install extension is reliably visible.",
+          "evidence": [
+            "Visible text: Install extension (confidence 1.00, source local_ocr)."
+          ],
+          "correction": null
+        }
+      ],
+      "interface_version": "CodeLab 1.0",
+      "reason": "completed",
+      "failure_notes": []
+    },
+    {
+      "id": "correct-installed",
+      "title": "Package is visibly installed and enabled",
+      "category": "correct",
+      "expected": "pass",
+      "predicted": "pass",
+      "correct": true,
+      "explanation": "All 3 approved screen constraint(s) are supported by visible UI evidence.",
+      "evidence": [
+        "Visible text: Replay Formatter (confidence 0.99, source local_ocr).",
+        "Visible text: Installed (confidence 1.00, source local_ocr).",
+        "Visible text: Enabled (confidence 1.00, source local_ocr)."
+      ],
+      "processing_latency_ms": 2928.84,
+      "screenshot_url": "/api/evaluation/digital/assets/case-correct-installed.png",
+      "screenshot_sha256": "f17a073d3ab1b2ed31f80481377d326d5b1ebc9f54d4bfc8f62d9c13efda0cc5",
+      "reference_step_id": "digital-step-4",
+      "expected_conditions": [
+        "Replay Formatter",
+        "Installed",
+        "Enabled"
+      ],
+      "observed_conditions": [
+        "ReplayLab CodeLab",
+        "Interactive simulation \u00b7 no actual software changes",
+        "Reset sandbox",
+        "</>",
+        "CodeLab 1.0",
+        "practice-workspace",
+        "Change Ul version",
+        "Show unexpected dialog",
+        "\u53e3",
+        "Extension details",
+        "Explorer",
+        "Replay Formatter",
+        "\u65e5",
+        "RF",
+        "Extensions",
+        "Consistent formatting, one practice file at a time.",
+        "ReplayLab \u00b7 Verified sandbox publisher",
+        "Installed",
+        "Enabled",
+        "Simple tools. Clear results.",
+        "This package demonstrates a visible installation workflow in a controlled practice environment.",
+        "ReplayLab observes only the screen you choose to share. It does not click buttons or install software for",
+        "you.",
+        "Settings",
+        "CodeLab 1.0",
+        "Local sandbox - Changes are simulated",
+        "-T8"
+      ],
+      "rule_results": [
+        {
+          "rule_id": "digital-step-4-text-1",
+          "status": "pass",
+          "expected": "Replay Formatter",
+          "observed": "Expected text Replay Formatter is reliably visible.",
+          "evidence": [
+            "Visible text: Replay Formatter (confidence 0.99, source local_ocr)."
+          ],
+          "correction": null
+        },
+        {
+          "rule_id": "digital-step-4-text-2",
+          "status": "pass",
+          "expected": "Installed",
+          "observed": "Expected text Installed is reliably visible.",
+          "evidence": [
+            "Visible text: Installed (confidence 1.00, source local_ocr)."
+          ],
+          "correction": null
+        },
+        {
+          "rule_id": "digital-step-4-text-3",
+          "status": "pass",
+          "expected": "Enabled",
+          "observed": "Expected text Enabled is reliably visible.",
+          "evidence": [
+            "Visible text: Enabled (confidence 1.00, source local_ocr)."
+          ],
+          "correction": null
+        }
+      ],
+      "interface_version": "CodeLab 1.0",
+      "reason": "completed",
+      "failure_notes": []
+    },
+    {
+      "id": "correct-tablet",
+      "title": "Marketplace at a tablet viewport",
+      "category": "correct",
+      "expected": "pass",
+      "predicted": "pass",
+      "correct": true,
+      "explanation": "All 1 approved screen constraint(s) are supported by visible UI evidence.",
+      "evidence": [
+        "Visible text: Extensions Marketplace (confidence 1.00, source local_ocr)."
+      ],
+      "processing_latency_ms": 2100.48,
+      "screenshot_url": "/api/evaluation/digital/assets/case-correct-tablet.png",
+      "screenshot_sha256": "73213cdb37d1a1c4b82e4c92498a71aa314099b795790e92cbb1955541f42c70",
+      "reference_step_id": "digital-step-1",
+      "expected_conditions": [
+        "Extensions Marketplace"
+      ],
+      "observed_conditions": [
+        "ReplayLab CodeLab",
+        "Interactive simulation \u00b7 no actual software changes",
+        "Reset sandbox",
+        "</>",
+        "CodeLab 1.0",
+        "practice-workspace",
+        "Change Ul version",
+        "Show unexpected dialog",
+        "\u65e5",
+        "Extensions Marketplace",
+        "Explorer",
+        "\u65e5",
+        "Find a package by name",
+        "Extensions",
+        "A space for your tools.",
+        "Search for the package named in your tutorial.",
+        "Settings",
+        "CodeLab 1.0",
+        "Local sandbox - Changes are simulated",
+        "-T-8"
+      ],
+      "rule_results": [
+        {
+          "rule_id": "digital-step-1-text-1",
+          "status": "pass",
+          "expected": "Extensions Marketplace",
+          "observed": "Expected text Extensions Marketplace is reliably visible.",
+          "evidence": [
+            "Visible text: Extensions Marketplace (confidence 1.00, source local_ocr)."
+          ],
+          "correction": null
+        }
+      ],
+      "interface_version": "CodeLab 1.0",
+      "reason": "completed",
+      "failure_notes": []
+    },
+    {
+      "id": "wrong-settings-market",
+      "title": "Settings contradicts the marketplace checkpoint",
+      "category": "incorrect",
+      "expected": "fail",
+      "predicted": "fail",
+      "correct": true,
+      "explanation": "A known contradictory UI state is reliably visible. Return to the approved Extensions Marketplace state, then capture the target window again.",
+      "evidence": [
+        "Visible text: Preferences (confidence 1.00, source local_ocr)."
+      ],
+      "processing_latency_ms": 1983.82,
+      "screenshot_url": "/api/evaluation/digital/assets/case-wrong-settings-market.png",
+      "screenshot_sha256": "536a6fcfbbf34a6df16505d019cb6b71dc6ef222d23bc070e8db6a47d0547ac1",
+      "reference_step_id": "digital-step-1",
+      "expected_conditions": [
+        "Extensions Marketplace"
+      ],
+      "observed_conditions": [
+        "ReplayLab CodeLab",
+        "Interactive simulation \u00b7 no actual software changes",
+        "Reset sandbox",
+        "</>",
+        "CodeLab 1.0",
+        "practice-workspace",
+        "Change Ul version",
+        "Show unexpected dialog",
+        "\u53e3",
+        "Explorer",
+        "Settings",
+        "Extensions",
+        "Preferences",
+        "This is a different destination from the tutorial workflow.",
+        "Editor theme",
+        "Midnight",
+        "Settings",
+        "CodeLab 1.0",
+        "Local sandbox - Changes are simulated",
+        "-T-8"
+      ],
+      "rule_results": [
+        {
+          "rule_id": "digital-step-1-text-1",
+          "status": "fail",
+          "expected": "Extensions Marketplace",
+          "observed": "A known contradictory UI state is reliably visible.",
+          "evidence": [
+            "Visible text: Preferences (confidence 1.00, source local_ocr)."
+          ],
+          "correction": "Return to the approved Extensions Marketplace state, then capture the target window again."
+        }
+      ],
+      "interface_version": "CodeLab 1.0",
+      "reason": "mismatch",
+      "failure_notes": []
+    },
+    {
+      "id": "wrong-settings-search",
+      "title": "Settings contradicts the package search checkpoint",
+      "category": "incorrect",
+      "expected": "fail",
+      "predicted": "fail",
+      "correct": true,
+      "explanation": "A known contradictory UI state is reliably visible. Return to the approved Search results state, then capture the target window again. A known contradictory UI state is reliably visible. Return to the approved Replay Formatter state, then capture the target window again.",
+      "evidence": [
+        "Visible text: Preferences (confidence 1.00, source local_ocr)."
+      ],
+      "processing_latency_ms": 1682.46,
+      "screenshot_url": "/api/evaluation/digital/assets/case-wrong-settings-search.png",
+      "screenshot_sha256": "00a0fe871b6b3c3b413489028854f40d0361ed2a9aefa97dfa9e9f0af55d246d",
+      "reference_step_id": "digital-step-2",
+      "expected_conditions": [
+        "Search results",
+        "Replay Formatter"
+      ],
+      "observed_conditions": [
+        "ReplayLab CodeLab",
+        "Interactive simulation \u00b7 no actual software changes",
+        "Reset sandbox",
+        "</>",
+        "CodeLab 1.0",
+        "practice-workspace",
+        "Change Ul version",
+        "Show unexpected dialog",
+        "\u53e3",
+        "Explorer",
+        "Settings",
+        "\u65e5",
+        "Extensions",
+        "Preferences",
+        "This is a different destination from the tutorial workflow.",
+        "Editor theme",
+        "Midnight",
+        "Settings",
+        "CodeLab 1.0",
+        "Local sandbox - Changes are simulated",
+        "-T-8"
+      ],
+      "rule_results": [
+        {
+          "rule_id": "digital-step-2-text-1",
+          "status": "fail",
+          "expected": "Search results",
+          "observed": "A known contradictory UI state is reliably visible.",
+          "evidence": [
+            "Visible text: Preferences (confidence 1.00, source local_ocr)."
+          ],
+          "correction": "Return to the approved Search results state, then capture the target window again."
+        },
+        {
+          "rule_id": "digital-step-2-text-2",
+          "status": "fail",
+          "expected": "Replay Formatter",
+          "observed": "A known contradictory UI state is reliably visible.",
+          "evidence": [
+            "Visible text: Preferences (confidence 1.00, source local_ocr)."
+          ],
+          "correction": "Return to the approved Replay Formatter state, then capture the target window again."
+        }
+      ],
+      "interface_version": "CodeLab 1.0",
+      "reason": "mismatch",
+      "failure_notes": []
+    },
+    {
+      "id": "wrong-dialog-market",
+      "title": "Permission error interrupts the marketplace",
+      "category": "incorrect",
+      "expected": "fail",
+      "predicted": "fail",
+      "correct": true,
+      "explanation": "A visible unexpected dialog or error interrupts this checkpoint. Visible error: Permission denied (confidence 1.00, source local_ocr). Resolve it and recheck the current step.",
+      "evidence": [
+        "Visible text: Extensions Marketplace (confidence 1.00, source local_ocr).",
+        "Visible error: Permission denied (confidence 1.00, source local_ocr)."
+      ],
+      "processing_latency_ms": 1989.21,
+      "screenshot_url": "/api/evaluation/digital/assets/case-wrong-dialog-market.png",
+      "screenshot_sha256": "7f007f33d43c15a111b00a82c546f2ed1a8fa5fa29422261aa8faf0264e552de",
+      "reference_step_id": "digital-step-1",
+      "expected_conditions": [
+        "Extensions Marketplace"
+      ],
+      "observed_conditions": [
+        "ReplayLab CodeLab",
+        "Interactive simulation \u00b7 no actual software changes",
+        "Reset sandbox",
+        "<>",
+        "CodeLab 1.0",
+        "practice-workspace",
+        "Change Ul version",
+        "Show unexpected dialog",
+        "LD",
+        "\u65e5",
+        "Extensions Marketplace",
+        "Explorer",
+        "Find a package by name",
+        "Extensions",
+        "X",
+        "Permission denied",
+        "This deliberately introduced dialog blocks the practice",
+        "workflow. Dismiss it to recover.",
+        "Dismiss dialog",
+        "Settings",
+        "CodeLab 1.0",
+        "Local sandbox - Changes are simulated",
+        "U-TF-8"
+      ],
+      "rule_results": [
+        {
+          "rule_id": "digital-step-1-text-1",
+          "status": "pass",
+          "expected": "Extensions Marketplace",
+          "observed": "Expected text Extensions Marketplace is reliably visible.",
+          "evidence": [
+            "Visible text: Extensions Marketplace (confidence 1.00, source local_ocr)."
+          ],
+          "correction": null
+        }
+      ],
+      "interface_version": "CodeLab 1.0",
+      "reason": "mismatch",
+      "failure_notes": []
+    },
+    {
+      "id": "wrong-not-installed",
+      "title": "Install control contradicts an installed checkpoint",
+      "category": "incorrect",
+      "expected": "fail",
+      "predicted": "fail",
+      "correct": true,
+      "explanation": "A known contradictory UI state is reliably visible. Return to the approved Installed state, then capture the target window again.",
+      "evidence": [
+        "Visible text: Replay Formatter (confidence 1.00, source local_ocr).",
+        "Visible text: Install extension (confidence 1.00, source local_ocr)."
+      ],
+      "processing_latency_ms": 1916.09,
+      "screenshot_url": "/api/evaluation/digital/assets/case-wrong-not-installed.png",
+      "screenshot_sha256": "41f2ce777fdb46a0a01f3111c1ee66b9fe4db8abbfad6cc70fc36badaf5c0ec1",
+      "reference_step_id": "digital-step-4",
+      "expected_conditions": [
+        "Replay Formatter",
+        "Installed",
+        "Enabled"
+      ],
+      "observed_conditions": [
+        "ReplayLab CodeLab",
+        "Interactive simulation \u00b7 no actual software changes",
+        "Reset sandbox",
+        "</>",
+        "CodeLab 1.0",
+        "practice-workspace",
+        "Change Ul version",
+        "Show unexpected dialog",
+        "\u53e3",
+        "Extension details",
+        "Explorer",
+        "Replay Formatter",
+        "\u65e5",
+        "RF",
+        "Extensions",
+        "Consistent formatting, one practice file at a time.",
+        "ReplayLab \u00b7 Verified sandbox publisher",
+        "Install extension",
+        "Simple tools. Clear results.",
+        "This package demonstrates a visible installation workflow in a controlled practice environment.",
+        "ReplayLab observes only the screen you choose to share. It does not click buttons or install software for",
+        "you.",
+        "Settings",
+        "CodeLab 1.0",
+        "Local sandbox - Changes are simulated",
+        "-T8"
+      ],
+      "rule_results": [
+        {
+          "rule_id": "digital-step-4-text-1",
+          "status": "pass",
+          "expected": "Replay Formatter",
+          "observed": "Expected text Replay Formatter is reliably visible.",
+          "evidence": [
+            "Visible text: Replay Formatter (confidence 1.00, source local_ocr)."
+          ],
+          "correction": null
+        },
+        {
+          "rule_id": "digital-step-4-text-2",
+          "status": "fail",
+          "expected": "Installed",
+          "observed": "A known contradictory UI state is reliably visible.",
+          "evidence": [
+            "Visible text: Install extension (confidence 1.00, source local_ocr)."
+          ],
+          "correction": "Return to the approved Installed state, then capture the target window again."
+        },
+        {
+          "rule_id": "digital-step-4-text-3",
+          "status": "uncertain",
+          "expected": "Enabled",
+          "observed": "No adequately qualified observation establishes Enabled. A missing label alone is not a mismatch.",
+          "evidence": [],
+          "correction": null
+        }
+      ],
+      "interface_version": "CodeLab 1.0",
+      "reason": "mismatch",
+      "failure_notes": []
+    },
+    {
+      "id": "wrong-dialog-details",
+      "title": "Permission error interrupts extension details",
+      "category": "incorrect",
+      "expected": "fail",
+      "predicted": "fail",
+      "correct": true,
+      "explanation": "A visible unexpected dialog or error interrupts this checkpoint. Visible error: Permission denied (confidence 1.00, source local_ocr). Resolve it and recheck the current step.",
+      "evidence": [
+        "Visible text: Extension details (confidence 1.00, source local_ocr).",
+        "Visible text: Replay Formatter (confidence 1.00, source local_ocr).",
+        "Visible text: Install extension (confidence 1.00, source local_ocr).",
+        "Visible error: Permission denied (confidence 1.00, source local_ocr)."
+      ],
+      "processing_latency_ms": 2213.46,
+      "screenshot_url": "/api/evaluation/digital/assets/case-wrong-dialog-details.png",
+      "screenshot_sha256": "09abcdf4817750113903ca2932e0a0b837fdf0e420e82d69517613bce8207efa",
+      "reference_step_id": "digital-step-3",
+      "expected_conditions": [
+        "Extension details",
+        "Replay Formatter",
+        "Install extension"
+      ],
+      "observed_conditions": [
+        "ReplayLab CodeLab",
+        "Interactive simulation \u00b7 no actual software changes",
+        "Reset sandbox",
+        "<>",
+        "CodeLab 1.0",
+        "practice-workspace",
+        "Change Ul version",
+        "Show unexpected dialog",
+        "LD",
+        "Extension details",
+        "Explorer",
+        "Replay Formatter",
+        "\u65e5",
+        "RF",
+        "Extensions",
+        "Consistent formatting, one practice file at a time.",
+        "ReplayLab\u00b7 Verified sandbox publisher",
+        "Install extension",
+        "X",
+        "Permission denied",
+        "This deliberately introduced dialog blocks the practice",
+        "workflow. Dismiss it to recover.",
+        "Simple tools. Clear results.",
+        "This package demonstrates a visible installatiol",
+        "Dismiss dialog",
+        "ReplayLab observes only the screen you choos",
+        "you.",
+        "Settings",
+        "CodeLab 1.0",
+        "Local sandbox - Changes are simulated",
+        "U-TF-8"
+      ],
+      "rule_results": [
+        {
+          "rule_id": "digital-step-3-text-1",
+          "status": "pass",
+          "expected": "Extension details",
+          "observed": "Expected text Extension details is reliably visible.",
+          "evidence": [
+            "Visible text: Extension details (confidence 1.00, source local_ocr)."
+          ],
+          "correction": null
+        },
+        {
+          "rule_id": "digital-step-3-text-2",
+          "status": "pass",
+          "expected": "Replay Formatter",
+          "observed": "Expected text Replay Formatter is reliably visible.",
+          "evidence": [
+            "Visible text: Replay Formatter (confidence 1.00, source local_ocr)."
+          ],
+          "correction": null
+        },
+        {
+          "rule_id": "digital-step-3-text-3",
+          "status": "pass",
+          "expected": "Install extension",
+          "observed": "Expected text Install extension is reliably visible.",
+          "evidence": [
+            "Visible text: Install extension (confidence 1.00, source local_ocr)."
+          ],
+          "correction": null
+        }
+      ],
+      "interface_version": "CodeLab 1.0",
+      "reason": "mismatch",
+      "failure_notes": []
+    },
+    {
+      "id": "ambiguous-welcome",
+      "title": "Welcome screen does not establish the requested panel",
+      "category": "ambiguous",
+      "expected": "uncertain",
+      "predicted": "uncertain",
+      "correct": true,
+      "explanation": "No adequately qualified observation establishes Extensions Marketplace. A missing label alone is not a mismatch. Recheck the target window or clarify the checkpoint.",
+      "evidence": [],
+      "processing_latency_ms": 1728.71,
+      "screenshot_url": "/api/evaluation/digital/assets/case-ambiguous-welcome.png",
+      "screenshot_sha256": "96f7ac2883c02326b172e4eb76d69045ed918aa3ab9b9b71e740b9edc961bfec",
+      "reference_step_id": "digital-step-1",
+      "expected_conditions": [
+        "Extensions Marketplace"
+      ],
+      "observed_conditions": [
+        "ReplayLab CodeLab",
+        "Interactive simulation \u00b7 no actual software changes",
+        "Reset sandbox",
+        "</>",
+        "CodeLab 1.0",
+        "practice-workspace",
+        "Change Ul version",
+        "Show unexpected dialog",
+        "\u53e3",
+        "Explorer",
+        "Extensions",
+        "Your next skill starts here.",
+        "A small, safe workspace for visual learning.",
+        "Open a panel from the sidebar to begin.",
+        "Follow the tutorial in ReplayLab. Changes here affect only this sandbox.",
+        "Settings",
+        "CodeLab 1.0",
+        "Local sandbox - Changes are simulated",
+        "-T-8"
+      ],
+      "rule_results": [
+        {
+          "rule_id": "digital-step-1-text-1",
+          "status": "uncertain",
+          "expected": "Extensions Marketplace",
+          "observed": "No adequately qualified observation establishes Extensions Marketplace. A missing label alone is not a mismatch.",
+          "evidence": [],
+          "correction": null
+        }
+      ],
+      "interface_version": "CodeLab 1.0",
+      "reason": "insufficient_evidence",
+      "failure_notes": []
+    },
+    {
+      "id": "ambiguous-empty-search",
+      "title": "Unrelated empty results cannot prove the requested package",
+      "category": "ambiguous",
+      "expected": "uncertain",
+      "predicted": "uncertain",
+      "correct": true,
+      "explanation": "No adequately qualified observation establishes Replay Formatter. A missing label alone is not a mismatch. Recheck the target window or clarify the checkpoint.",
+      "evidence": [
+        "Visible text: Search results (confidence 1.00, source local_ocr)."
+      ],
+      "processing_latency_ms": 1929.92,
+      "screenshot_url": "/api/evaluation/digital/assets/case-ambiguous-empty-search.png",
+      "screenshot_sha256": "a255e6e2e8911a525599e15eb48077d7e8938e9cead1e34c7a8b69107e60cbd6",
+      "reference_step_id": "digital-step-2",
+      "expected_conditions": [
+        "Search results",
+        "Replay Formatter"
+      ],
+      "observed_conditions": [
+        "ReplayLab CodeLab",
+        "Interactive simulation \u00b7 no actual software changes",
+        "Reset sandbox",
+        "</>",
+        "CodeLab 1.0",
+        "practice-workspace",
+        "Change Ul version",
+        "Show unexpected dialog",
+        "\u53e3",
+        "\u65e5",
+        "Search results",
+        "Explorer",
+        "\u65e5",
+        "unrelated package",
+        "Extensions",
+        "No matching package. Check the name in your tutorial.",
+        "Settings",
+        "CodeLab 1.0",
+        "Local sandbox - Changes are simulated",
+        "-T-8"
+      ],
+      "rule_results": [
+        {
+          "rule_id": "digital-step-2-text-1",
+          "status": "pass",
+          "expected": "Search results",
+          "observed": "Expected text Search results is reliably visible.",
+          "evidence": [
+            "Visible text: Search results (confidence 1.00, source local_ocr)."
+          ],
+          "correction": null
+        },
+        {
+          "rule_id": "digital-step-2-text-2",
+          "status": "uncertain",
+          "expected": "Replay Formatter",
+          "observed": "No adequately qualified observation establishes Replay Formatter. A missing label alone is not a mismatch.",
+          "evidence": [],
+          "correction": null
+        }
+      ],
+      "interface_version": "CodeLab 1.0",
+      "reason": "insufficient_evidence",
+      "failure_notes": []
+    },
+    {
+      "id": "ambiguous-obscured",
+      "title": "An opaque privacy region hides the relevant content",
+      "category": "ambiguous",
+      "expected": "uncertain",
+      "predicted": "uncertain",
+      "correct": true,
+      "explanation": "No adequately qualified observation establishes Extensions Marketplace. A missing label alone is not a mismatch. Recheck the target window or clarify the checkpoint.",
+      "evidence": [],
+      "processing_latency_ms": 2127.21,
+      "screenshot_url": "/api/evaluation/digital/assets/case-ambiguous-obscured.png",
+      "screenshot_sha256": "286d07f64b6716bd1a32fa45c2b206f727be47e97ab15c9b59901b9ab6b832b7",
+      "reference_step_id": "digital-step-1",
+      "expected_conditions": [
+        "Extensions Marketplace"
+      ],
+      "observed_conditions": [
+        "0",
+        "ReplayLab CodeLab",
+        "Interactive simulation \u00b7 no actual software changes",
+        "Reset sandbox",
+        "</>",
+        "CodeLab 1.0",
+        "practice-workspace",
+        "Change Ul version",
+        "Show unexpected dialog",
+        "\u53e3",
+        "Explorer",
+        "Extensions",
+        "Settings",
+        "CodeLab 1.0",
+        "Local sandbox - Changes are simulated",
+        "-T-8"
+      ],
+      "rule_results": [
+        {
+          "rule_id": "digital-step-1-text-1",
+          "status": "uncertain",
+          "expected": "Extensions Marketplace",
+          "observed": "No adequately qualified observation establishes Extensions Marketplace. A missing label alone is not a mismatch.",
+          "evidence": [],
+          "correction": null
+        }
+      ],
+      "interface_version": "CodeLab 1.0",
+      "reason": "insufficient_evidence",
+      "failure_notes": []
+    },
+    {
+      "id": "ambiguous-cropped",
+      "title": "Only application chrome is visible",
+      "category": "ambiguous",
+      "expected": "uncertain",
+      "predicted": "uncertain",
+      "correct": true,
+      "explanation": "No adequately qualified observation establishes Extensions Marketplace. A missing label alone is not a mismatch. Recheck the target window or clarify the checkpoint.",
+      "evidence": [],
+      "processing_latency_ms": 2352.45,
+      "screenshot_url": "/api/evaluation/digital/assets/case-ambiguous-cropped.png",
+      "screenshot_sha256": "86505298920c892317e2c094080b78a998364f75a5afc8ab83746e0575107dec",
+      "reference_step_id": "digital-step-1",
+      "expected_conditions": [
+        "Extensions Marketplace"
+      ],
+      "observed_conditions": [
+        "</> CodeLab 1.0",
+        "practice-workspace",
+        "Change UI version",
+        "Show unexpected dialog"
+      ],
+      "rule_results": [
+        {
+          "rule_id": "digital-step-1-text-1",
+          "status": "uncertain",
+          "expected": "Extensions Marketplace",
+          "observed": "No adequately qualified observation establishes Extensions Marketplace. A missing label alone is not a mismatch.",
+          "evidence": [],
+          "correction": null
+        }
+      ],
+      "interface_version": "CodeLab 1.0",
+      "reason": "insufficient_evidence",
+      "failure_notes": []
+    },
+    {
+      "id": "ambiguous-blurred",
+      "title": "Strong blur makes target labels unreadable",
+      "category": "ambiguous",
+      "expected": "uncertain",
+      "predicted": "uncertain",
+      "correct": true,
+      "explanation": "No adequately qualified observation establishes Extension details. A missing label alone is not a mismatch. No adequately qualified observation establishes Replay Formatter. A missing label alone is not a mismatch. No adequately qualified observation establishes Install extension. A missing label alone is not a mismatch. Recheck the target window or clarify the checkpoint.",
+      "evidence": [],
+      "processing_latency_ms": 2260.78,
+      "screenshot_url": "/api/evaluation/digital/assets/case-ambiguous-blurred.png",
+      "screenshot_sha256": "04faad49e18e90ad0f695e6a818ddd2ca25e453d41847cd8d01cc5d3d20095d4",
+      "reference_step_id": "digital-step-3",
+      "expected_conditions": [
+        "Extension details",
+        "Replay Formatter",
+        "Install extension"
+      ],
+      "observed_conditions": [
+        "0",
+        "ReplayLab CodeLab",
+        "Interactive simulation \u00b7 no actual software changes",
+        "Reset sandbox",
+        "</>",
+        "CodeLab 1.0",
+        "practice-workspace",
+        "Change Ul version",
+        "Show unexpected dialog",
+        "\u53e3",
+        "Explorer",
+        "Extensions",
+        "Settings",
+        "CodeLab 1.0",
+        "Local sandbox - Changes are simulated",
+        "-T-8"
+      ],
+      "rule_results": [
+        {
+          "rule_id": "digital-step-3-text-1",
+          "status": "uncertain",
+          "expected": "Extension details",
+          "observed": "No adequately qualified observation establishes Extension details. A missing label alone is not a mismatch.",
+          "evidence": [],
+          "correction": null
+        },
+        {
+          "rule_id": "digital-step-3-text-2",
+          "status": "uncertain",
+          "expected": "Replay Formatter",
+          "observed": "No adequately qualified observation establishes Replay Formatter. A missing label alone is not a mismatch.",
+          "evidence": [],
+          "correction": null
+        },
+        {
+          "rule_id": "digital-step-3-text-3",
+          "status": "uncertain",
+          "expected": "Install extension",
+          "observed": "No adequately qualified observation establishes Install extension. A missing label alone is not a mismatch.",
+          "evidence": [],
+          "correction": null
+        }
+      ],
+      "interface_version": "CodeLab 1.0",
+      "reason": "insufficient_evidence",
+      "failure_notes": []
+    },
+    {
+      "id": "version-market",
+      "title": "A visible different version makes marketplace comparison uncertain",
+      "category": "interface_difference",
+      "expected": "uncertain",
+      "predicted": "uncertain",
+      "correct": true,
+      "explanation": "The explicitly observed interface version differs from the tutorial. Review or update its steps; this is not evidence of a user mistake.",
+      "evidence": [
+        "Tutorial interface version CodeLab 1.0; observed version CodeLab 2.0."
+      ],
+      "processing_latency_ms": 2349.06,
+      "screenshot_url": "/api/evaluation/digital/assets/case-version-market.png",
+      "screenshot_sha256": "02baf98708fcd10857e3b159f5e5279c391bf2a8eacd14f6fe899448805d92d7",
+      "reference_step_id": "digital-step-1",
+      "expected_conditions": [
+        "Extensions Marketplace"
+      ],
+      "observed_conditions": [
+        "ReplayLab CodeLab",
+        "Interactive simulation \u00b7 no actual software changes",
+        "Reset sandbox",
+        "</>",
+        "CodeLab 2.0",
+        "practice-workspace",
+        "Change Ul version",
+        "Show unexpected dialog",
+        "\u53e3",
+        "\u65e5",
+        "Extensions Marketplace",
+        "Explorer",
+        "\u65e5",
+        "Find a package by name",
+        "Extensions",
+        "A space for your tools.",
+        "Search for the package named in your tutorial.",
+        "Settings",
+        "CodeLab 2.0",
+        "Local sandbox - Changes are simulated",
+        "-T-8"
+      ],
+      "rule_results": [],
+      "interface_version": "CodeLab 2.0",
+      "reason": "interface_mismatch",
+      "failure_notes": []
+    },
+    {
+      "id": "version-search",
+      "title": "A visible different version makes search comparison uncertain",
+      "category": "interface_difference",
+      "expected": "uncertain",
+      "predicted": "uncertain",
+      "correct": true,
+      "explanation": "The explicitly observed interface version differs from the tutorial. Review or update its steps; this is not evidence of a user mistake.",
+      "evidence": [
+        "Tutorial interface version CodeLab 1.0; observed version CodeLab 2.0."
+      ],
+      "processing_latency_ms": 2373.22,
+      "screenshot_url": "/api/evaluation/digital/assets/case-version-search.png",
+      "screenshot_sha256": "8525d2166db2fc99be21b49849db563923630afbd0bed139af90f1be315b85fc",
+      "reference_step_id": "digital-step-2",
+      "expected_conditions": [
+        "Search results",
+        "Replay Formatter"
+      ],
+      "observed_conditions": [
+        "ReplayLab CodeLab",
+        "Interactive simulation \u00b7 no actual software changes",
+        "Reset sandbox",
+        "</>",
+        "CodeLab 2.0",
+        "practice-workspace",
+        "Change Ul version",
+        "Show unexpected dialog",
+        "\u53e3",
+        "\u65e5",
+        "Search results",
+        "Explorer",
+        "\u65e5",
+        "Replay Formatter",
+        "Extensions",
+        "Replay Formatter",
+        "RF",
+        "A consistent style for your practice files.",
+        "View details \u2192",
+        "ReplayLab \u00b7 Sandbox package",
+        "Settings",
+        "CodeLab 2.0",
+        "Local sandbox - Changes are simulated",
+        "-T-8"
+      ],
+      "rule_results": [],
+      "interface_version": "CodeLab 2.0",
+      "reason": "interface_mismatch",
+      "failure_notes": []
+    },
+    {
+      "id": "version-details",
+      "title": "A visible different version makes details comparison uncertain",
+      "category": "interface_difference",
+      "expected": "uncertain",
+      "predicted": "uncertain",
+      "correct": true,
+      "explanation": "The explicitly observed interface version differs from the tutorial. Review or update its steps; this is not evidence of a user mistake.",
+      "evidence": [
+        "Tutorial interface version CodeLab 1.0; observed version CodeLab 2.0."
+      ],
+      "processing_latency_ms": 2288.4,
+      "screenshot_url": "/api/evaluation/digital/assets/case-version-details.png",
+      "screenshot_sha256": "6700189f5460e3cc95b319bf1dde74c37bd9435e78bb8b1b2dc0e8be68482399",
+      "reference_step_id": "digital-step-3",
+      "expected_conditions": [
+        "Extension details",
+        "Replay Formatter",
+        "Install extension"
+      ],
+      "observed_conditions": [
+        "ReplayLab CodeLab",
+        "Interactive simulation \u00b7 no actual software changes",
+        "Reset sandbox",
+        "</>",
+        "CodeLab 2.0",
+        "practice-workspace",
+        "Change Ul version",
+        "Show unexpected dialog",
+        "\u53e3",
+        "Extension details",
+        "Explorer",
+        "Replay Formatter",
+        "\u65e5",
+        "RF",
+        "Extensions",
+        "Consistent formatting, one practice file at a time.",
+        "ReplayLab \u00b7 Verified sandbox publisher",
+        "Install extension",
+        "Simple tools. Clear results.",
+        "This package demonstrates a visible installation workflow in a controlled practice environment.",
+        "ReplayLab observes only the screen you choose to share. It does not click buttons or install software for",
+        "you.",
+        "Settings",
+        "CodeLab 2.0",
+        "Local sandbox - Changes are simulated",
+        "-T8"
+      ],
+      "rule_results": [],
+      "interface_version": "CodeLab 2.0",
+      "reason": "interface_mismatch",
+      "failure_notes": []
+    },
+    {
+      "id": "version-installed",
+      "title": "A visible different version makes installed comparison uncertain",
+      "category": "interface_difference",
+      "expected": "uncertain",
+      "predicted": "uncertain",
+      "correct": true,
+      "explanation": "The explicitly observed interface version differs from the tutorial. Review or update its steps; this is not evidence of a user mistake.",
+      "evidence": [
+        "Tutorial interface version CodeLab 1.0; observed version CodeLab 2.0."
+      ],
+      "processing_latency_ms": 2991.81,
+      "screenshot_url": "/api/evaluation/digital/assets/case-version-installed.png",
+      "screenshot_sha256": "ca173b1b38f20de032dfb8b51c809eee42cad7db3b9d3a3ba8c4f7f471080f89",
+      "reference_step_id": "digital-step-4",
+      "expected_conditions": [
+        "Replay Formatter",
+        "Installed",
+        "Enabled"
+      ],
+      "observed_conditions": [
+        "ReplayLab CodeLab",
+        "Interactive simulation \u00b7 no actual software changes",
+        "Reset sandbox",
+        "</>",
+        "CodeLab 2.0",
+        "practice-workspace",
+        "Change Ul version",
+        "Show unexpected dialog",
+        "\u53e3",
+        "Extension details",
+        "Explorer",
+        "Replay Formatter",
+        "\u65e5",
+        "RF",
+        "Extensions",
+        "Consistent formatting, one practice file at a time.",
+        "ReplayLab \u00b7 Verified sandbox publisher",
+        "Installed",
+        "Enabled",
+        "Simple tools. Clear results.",
+        "This package demonstrates a visible installation workflow in a controlled practice environment.",
+        "ReplayLab observes only the screen you choose to share. It does not click buttons or install software for",
+        "you.",
+        "Settings",
+        "CodeLab 2.0",
+        "Local sandbox - Changes are simulated",
+        "-T8"
+      ],
+      "rule_results": [],
+      "interface_version": "CodeLab 2.0",
+      "reason": "interface_mismatch",
+      "failure_notes": []
+    },
+    {
+      "id": "version-settings",
+      "title": "Version difference prevents attributing a menu mismatch to the user",
+      "category": "interface_difference",
+      "expected": "uncertain",
+      "predicted": "uncertain",
+      "correct": true,
+      "explanation": "The explicitly observed interface version differs from the tutorial. Review or update its steps; this is not evidence of a user mistake.",
+      "evidence": [
+        "Tutorial interface version CodeLab 1.0; observed version CodeLab 2.0."
+      ],
+      "processing_latency_ms": 1785.18,
+      "screenshot_url": "/api/evaluation/digital/assets/case-version-settings.png",
+      "screenshot_sha256": "74accfddd2886afd1958ea4dbdf1f0cb408f420d268473121021791d712e3e2f",
+      "reference_step_id": "digital-step-1",
+      "expected_conditions": [
+        "Extensions Marketplace"
+      ],
+      "observed_conditions": [
+        "ReplayLab CodeLab",
+        "Interactive simulation \u00b7 no actual software changes",
+        "Reset sandbox",
+        "</>",
+        "CodeLab 2.0",
+        "practice-workspace",
+        "Change Ul version",
+        "Show unexpected dialog",
+        "\u53e3",
+        "Explorer",
+        "Settings",
+        "\u65e5",
+        "Extensions",
+        "Preferences",
+        "This is a different destination from the tutorial workflow.",
+        "Editor theme",
+        "Midnight",
+        "Settings",
+        "CodeLab 2.0",
+        "Local sandbox - Changes are simulated",
+        "-T-8"
+      ],
+      "rule_results": [],
+      "interface_version": "CodeLab 2.0",
+      "reason": "interface_mismatch",
+      "failure_notes": []
+    }
+  ],
+  "skipped": [],
+  "limitations": [
+    "Twenty controlled CodeLab screenshots are a small authored challenge set, not a representative real-world benchmark.",
+    "Labels were fixed by the implementing coding agent before inference; they have not been independently reviewed by human annotators.",
+    "The CodeLab target is an interactive software simulation. No third-party extension is installed.",
+    "Real local OCR reads captured browser pixels; workflow rules use the reviewed mock demonstration template. No live Meta inference is measured.",
+    "These cases are stored separately from development observation fixtures, but share CodeLab and its expected labels. This is not a held-out application or blinded evaluation.",
+    "Latency covers uncached screenshot decode, local OCR, deterministic verification, and result construction; it excludes browser capture, transport, and cloud calls. The first sample can include OCR initialization.",
+    "Ambiguous and version-difference cases deliberately exercise abstention. A matching small-set score does not establish broad accuracy or calibrated confidence."
+  ],
+  "manifest_sha256": "f6f1477e7923f7d218124924723af9ec677333230ca855fcc5e696201dbb3a72",
+  "capture_metadata": {
+    "browser": "Chromium",
+    "browser_version": "148.0.7778.96",
+    "device_scale_factor": 1
+  },
+  "label_provenance": "Coding-agent-authored challenge labels fixed in label-plan.json before capture and before OCR inference; not independent human annotation.",
+  "environment": {
+    "python": "3.12.3",
+    "platform": "Windows-11-10.0.26200-SP0"
+  },
+  "manifest_hash_method": "sha256_utf8_crlf_normalized_to_lf"
+}

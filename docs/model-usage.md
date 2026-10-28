@@ -19,6 +19,15 @@ results.
 | Optional physical segmentation | `sam-3.1` | Official SAM parser normalizes boxes/masks/confidence |
 | Guidance | Deterministic corrections/Ask templates, optional fixed-evidence selection and browser speech | Cannot override verdicts or invent observations |
 
+In 3.0, digital Meta guidance uses a constrained Muse sentence plan: select up to
+three existing evidence IDs and one approved correction ID, preserving the exact
+deterministic status. Only those approved facts are rendered as natural language.
+Free-form model narration is not accepted. Unsupported IDs, changed statuses, or
+provider failure retain explicitly identified deterministic guidance; actual Meta
+screen observations do not become mock data. The optional call runs outside global
+project/session locks, and a stopped or changed workflow cannot commit its result.
+Plans use a bounded 16-entry, ten-minute redacted RAM cache, cleared on deletion.
+
 Local OCR uses the three models installed with the RapidOCR wheel through explicit
 paths. Missing OCR dependencies/models produce unavailable/uncertain behavior;
 capture-time code does not fetch replacements. OCR scores measure recognition,
@@ -44,6 +53,12 @@ Rights-confirmed videos are inspected and sampled locally. Non-MP4 inputs are
 prepared as MP4 before Meta video understanding. File upload uses multipart
 `purpose=user_data`; Muse receives an `input_file.file_id`. Uploaded files request
 one-hour expiration, and cleanup attempts `DELETE /files/{id}` in `finally`.
+
+MP4 preparation now preserves the first embedded audio track as AAC when present,
+alongside H.264 video; silent sources remain supported. This is tested with actual
+FFmpeg-encoded media. Source transcripts can also be supplied directly. No local
+speech-to-text system or successful Muse audio transcription is claimed; Meta's
+current video guide notes limitations in audio support.
 Cleanup failures are surfaced in proposal provenance. A timeout before an upload
 ID arrives cannot be cleaned up by ID; requested expiration remains the fallback.
 [Video understanding](https://dev.meta.ai/docs/video-understanding/),

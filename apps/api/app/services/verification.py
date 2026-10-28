@@ -9,10 +9,7 @@ from __future__ import annotations
 import math
 
 from app.schemas import Observation, ObservationSet, Rule, RuleResult, Step, VerificationResult
-
-MIN_CONFIDENCE = 0.75
-MIN_QUALITY = 0.65
-
+from app.services.thresholds import evidence_thresholds
 
 def _quality_issues(reference: ObservationSet, current: ObservationSet) -> list[str]:
     issues: list[str] = []
@@ -23,8 +20,8 @@ def _quality_issues(reference: ObservationSet, current: ObservationSet) -> list[
             value = getattr(observation_set, field)
             if value is None:
                 issues.append(f"{name} {field.replace('_', ' ')} is unknown.")
-            elif value < MIN_QUALITY:
-                issues.append(f"{name} {field.replace('_', ' ')} {value:.2f} is below {MIN_QUALITY:.2f}.")
+            elif value < evidence_thresholds().physical_quality:
+                issues.append(f"{name} {field.replace('_', ' ')} {value:.2f} is below {evidence_thresholds().physical_quality:.2f}.")
         if observation_set.comparable is not True:
             issues.append(
                 f"{name} camera comparability is {'unknown' if observation_set.comparable is None else 'not established'}."
@@ -35,9 +32,9 @@ def _quality_issues(reference: ObservationSet, current: ObservationSet) -> list[
 def _matches(observations: ObservationSet, label: str) -> tuple[list[Observation], list[Observation]]:
     matching = [item for item in observations.observations if item.label.casefold() == label.casefold()]
     reliable = [
-        item for item in matching if item.confidence is not None and item.confidence >= MIN_CONFIDENCE
+        item for item in matching if item.confidence is not None and item.confidence >= evidence_thresholds().confidence
     ]
-    ambiguous = [item for item in matching if item.confidence is None or item.confidence < MIN_CONFIDENCE]
+    ambiguous = [item for item in matching if item.confidence is None or item.confidence < evidence_thresholds().confidence]
     return reliable, ambiguous
 
 
@@ -195,7 +192,7 @@ def _evaluate(rule: Rule, current: ObservationSet) -> RuleResult:
         if (
             subject.color is None
             or subject.color_confidence is None
-            or subject.color_confidence < MIN_CONFIDENCE
+            or subject.color_confidence < evidence_thresholds().confidence
         ):
             return _result(
                 rule, "uncertain", f"Reliable color evidence for {rule.subject} is unavailable.", evidence
