@@ -1,5 +1,17 @@
 # ReplayLab delivery status
 
+## ReplayLab 3.0
+
+The shared decision contract, redacted opt-in digital history, incorrect-verdict
+reports, configurable evidence gates, inspector, and captured digital evaluation
+are implemented. Twenty controlled browser cases are measured separately from
+the original physical observation fixtures. See [implementation status](IMPLEMENTATION_STATUS.md)
+for actual checks and remaining external requirements. Live Meta validation,
+independent human evaluation, public hosting, and submission eligibility remain
+unconfirmed; the owner requires a private repository.
+
+## Preserved ReplayLab 2.0 baseline
+
 ReplayLab 2.0 implements both the original physical workflow and an offline digital
 vertical slice: tutorial source, reviewed task graph, user-authorized screen
 capture, actual local OCR, deterministic verification, and corrective guidance.

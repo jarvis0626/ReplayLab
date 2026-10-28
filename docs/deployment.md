@@ -29,6 +29,14 @@ extraction or screenshot analysis. The owner's current scope leaves live Meta
 validation pending. `npm run check` validates source behavior; `npm run contracts`
 exports the shared OpenAPI snapshot. See [test results](test-results.md).
 
+Version 3 adds local SQLite verification/feedback tables automatically on startup;
+the existing JSON project/task records remain compatible. Opt-in digital evidence
+stores relevant redacted text, not screenshots. Both new tables are purged on
+project deletion and capped at 100 records per workflow. Back up the data directory
+before transferring a local installation. The Docker API image includes the
+repo-owned controlled digital evaluation screenshots and checked-in measurement;
+rerun reports live under the ignored persistent data directory.
+
 ## Docker configuration
 
 With an operating Docker engine:

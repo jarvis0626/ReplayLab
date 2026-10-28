@@ -59,6 +59,7 @@ alongside H.264 video; silent sources remain supported. This is tested with actu
 FFmpeg-encoded media. Source transcripts can also be supplied directly. No local
 speech-to-text system or successful Muse audio transcription is claimed; Meta's
 current video guide notes limitations in audio support.
+
 Cleanup failures are surfaced in proposal provenance. A timeout before an upload
 ID arrives cannot be cleaned up by ID; requested expiration remains the fallback.
 [Video understanding](https://dev.meta.ai/docs/video-understanding/),
@@ -125,6 +126,18 @@ insufficient evidence remains uncertain.
 [official Python parser](https://github.com/meta-models/meta-sam/blob/main/python/README.md).
 
 ## Caching, retention, and controls
+
+Version 3 adds a separate unchecked **save relevant redacted evidence** option.
+When enabled, the server retains only the shared decision record's relevant
+redacted evidence, expected/observed constraints, provider, and timing, capped at
+100 decisions per workflow. It never saves digital screenshot images or a full
+OCR transcript through that path. Disabling the option affects later captures;
+deleting the project removes saved decisions. Explicit incorrect-evaluation
+reports save only the verdict label, redacted note, identifier, and timestamp,
+also capped at 100 per workflow. Reporting never changes the decision or progress.
+
+The default screen path below remains transient. Stop invalidates captures even
+when they are still arriving as multipart uploads, before observation begins.
 
 The screen endpoint does not create screenshot media, attempt images, database
 screen blobs, or screen-content logs. Request bytes/canvas frames remain transient;

@@ -20,8 +20,10 @@ import type {
   Project,
   Provider,
   VerificationResult,
+  WorkflowVerification,
 } from "../types";
 import { api } from "../services/api";
+import { EvidenceInspector, VerificationHistory } from "../components/EvidenceInspector";
 import {
   Badge,
   Empty,
@@ -584,6 +586,8 @@ export function Practice({
               {attempt?.result && (
                 <VerificationPanel
                   result={attempt.result}
+                  verification={attempt.verification}
+                  onError={onError}
                   onRetry={() => setAttempt(null)}
                   onNext={
                     eligible.length && attempt.result.status === "pass"
@@ -627,6 +631,7 @@ export function Practice({
                   </div>
                 </section>
               )}
+              <VerificationHistory key={project.id} projectId={project.id} onError={onError} />
             </>
           )}
         </div>
@@ -639,10 +644,14 @@ export function VerificationPanel({
   result,
   onRetry,
   onNext,
+  verification,
+  onError,
 }: {
   result: VerificationResult;
   onRetry: () => void;
   onNext?: () => void;
+  verification?: WorkflowVerification | null;
+  onError?: (message: string) => void;
 }) {
   return (
     <section
@@ -725,6 +734,7 @@ export function VerificationPanel({
           )}
         </div>
       </div>
+      <EvidenceInspector key={verification?.id} verification={verification} onError={onError} />
       <div className="result-actions">
         <span className="muted small">
           Deterministic verdict · explanations cannot change the outcome

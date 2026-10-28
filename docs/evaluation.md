@@ -1,5 +1,10 @@
 # Evaluation: what the measured result means
 
+ReplayLab 3.0 also provides a separate [20-case digital screenshot evaluation](digital-evaluation.md)
+with actual local OCR, uncertainty/false-certainty metrics, latency, and per-case
+screen evidence. The physical observation-fixture results below remain separate;
+neither dataset measures live Meta model accuracy.
+
 ReplayLab currently measures deterministic rule behavior over 25 curated
 normalized-observation scenarios. An actual local run matched **25 of 25 expected
 verdicts**. This is agreement on supplied observations; it does not measure Muse

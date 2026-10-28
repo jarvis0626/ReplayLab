@@ -26,6 +26,7 @@ import {
   VerdictBadge,
 } from "../components/ui";
 import { useScreenCapture } from "../hooks/useScreenCapture";
+import { EvidenceInspector, VerificationHistory } from "../components/EvidenceInspector";
 import type { Redaction } from "../hooks/useScreenCapture";
 
 interface Props {
@@ -60,6 +61,7 @@ export function LiveScreenAssistant({
   );
   const [paused, setPaused] = useState(false);
   const [cloudConsent, setCloudConsent] = useState(false);
+  const [retainEvidence, setRetainEvidence] = useState(false);
   const [voice, setVoice] = useState(false);
   const [check, setCheck] = useState<ScreenCheck | null>(null);
   const [redactions, setRedactions] = useState<Redaction[]>([]);
@@ -100,6 +102,7 @@ export function LiveScreenAssistant({
       setAnswer(null);
       setRedactions([]);
       setCloudConsent(false);
+      setRetainEvidence(false);
       setPaused(false);
     }
     void api.clearScreenSession(project.id).catch(() => {});
@@ -114,6 +117,7 @@ export function LiveScreenAssistant({
       "",
       source,
       signal,
+      retainEvidence,
     );
     if (signal.aborted || !mounted.current) return;
     setCheck(value);
@@ -279,7 +283,8 @@ export function LiveScreenAssistant({
           <strong>Your window. Your control.</strong>
           <p>
             Choose a separate workflow tab or window. Screenshots are processed
-            in memory and discarded; no click automation or filesystem access.
+            in memory and discarded. Saving relevant redacted decision evidence
+            is optional; screenshots are never saved.
           </p>
         </div>
         <Badge variant="cyan">
@@ -498,6 +503,10 @@ export function LiveScreenAssistant({
               </span>
             </label>
           )}
+          <label className="panel checkbox-row screen-evidence-consent">
+            <input type="checkbox" checked={retainEvidence} onChange={(event) => setRetainEvidence(event.target.checked)} />
+            <span>Save relevant redacted decision evidence for this project. This saves up to 100 decisions until project deletion or history eviction, never screenshots. Leave this off for temporary screen-session evidence.</span>
+          </label>
           {check && (
             <section
               className={`panel screen-result ${check.result.status}`}
@@ -567,8 +576,10 @@ export function LiveScreenAssistant({
                   probability of task completion.
                 </p>
               </details>
+              <EvidenceInspector key={check.verification?.id} verification={check.verification} onError={onError} />
             </section>
           )}
+          <VerificationHistory key={project.id} projectId={project.id} onError={onError} />
           <section className="panel screen-ask">
             <div className="panel-heading">
               <h2>
@@ -638,7 +649,7 @@ export function LiveScreenAssistant({
                     alt={`Reference screenshot for ${step?.title}`}
                   />
                   <small>
-                    Source reference · synthetic for the CodeLab demo
+                    {project.tutorial?.kind === "demo" ? "Source reference · synthetic for the CodeLab demo" : "Source reference · approved tutorial frame"}
                   </small>
                 </>
               )}

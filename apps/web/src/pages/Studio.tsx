@@ -208,7 +208,7 @@ export function Studio({
                 <Image size={17} />
                 Source evidence
               </h2>
-              <p>Real frames extracted from your demonstration.</p>
+              <p>{project.tutorial?.kind === "demo" ? "Authored source references used to create this controlled demo video." : "Real frames extracted from your demonstration."}</p>
             </div>
             <Badge>{project.frames.length} frames</Badge>
           </div>
@@ -245,24 +245,23 @@ export function Studio({
           <span className="eyebrow">FROM VIDEO TO TASK</span>
           <h2>A little clarity goes a long way.</h2>
           <p className="muted">
-            This research preview is built for a four-step colored-block
-            assembly.
+            {digital ? "Use a tutorial with readable interface labels and clearly visible checkpoints." : "This research preview is built for a four-step colored-block assembly."}
           </p>
           <ol className="numbered-tips">
             <li>
               <span>01</span>
               <div>
-                <strong>Keep the camera steady</strong>
+                <strong>{digital ? "Show the application clearly" : "Keep the camera steady"}</strong>
                 <p>
-                  Use the same tabletop angle for demonstration and practice.
+                  {digital ? "Record only the relevant app and keep its text readable." : "Use the same tabletop angle for demonstration and practice."}
                 </p>
               </div>
             </li>
             <li>
               <span>02</span>
               <div>
-                <strong>Show every component</strong>
-                <p>Keep colors distinct and avoid covering the blocks.</p>
+                <strong>{digital ? "Name observable UI states" : "Show every component"}</strong>
+                <p>{digital ? "Use a timestamped transcript with quoted labels to support offline extraction." : "Keep colors distinct and avoid covering the blocks."}</p>
               </div>
             </li>
             <li>

@@ -1,11 +1,25 @@
-# ReplayLab 2.0
+# ReplayLab 3.0
 
-**Learn visual workflows with evidence, one reviewed checkpoint at a time.**
+**Watch. Learn. Do.** Learn visual workflows with evidence, one reviewed checkpoint at a time.
 
 ReplayLab supports both physical camera tasks and digital screen workflows.
 Tutorials become editable steps in a shared dependency graph. After approval,
 separate deterministic verifiers return **PASS**, **FAIL**, or **UNCERTAIN**, with
 visible evidence and corrections. Manual navigation never marks a step complete.
+
+Version 3 adds a common physical/digital decision record, inspectable expected
+and observed conditions, explicit mismatch classifications, processing latency,
+opt-in redacted digital evidence history, and incorrect-evaluation reports.
+Configurable evidence gates remain deterministic; explanations cannot change a
+verdict. The Evaluation page now includes captured digital screenshots alongside
+the separate physical rule fixtures.
+
+The controlled digital evaluation measured **20/20 three-class agreement**,
+**0/10 false certainty**, and **10/10 uncertainty recall**, with a **2.17 s median**
+and **2.93 s p95** local processing time. Labels were authored by the implementing
+agent before inference, without independent human review. These small CodeLab
+results do not establish broad accuracy or live Meta performance.
+[Frozen cases, measured results, and reproduction](docs/digital-evaluation.md).
 
 | Mode | Working offline example | Source of verification evidence |
 | --- | --- | --- |
@@ -120,6 +134,12 @@ session expires after ten minutes or is cleared on Stop. HTTP frameworks may
 buffer request bodies transiently. Tutorial media, transcripts, workflows,
 physical attempts, and progress remain local until project deletion.
 
+**Save redacted verification evidence** is a separate, unchecked opt-in. It saves
+up to 100 relevant decision records per workflow, never digital screenshot images
+or the full OCR transcript. Explicit incorrect-evaluation reports save only the
+label, redacted note, decision identifier, and timestamp. Saved evidence and
+reports are removed on project deletion; changing consent affects later captures.
+
 Cloud extraction and Meta screen processing require explicit in-app consent.
 Screenshots are sent inline with `store:false` requested; uploaded tutorial files
 instead request one-hour expiry plus immediate deletion. Those controls do not
@@ -136,8 +156,9 @@ docker compose up --build
 ```
 
 Use `npm.cmd` if PowerShell blocks `npm.ps1`. Actual results are recorded in
-[test results](docs/test-results.md); curated physical evaluation is described in
-[evaluation](docs/evaluation.md). Test agreement is not live model accuracy.
+[test results](docs/test-results.md); captured digital evaluation is described in
+[digital evaluation](docs/digital-evaluation.md), and curated physical evaluation
+in [evaluation](docs/evaluation.md). Test agreement is not live model accuracy.
 
 Docker configuration serves the application at localhost:8080 with persistent
 storage when run on a working Docker engine. Container startup and public hosting
@@ -148,6 +169,8 @@ authentication; see [deployment](docs/deployment.md).
 
 - [Architecture](docs/architecture.md), [development](docs/development.md), and [roadmap](docs/roadmap.md)
 - [Digital workflows](docs/digital-workflows.md) and [tutorial sources](docs/tutorial-sources.md)
+- [3.0 implementation status](docs/IMPLEMENTATION_STATUS.md), [upgrade brief](docs/replaylab-3-brief.md), and [digital evaluation](docs/digital-evaluation.md)
+- [Submission checklist and remaining external requirements](docs/submission-checklist.md)
 - [Model usage](docs/model-usage.md), [API contracts](packages/contracts/README.md), and [test results](docs/test-results.md)
 - [Original brief](docs/project-brief.md), [official-source provenance](docs/official-sources.md), [license](LICENSE), and [attribution](docs/attribution.md)
 

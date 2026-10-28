@@ -8,6 +8,8 @@ import type {
   Modality,
   ScreenCheck,
   Task,
+  WorkflowVerification,
+  Verdict,
 } from "../types";
 
 export async function request<T>(
@@ -71,6 +73,7 @@ export const api = {
     interfaceVersion: string,
     sourceScope: string,
     signal?: AbortSignal,
+    retainEvidence = false,
   ) => {
     const body = new FormData();
     body.append("file", file, "screen-check.png");
@@ -78,6 +81,7 @@ export const api = {
     body.append("cloud_consent", String(consent));
     if (interfaceVersion) body.append("interface_version", interfaceVersion);
     body.append("source_scope", sourceScope);
+    body.append("retain_evidence", String(retainEvidence));
     return request<ScreenCheck>(`/projects/${id}/screen-check`, {
       method: "POST",
       body,
@@ -138,5 +142,10 @@ export const api = {
     }),
   fixtures: () => request<Fixture[]>("/demo/fixtures"),
   evaluation: (id: string) => request<Evaluation>(`/projects/${id}/evaluation`),
+  digitalEvaluation: () => request<Evaluation>("/evaluation/digital"),
+  runDigitalEvaluation: () => post<Evaluation>("/evaluation/digital/run", {}),
+  verifications: (id: string) => request<WorkflowVerification[]>(`/projects/${id}/verifications`),
+  reportVerification: (id: string, verificationId: string, expected_verdict: Verdict, notes: string) =>
+    post<{ id: string }>(`/projects/${id}/verifications/${verificationId}/feedback`, { expected_verdict, notes }),
   provider: (mode: "mock" | "meta") => post<Health>("/provider", { mode }),
 };

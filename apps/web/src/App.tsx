@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { lazy, Suspense, useCallback, useEffect, useState } from "react";
 import {
   Activity,
   ArrowLeft,
@@ -24,8 +24,8 @@ import { Badge, ErrorBanner, Spinner } from "./components/ui";
 import { Dashboard } from "./pages/Dashboard";
 import { Studio } from "./pages/Studio";
 import { TaskWorkspace } from "./pages/TaskWorkspace";
-import { Practice } from "./pages/Practice";
-import { EvaluationPage } from "./pages/Evaluation";
+const Practice = lazy(() => import("./pages/Practice").then((module) => ({ default: module.Practice })));
+const EvaluationPage = lazy(() => import("./pages/Evaluation").then((module) => ({ default: module.EvaluationPage })));
 import { LiveScreenAssistant } from "./pages/LiveScreenAssistant";
 
 type Tab = "studio" | "task" | "practice" | "evaluation";
@@ -199,7 +199,7 @@ export function App() {
           </button>
           <div className="sidebar-footer">
             <span>ReplayLab</span>
-            <span>v2.0 · Research preview</span>
+            <span>v3.0 · Research preview</span>
           </div>
         </div>
       </aside>
@@ -339,17 +339,17 @@ export function App() {
                   onReview={() => setTab("task")}
                 />
               ) : (
-                <Practice
+                <Suspense fallback={<Spinner label="Loading physical practice…" />}><Practice
                   project={project}
                   provider={provider}
                   consent={consent}
                   onUpdate={updateProject}
                   onError={setError}
                   onReview={() => setTab("task")}
-                />
+                /></Suspense>
               ))}
             {tab === "evaluation" && (
-              <EvaluationPage project={project} onError={setError} />
+              <Suspense fallback={<Spinner label="Loading evaluation…" />}><EvaluationPage project={project} onError={setError} /></Suspense>
             )}
           </div>
         )}

@@ -1,0 +1,42 @@
+﻿.verification-inspector { padding: 20px 24px; border-top: 1px solid var(--border); overflow-wrap: anywhere; }
+.verification-trace-meta { display: flex; align-items: center; flex-wrap: wrap; gap: 12px; font-size: 11px; color: var(--muted); }
+.verification-trace-meta > span:first-child { display: flex; align-items: center; gap: 7px; font-weight: 600; color: #e8edf2; }
+.verification-inspector details { margin-top: 13px; font-size: 11px; line-height: 1.8; }
+.verification-inspector summary { cursor: pointer; font-weight: 600; color: #e8edf2; padding: 7px 0; }
+.verification-inspector h3 { font-size: 11px; margin: 14px 0 7px; }
+.verification-inspector ul { padding-left: 19px; margin: 7px 0; }
+.verification-inspector li + li { margin-top: 5px; }
+.trace-conditions { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
+.trace-constraint { display: flex; align-items: flex-start; gap: 10px; padding: 11px 0; border-bottom: 1px solid var(--border); }
+.trace-constraint p, .trace-evidence p { margin: 0; }
+.trace-constraint > .badge { flex-shrink: 0; margin-top: 3px; }
+.mismatch-classification { display: inline-block; color: var(--uncertain); font-size: 11px; text-transform: capitalize; padding: 8px 0 0; margin: 0; }
+.uncertainty-reasons { font-size: 11px; line-height: 1.7; padding: 12px 14px; background: rgba(226, 163, 49, .07); margin-top: 12px; border-radius: 7px; }
+.trace-feedback { margin-top: 13px; font-size: 11px; }
+.trace-feedback form { display: grid; gap: 12px; max-width: 560px; padding-top: 10px; }
+.trace-feedback label { display: grid; gap: 6px; font-size: 11px; }
+.trace-feedback textarea, .trace-feedback select { width: 100%; padding: 9px 11px; border: 1px solid var(--border); border-radius: 6px; background: var(--surface); color: #e8edf2; font: inherit; }
+.trace-feedback select { max-width: 220px; }
+.trace-feedback form .button { justify-self: start; }
+.trace-history-list { display: grid; padding: 0 18px 15px; gap: 6px; max-height: 240px; overflow-y: auto; }
+.trace-history-list > button { display: flex; align-items: center; gap: 10px; padding: 10px; text-align: left; border: 1px solid var(--border); border-radius: 6px; font-size: 11px; background: transparent; color: #e8edf2; }
+.trace-history-list > button.selected { background: rgba(81, 154, 153, .08); }
+.trace-history-list time { margin-left: auto; font-size: 10px; color: var(--muted); }
+.history-disclosure { padding: 0 18px; }
+.screen-evidence-consent { margin: 0; padding: 13px 19px; border-top: 1px solid var(--border); }
+.screen-evidence-consent > span { line-height: 1.65; }
+.evaluation-suite-picker { display: flex; align-items: center; gap: 8px; margin-bottom: 18px; }
+.evaluation-suite-picker .button[aria-pressed="true"] { background: rgba(81, 154, 153, .12); border-color: #8cb9b1; }
+.evaluation-method { margin-bottom: 18px; padding: 15px 18px; display: flex; flex-direction: column; align-items: flex-start; gap: 8px; font-size: 11px; line-height: 1.7; }
+.evaluation-method p { margin: 0; }
+.calibration-stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin-bottom: 20px; }
+.calibration-stat { padding: 17px; display: flex; flex-direction: column; gap: 8px; }
+.calibration-stat strong { font-size: 24px; letter-spacing: -1px; }
+.calibration-stat .muted { font-size: 10px; line-height: 1.7; }
+.case-diagnostic img { width: 100%; border: 1px solid var(--border); border-radius: 7px; margin-top: 12px; }
+.case-diagnostic ul { padding-left: 18px; font-size: 11px; line-height: 1.8; }
+.case-latency { font-size: 10px; color: var(--muted); }
+.workflow-version-label { display: grid; gap: 7px; max-width: 420px; font-size: 10px; margin-top: 13px; }
+.workflow-version-label input { padding: 8px 10px; border: 1px solid var(--border); border-radius: 6px; background: var(--surface); color: inherit; }
+@media (max-width: 800px) { .calibration-stats { grid-template-columns: 1fr 1fr; } .trace-conditions { grid-template-columns: 1fr; gap: 0; } }
+@media (max-width: 560px) { .verification-inspector { padding: 16px; } .verification-trace-meta { font-size: 10px; gap: 7px; } .calibration-stat { padding: 13px; } .calibration-stat strong { font-size: 21px; } .evaluation-suite-picker { flex-wrap: wrap; } .evaluation-suite-picker .button { font-size: 10px; } .trace-history-list time { display: none; } }

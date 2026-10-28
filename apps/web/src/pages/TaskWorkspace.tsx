@@ -284,6 +284,7 @@ export function TaskWorkspace({
               {task.provider_mode.toUpperCase()} PROPOSAL
             </Badge>
           </div>
+          {digital && <label className="workflow-version-label">Reference application/version (optional)<input aria-label="Reference application and version" maxLength={120} placeholder="e.g. CodeLab 1.0 — use visible source evidence" value={task.interface_version ?? ""} onChange={(event) => { setTask({ ...task, interface_version: event.target.value || null }); setDirty(true); }} /><small className="muted">Set only a version shown in the tutorial. A detected difference causes uncertainty.</small></label>}
         </div>
         <div className="row-actions">
           {dirty && <span className="unsaved">Unsaved changes</span>}

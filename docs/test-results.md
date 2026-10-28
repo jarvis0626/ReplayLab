@@ -1,5 +1,26 @@
 # Recorded validation
 
+## ReplayLab 3.0 upgrade — 28 October 2026
+
+`npm.cmd run check` completed with **332 backend tests passed**, **38 frontend
+tests passed**, backend Ruff clean, and a successful TypeScript/Vite production
+build. This includes all earlier physical/digital tests and new shared evidence,
+retention, feedback, threshold, version-quality, model-grounding, audio media,
+streamed-upload cancellation, and evaluation metric regressions. A Starlette
+HTTPX TestClient deprecation warning remains; it does not fail the suite.
+
+The captured digital suite measured **20/20 agreement**, **10/10 decisive
+accuracy**, **0/10 false certainty**, **10/10 uncertainty recall**, zero PASS/FAIL
+swaps, median **2170.34 ms**, and nearest-rank p95 **2928.84 ms** (n=20). The
+screenshots were captured from actual Chromium-rendered CodeLab attempts and
+controlled obscured/version views. Labels were fixed by the implementing agent
+before inference; no independent human review or live Meta inference is claimed.
+See [evaluation methodology and case evidence](digital-evaluation.md).
+
+OpenAPI export, document-link checks, and `docker compose config --quiet` pass.
+Docker runtime/public hosting and credentialed Meta calls remain unverified.
+The final actual browser recording/checks are documented separately once complete.
+
 ## ReplayLab 2.0 upgrade — 27 October 2026
 
 The integrated `npm.cmd run check` completed with **286 backend tests passed**, **32 frontend tests passed**, Ruff clean, and a successful TypeScript/Vite production build. This run includes the original physical workflow tests and the digital ingestion, OCR, verification, privacy, cache, and concurrency suites.

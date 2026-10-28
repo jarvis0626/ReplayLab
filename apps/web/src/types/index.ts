@@ -70,6 +70,7 @@ export interface Step {
   screen_rules?: ScreenRule[];
 }
 export interface Task {
+  interface_version?: string | null;
   id: string;
   title: string;
   description: string;
@@ -134,6 +135,7 @@ export interface ScreenResult {
   warnings: string[];
 }
 export interface ScreenCheck {
+  verification?: WorkflowVerification | null;
   result: ScreenResult;
   observation: ScreenObservation;
   completed_step_ids: string[];
@@ -166,6 +168,7 @@ export interface VerificationResult {
   provider_mode: string;
 }
 export interface Attempt {
+  verification?: WorkflowVerification | null;
   id: string;
   project_id: string;
   step_id: string;
@@ -189,6 +192,19 @@ export interface Graph {
   order: string[];
 }
 export interface Evaluation {
+  dataset?: string;
+  provider_mode?: string;
+  evaluation_kind?: string;
+  measured_at?: string;
+  target_size?: number;
+  decisive_accuracy?: number | null;
+  decisive_predictions?: number;
+  false_certainty_rate?: number | null;
+  false_certainty_count?: number;
+  uncertain_ground_truth_count?: number;
+  uncertainty_recall?: number | null;
+  decisive_misclassifications?: number;
+  latency_ms?: { sample_size: number; median: number | null; p95: number | null; min: number | null; max: number | null };
   details: {
     id: string;
     title: string;
@@ -196,10 +212,40 @@ export interface Evaluation {
     predicted: Verdict;
     correct: boolean;
     explanation: string;
+    category?: string;
+    evidence?: string[];
+    processing_latency_ms?: number;
+    screenshot_url?: string;
+    reference_step_id?: string;
+    expected_conditions?: string[];
+    observed_conditions?: string[];
+    failure_notes?: string[];
   }[];
   correct: number;
   sample_size: number;
   accuracy: number | null;
   confusion_matrix: Record<string, Record<string, number>>;
   limitations: string[];
+}
+
+export interface WorkflowVerification {
+  id: string;
+  workflow_id: string;
+  task_id: string;
+  step_id: string;
+  modality: Modality;
+  verdict: Verdict;
+  expected_conditions: string[];
+  observed_conditions: string[];
+  constraints: { id: string; kind: string; verdict: Verdict; expected: string; observed: string; evidence: string[]; correction: string | null }[];
+  evidence_references: { id: string; kind: string; text: string; source: string; timestamp?: number | null }[];
+  uncertainty_reasons: string[];
+  correction: string | null;
+  explanation: string;
+  provider: { mode: string; observation: string; explanation: string };
+  mismatch_classification: string | null;
+  latency_ms: number;
+  created_at: string;
+  task_revision: string;
+  retained: boolean;
 }

@@ -4,6 +4,7 @@ import { App } from "./App";
 import "@xyflow/react/dist/style.css";
 import "./styles.css";
 import "./digital.css";
+import "./verification.css";
 
 const CodeLabDemo = React.lazy(() =>
   import("./pages/CodeLabDemo").then((module) => ({

@@ -292,7 +292,7 @@ describe("digital screen privacy and lifecycle", () => {
     expect(
       screen.getByRole("button", { name: "Upload screenshot" }),
     ).toBeDisabled();
-    await user.click(screen.getByRole("checkbox"));
+    await user.click(screen.getByRole("checkbox", { name: /I consent to sending this project/ }));
     expect(
       screen.getByRole("button", { name: "Choose screen or window" }),
     ).toBeEnabled();
@@ -342,6 +342,7 @@ describe("digital screen privacy and lifecycle", () => {
       "",
       "manually selected screenshot",
       expect.any(AbortSignal),
+      false,
     );
     expect(onUpdate).toHaveBeenCalledWith(
       expect.objectContaining({ completed_step_ids: [] }),
@@ -373,6 +374,17 @@ describe("digital screen privacy and lifecycle", () => {
       await Promise.resolve();
     });
     expect(onUpdate).not.toHaveBeenCalled();
+  });
+  it("keeps evidence retention off until explicitly selected and sends that preference with the capture", async () => {
+    const user = userEvent.setup();
+    mount();
+    const retention = screen.getByRole("checkbox", { name: /Save relevant redacted decision evidence/ });
+    expect(retention).not.toBeChecked();
+    await user.click(retention);
+    await user.upload(screen.getByLabelText("Upload screen screenshot"), new File(["pixels"], "screen.png", { type: "image/png" }));
+    await waitFor(() => expect(api.screenCheck).toHaveBeenCalledOnce());
+    expect(vi.mocked(api.screenCheck).mock.calls[0][7]).toBe(true);
+    expect(screen.getByText(/never screenshots\. Leave this off/)).toBeInTheDocument();
   });
   it("skips duplicate frames, rechecks on a bounded heartbeat, and blocks heartbeat while paused", async () => {
     let now = 1000000;
