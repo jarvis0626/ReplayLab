@@ -15,7 +15,7 @@ remain unverified, and the owner requires this repository to stay private.
 | Separate provider modes | Explicit MOCK/META; no silent replacement of failed live observations |
 | Automated tests and measured evaluation | Actual pytest/Vitest/build checks; frozen 20-case controlled browser evaluation with case evidence and latency |
 | Independent evaluation | Agent-authored labels fixed before inference; independent human annotation and unseen application studies are not delivered |
-| Reproducible digital demonstration | Controlled CodeLab simulation of an extension workflow, with actual tutorial upload/transcript review, capture, OCR, decisions, and evaluation; no real VS Code extension installation |
+| Reproducible digital demonstration | Verified 180-second CodeLab walkthrough with actual tutorial upload/transcript review, four live and three manual OCR checks, decisions, physical shared inspector, and evaluation; no real VS Code extension installation |
 | Physical transfer | Controlled colored-block fixtures use the same graph/result inspector; labeled fixture observations are not live SAM |
 | Public repository | Intentionally private under owner instructions; no visibility change or submission publication performed |
 | Hosted application | Deployment configuration prepared; Docker runtime and public hosting remain unverified |
@@ -25,6 +25,7 @@ Current evidence and exact checks are recorded in
 [implementation status](IMPLEMENTATION_STATUS.md), [test results](test-results.md),
 and [digital evaluation](digital-evaluation.md). Original physical demonstration
 evidence remains available in [demo-script.md](demo-script.md).
+The current recording and its reproduction/limitations are in [v3-demo.md](v3-demo.md).
 
 Before an eventual submission, the owner must resolve live model validation,
 eligibility/acceptance, repository visibility requirements, and any hosted-demo

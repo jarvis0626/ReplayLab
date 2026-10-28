@@ -1,0 +1,74 @@
+1
+00:00:00,514 --> 00:00:08,000
+ReplayLab 3.0 · Watch. Learn. Do.
+Tutorials explain actions. ReplayLab checks visible results.
+
+2
+00:00:08,000 --> 00:00:20,375
+This is an actual local app recording.
+Workflow extraction is offline; screen OCR processes real captured pixels.
+
+3
+00:00:20,375 --> 00:00:36,952
+Upload a rights-cleared tutorial and its timestamped transcript.
+FFmpeg extracts real source frames. Offline extraction proposes quoted UI labels.
+
+4
+00:00:36,952 --> 00:00:52,639
+One shared workflow graph: timestamps, visible conditions and prerequisites.
+Review and approve the proposal before verification can begin.
+
+5
+00:00:52,639 --> 00:01:18,311
+Real browser tab sharing → local OCR → evidence-backed PASS.
+CodeLab is a controlled software simulation, not a real extension installation.
+
+6
+00:01:18,311 --> 00:01:32,514
+A visible wrong destination produces FAIL, with actual counterevidence.
+The correction points back to the approved Extensions workflow.
+
+7
+00:01:32,514 --> 00:01:46,577
+Correct the visible state and the next checkpoint passes.
+Progress is persisted; dependencies unlock the following step.
+
+8
+00:01:46,577 --> 00:01:53,921
+Missing evidence is UNCERTAIN, not automatic failure.
+Showing a different view cannot establish whether the required details are open.
+
+9
+00:01:53,921 --> 00:02:12,405
+Sharing is stopped. The app now reviews fresh, actual target screenshots.
+Visible CodeLab 2.0 differs from the approved source: evidence-backed UNCERTAIN.
+
+10
+00:02:12,405 --> 00:02:14,625
+Manual screenshot review confirms Installed and Enabled: four of four.
+ReplayLab observes visible evidence; the sandbox installation is simulated.
+
+11
+00:02:14,625 --> 00:02:25,717
+Stop ends the real capture track. Screenshots are never retained.
+Only opted-in, relevant redacted decision evidence is saved for inspection.
+
+12
+00:02:25,717 --> 00:02:33,936
+Physical mode uses the same workflow and decision-inspection contract.
+This controlled block checkpoint uses labeled fixture observations, not live SAM.
+
+13
+00:02:33,936 --> 00:02:46,061
+Measured evaluation: 20/20 agreement on controlled browser captures.
+Small, development-team-labeled local OCR set; not broad real-world or Meta accuracy.
+
+14
+00:02:46,061 --> 00:02:55,061
+Meta Muse Spark and SAM adapters are implemented and contract-tested.
+Live Meta inference and hackathon eligibility remain unverified; this demo is offline.
+
+15
+00:02:55,061 --> 00:03:00,000
+ReplayLab: demonstration → expected states → evidence → verification.
+Its advantage is knowing when to pass, when to correct, and when it cannot decide.

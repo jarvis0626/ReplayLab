@@ -37,9 +37,11 @@ contract-tested. **Live Meta validation is intentionally pending**, following th
 owner's instruction to finish offline. Failed live requests never become mock
 results. The GitHub repository remains **private**.
 
-![Actual ReplayLab 2 screen sharing with local OCR evidence](docs/assets/v2/screen-sharing-pass.png)
+![Actual ReplayLab 3 evidence-backed screen verification](docs/assets/v3/evidence-backed-fail.png)
 
-[Actual digital browser validation and screenshots](docs/digital-browser-qa.md)
+[Three-minute ReplayLab 3 recording](docs/assets/v3/demo.mp4) ·
+[Walkthrough, screenshots, and validation](docs/v3-demo.md) ·
+[Preserved 2.0 browser validation](docs/digital-browser-qa.md)
 
 ## Quick start
 

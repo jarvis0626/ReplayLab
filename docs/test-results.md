@@ -19,7 +19,20 @@ See [evaluation methodology and case evidence](digital-evaluation.md).
 
 OpenAPI export, document-link checks, and `docker compose config --quiet` pass.
 Docker runtime/public hosting and credentialed Meta calls remain unverified.
-The final actual browser recording/checks are documented separately once complete.
+The final application source passed [GitHub Actions on Ubuntu](https://github.com/jarvis0626/ReplayLab/actions/runs/40706517421),
+commit `d525b97`. The earlier backend milestone also passed
+[Actions](https://github.com/jarvis0626/ReplayLab/actions/runs/40705588273),
+commit `603e00a`.
+
+The [actual 3.0 recording](v3-demo.md) passed **13 browser assertion groups** with
+**seven real OCR decisions** (four live tab captures, three explicitly manual
+actual browser screenshots): four PASS, one FAIL, two UNCERTAIN. It verified all
+four digital checkpoints, a separate physical fixture PASS using the common
+inspector, saved evidence, stopped tracks, desktop/tablet layouts, and measured
+evaluation. Zero JavaScript errors were observed. The final silent subtitled
+H.264 video is **180.000 s**, **1280×960**, **4,500 frames**, **3,759,818 bytes**;
+FFprobe and full FFmpeg decode passed. The manual transition addresses a recorded
+headless Chromium background-frame freeze; it is disclosed in the video and report.
 
 ## ReplayLab 2.0 upgrade — 27 October 2026
 

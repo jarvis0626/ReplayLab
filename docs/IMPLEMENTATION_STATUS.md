@@ -42,13 +42,28 @@ Ruff checks passed, API health returned OK and Vite returned HTTP 200. The final
 | Digital screenshot evaluation | Working and tested | 20 actual controlled Chromium cases; labels frozen before inference, not independently human-reviewed |
 | Grounded Muse explanation planning | Implemented but unverified live | Strict evidence/correction IDs; template fallback; no model authority over verdict |
 | Tutorial audio preservation | Working and tested | Actual WebM-to-H.264/AAC conversion, including mislabeled container and silent inputs |
-| Evidence inspector and evaluation UI | Working and tested | 38 frontend tests and production build; final recorded browser verification in progress |
-| Updated actual three-minute demo | In progress | Recording the running local digital workflow; no live Meta claim |
+| Evidence inspector and evaluation UI | Working and tested | 38 frontend tests, production build, desktop/tablet browser checks |
+| Updated actual three-minute demo | Working and tested | 180.000-second H.264 recording; 13 browser assertion groups; disclosed live/manual transition |
 
 Integrated checks passed with **332 backend tests, 38 frontend tests**, Ruff,
 TypeScript, and the production build. Docker Compose configuration validates;
-container runtime/public hosting remain unverified. Final browser/demo evidence
-and any subsequent regression checks will be recorded before delivery.
+container runtime/public hosting remain unverified. The final application source
+also passed [GitHub Actions on Ubuntu](https://github.com/jarvis0626/ReplayLab/actions/runs/40706517421),
+commit `d525b97`.
+
+The [actual three-minute walkthrough](v3-demo.md) passed **13 browser assertion
+groups** and **seven real OCR checks**: four live-tab checks followed by three
+explicit manual screenshot reviews, producing four PASS, one FAIL, and two
+UNCERTAIN results. All four digital steps completed. A separate physical fixture
+PASS used the same inspector; measured evaluation and 1440/1024-pixel layouts
+were checked. Zero JavaScript errors were recorded. The silent subtitled MP4 is
+1280×960, 4,500 frames, 3,759,818 bytes; FFprobe and full decode passed.
+
+During headless recording, background tab delivery could become stale. The final
+recording explicitly stops sharing and uses actual fresh screenshots for version
+and final checks. It does not claim seven successful live-stream observations.
+No OS permission picker, arbitrary application, real VS Code installation, or
+live Meta call is validated by that demonstration.
 
 Final reliability review additionally reproduced and fixed stopped uploads during
 multipart parsing and asynchronous file reads, in both provider modes. Such

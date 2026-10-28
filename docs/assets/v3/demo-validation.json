@@ -1,0 +1,53 @@
+{
+  "browser": "148.0.7778.96",
+  "recorded": true,
+  "elapsed_seconds": 180.22,
+  "assertions": [
+    "real tab capture and first-step PASS",
+    "shared inspector fits desktop1440px",
+    "wrong panel FAIL with shared inspectable evidence",
+    "corrected search PASS and dependency progression",
+    "unobserved checkpoint UNCERTAIN",
+    "visible version mismatch UNCERTAIN",
+    "four of four visible checkpoints verified",
+    "shared saved inspector fits tablet1024px",
+    "stop ends real track and explicitly saved evidence remains inspectable",
+    "physical fixture PASS uses shared evidence inspector",
+    "measured evaluation fits desktop1440px",
+    "measured evaluation fits tablet1024px",
+    "measured 20-case digital evaluation, calibration and latency visible"
+  ],
+  "screen_check_count": 7,
+  "verdicts": [
+    "pass",
+    "fail",
+    "pass",
+    "uncertain",
+    "uncertain",
+    "pass",
+    "pass"
+  ],
+  "page_errors": 0,
+  "video": {
+    "programs": [],
+    "stream_groups": [],
+    "streams": [
+      {
+        "width": 1280,
+        "height": 960,
+        "nb_frames": "4500"
+      }
+    ],
+    "format": {
+      "duration": "180.000000",
+      "size": "3759818"
+    }
+  },
+  "limitations": [
+    "Controlled CodeLab simulation, not a real VS Code extension installation.",
+    "Actual getDisplayMedia tab stream for initial states; Chromium test flag selects the source instead of a human picker.",
+    "After stopping sharing, version and final checkpoints use the app's manual review path with actual fresh browser screenshots. Recording-mode background-tab delivery can become stale; the verifier abstains on stale insufficient views.",
+    "Offline transcript extraction; real local OCR. No live Meta calls.",
+    "Controlled team-authored evaluation cases, not independent human annotation."
+  ]
+}

@@ -1,5 +1,11 @@
 # License and attribution
 
+The 3.0 controlled evaluation screenshots and walkthrough are recordings of the
+actual ReplayLab/CodeLab browser UI, authored and captured for this project. Labels
+were supplied by the implementing coding agent before inference, without
+independent human review. The demo uses real local OCR with explicitly offline
+workflow extraction and physical fixtures. Live Meta inference is not represented.
+
 ReplayLab-owned source, planning documents, generated synthetic physical/CodeLab
 demo media, and its recorded application demonstration are covered by the
 repository [MIT license](../LICENSE). CodeLab is a fictional browser simulation,
