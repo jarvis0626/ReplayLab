@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import type { Project, Provider, ScreenCheck } from "../types";
 import { api } from "../services/api";
+import { providerModels, providerName, usesCloud } from "../services/providers";
 import {
   Badge,
   Empty,
@@ -61,6 +62,9 @@ export function LiveScreenAssistant({
   );
   const [paused, setPaused] = useState(false);
   const [cloudConsent, setCloudConsent] = useState(false);
+  const [consentScope, setConsentScope] = useState("");
+  const currentConsentScope = `${project.id}:${provider?.mode ?? "unknown"}`;
+  const approvedCloudConsent = cloudConsent && consentScope === currentConsentScope;
   const [retainEvidence, setRetainEvidence] = useState(false);
   const [voice, setVoice] = useState(false);
   const [check, setCheck] = useState<ScreenCheck | null>(null);
@@ -89,7 +93,7 @@ export function LiveScreenAssistant({
     if (mounted.current) setAsking(false);
   }, []);
   const canAnalyze =
-    !!project.approved && !!step && (provider?.mode !== "meta" || cloudConsent);
+    !!project.approved && !!step && (!usesCloud(provider) || approvedCloudConsent);
   const cancelVoice = useCallback(() => {
     window.speechSynthesis?.cancel();
   }, []);
@@ -113,7 +117,7 @@ export function LiveScreenAssistant({
       project.id,
       step.id,
       blob,
-      cloudConsent,
+      approvedCloudConsent,
       "",
       source,
       signal,
@@ -129,7 +133,7 @@ export function LiveScreenAssistant({
     projectId: project.id,
     enabled: canAnalyze,
     paused: paused || redacting,
-    interval: provider?.mode === "meta" ? 12000 : 4000,
+    interval: usesCloud(provider) ? 12000 : 4000,
     redactions,
     onCapture: analyze,
     onStop: clearSession,
@@ -288,7 +292,7 @@ export function LiveScreenAssistant({
           </p>
         </div>
         <Badge variant="cyan">
-          {provider?.mode === "meta" ? "META · LIVE UNVERIFIED" : "LOCAL OCR"}
+          {usesCloud(provider) ? `${providerName(provider).toUpperCase()} · ${provider?.live_verified ? "LIVE VALIDATED" : "ACCESS UNVERIFIED"}` : "LOCAL OCR"}
         </Badge>
       </div>
       <div className="screen-layout">
@@ -364,7 +368,7 @@ export function LiveScreenAssistant({
                     )}
                   </button>
                   <small>
-                    {provider?.mode === "meta"
+                    {usesCloud(provider)
                       ? "Cloud consent is required before analysis."
                       : "Your selection authorizes processing by local OCR. No Meta calls in offline mode."}
                   </small>
@@ -488,21 +492,22 @@ export function LiveScreenAssistant({
               </span>
             </div>
           </section>
-          {provider?.mode === "meta" && (
+          {usesCloud(provider) && (
             <label className="checkbox-row screen-cloud-consent">
               <input
                 type="checkbox"
-                checked={cloudConsent}
-                onChange={(e) => setCloudConsent(e.target.checked)}
+                checked={approvedCloudConsent}
+                onChange={(e) => {
+                  setConsentScope(currentConsentScope);
+                  setCloudConsent(e.target.checked);
+                }}
               />
               <span>
-                I consent to sending this project’s redacted screen frames to
-                Meta with store:false requested. Provider processing and
-                retention terms apply; local screenshots are not retained. This
-                choice resets when leaving the project or switching providers.
+                I consent to sending this project’s redacted screen frames to {providerName(provider)}{provider?.mode === "meta" ? " with store:false requested" : " for inference"}. Provider processing and retention terms apply; local screenshots are not retained. This choice resets when leaving the project or switching providers.
               </span>
             </label>
           )}
+          {provider?.mode === "nvidia" && <p className="muted small">NVIDIA model: {providerModels(provider)}. Model descriptions are observations, not completion proof. The verifier checks approved constraints against qualified evidence, including local OCR; model-reported confidence is not a calibrated success probability.</p>}
           <label className="panel checkbox-row screen-evidence-consent">
             <input type="checkbox" checked={retainEvidence} onChange={(event) => setRetainEvidence(event.target.checked)} />
             <span>Save relevant redacted decision evidence for this project. This saves up to 100 decisions until project deletion or history eviction, never screenshots. Leave this off for temporary screen-session evidence.</span>

@@ -1,5 +1,6 @@
 export type Verdict = "pass" | "fail" | "uncertain";
 export type Modality = "physical" | "digital";
+export type ProviderMode = "mock" | "meta" | "nvidia";
 export interface ScreenRule {
   id: string;
   kind:
@@ -25,10 +26,14 @@ export interface Tutorial {
   instruction_warnings?: string[];
 }
 export interface Provider {
-  mode: "mock" | "meta";
+  mode: ProviderMode;
   configured: boolean;
   available: boolean;
   message: string;
+  live_verified?: boolean;
+  model?: string;
+  models?: string[];
+  host?: string;
 }
 export interface Health {
   status: string;
@@ -192,6 +197,13 @@ export interface Graph {
   order: string[];
 }
 export interface Evaluation {
+  model?: string;
+  host?: string;
+  skipped?: { id: string; reason: string }[];
+  live_api_verified?: boolean;
+  fresh_observation_count?: number;
+  cached_observation_count?: number;
+  uncached_latency_ms?: { sample_size: number; median: number | null; p95: number | null; min: number | null; max: number | null };
   dataset?: string;
   provider_mode?: string;
   evaluation_kind?: string;

@@ -59,6 +59,8 @@ def explain_verification(provider, step, result) -> GroundedExplanation:
 
     if provider is None:
         return fallback()
+    model = getattr(provider, "model", SPARK_MODEL)
+    provider_mode = getattr(provider, "provider_mode", "meta")
     # Bound facts before constructing IDs; unknown model strings cannot become IDs.
     evidence = {
         f"E{index + 1}": redact_text(fact[:1500])
@@ -88,7 +90,7 @@ def explain_verification(provider, step, result) -> GroundedExplanation:
     }
     account = hashlib.sha256((provider.base_url + provider._api_key).encode()).hexdigest()
     key = provider._key("grounded_explanation_v3", b"", {
-        "model": SPARK_MODEL, "payload": payload, "schema": schema, "account": account,
+        "model": model, "payload": payload, "schema": schema, "account": account,
     })
     with _lock:
         entry = _cache.get(key)
@@ -135,9 +137,9 @@ def explain_verification(provider, step, result) -> GroundedExplanation:
             while len(_cache) > 16:
                 _cache.popitem(last=False)
         return GroundedExplanation(
-            text=" ".join(sentences), provider_mode="meta_grounded_plan", evidence_ids=unique_ids,
+            text=" ".join(sentences), provider_mode=provider_mode + "_grounded_plan", evidence_ids=unique_ids,
             status=result.status, latency_ms=round((time.perf_counter() - started) * 1000, 3),
             cache_hit=cache_hit,
         )
     except (ProviderError, ValueError, TypeError, KeyError, AttributeError):
-        return fallback("Meta explanation unavailable or rejected; deterministic guidance retained.")
+        return fallback(("NVIDIA" if provider_mode == "nvidia" else "Meta") + " explanation unavailable or rejected; deterministic guidance retained.")

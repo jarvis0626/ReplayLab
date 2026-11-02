@@ -1,5 +1,34 @@
 # Recorded validation
 
+## NVIDIA integration — 2 November 2026
+
+The final `npm.cmd run check` passed **396 backend tests**, **42 frontend tests**,
+backend Ruff, TypeScript, and the Vite production build. New coverage includes
+37 NVIDIA transport/schema/grounding/cache/concurrency tests, eight cloud-consent
+and routing cases, and 19 evaluation orchestration cases. All inference in those
+unit/integration tests uses mocked transport; these counts are not model accuracy.
+The OpenAPI snapshot, Docker Compose configuration, helper-script Ruff checks,
+and local document links also validate.
+
+Actual authenticated text/image probes, streaming, minimal requests, and the
+exact NVIDIA example via HTTPX and the official client all timed out. The owner
+demonstrated a successful Playground response, which does not establish this
+application's API access. [Raw safe check metadata](validation/nvidia-live-checks.json)
+preserves the actual failures without keys or invented model responses.
+
+The real [NVIDIA evaluation](nvidia-evaluation.md) attempted two controlled images
+with a ten-second timeout and opened its failure circuit. **0/20 cases completed**,
+18 were not attempted, and all accuracy/calibration/successful-response latency
+metrics remain unknown. The original local OCR20/20 result stays separate.
+
+The [actual browser test](nvidia-browser-qa.md) sent one controlled screenshot with
+explicit in-app consent and observed HTTP502, a visible timeout, zero progression,
+and NVIDIA still selected. Explicitly selecting mock afterward produced real
+local OCR PASS. Eight continuation assertion groups passed with zero JavaScript
+errors and desktop/tablet layout checks. The failed first harness phase and its
+unknown timing are disclosed; no second live image request was manufactured for
+the continuation. No successful live NVIDIA or new submission-video claim is made.
+
 ## ReplayLab 3.0 upgrade — 28 October 2026
 
 `npm.cmd run check` completed with **332 backend tests passed**, **38 frontend

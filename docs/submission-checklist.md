@@ -1,5 +1,13 @@
 # Submission readiness
 
+As of 2 November 2026, the NVIDIA-hosted Meta adapter and UI are implemented, but
+actual application text/image requests time out. The owner showed a successful
+Playground reply; the application's API remains unverified. Its real evaluation
+scored zero completed cases after two timeouts, without borrowing offline scores.
+See [NVIDIA integration](nvidia-integration.md) and
+[browser validation](nvidia-browser-qa.md). A successful live-model submission
+demonstration remains blocked; the original video is still an offline recording.
+
 ReplayLab 3.0 is a functioning offline research preview. It is **not certified
 hackathon-ready**: successful live Meta inference and submission eligibility
 remain unverified, and the owner requires this repository to stay private.

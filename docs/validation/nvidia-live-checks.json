@@ -1,0 +1,87 @@
+{
+  "checked_date": "2026-11-02",
+  "host": "https://integrate.api.nvidia.com/v1",
+  "configured_model": "meta/muse-glimmer-30b",
+  "credential_storage": "ignored apps/api/.env; hidden-input setup; no credential in this report",
+  "live_application_inference_verified": false,
+  "owner_observation": "Owner supplied a screenshot of a successful NVIDIA Playground reply. This is distinct from the application API requests below.",
+  "checks": [
+    {
+      "check": "public model catalog",
+      "http_status": 200,
+      "latency_ms": 441,
+      "requested_model_present": true
+    },
+    {
+      "check": "unauthenticated POST",
+      "http_status": 401,
+      "latency_ms": 519
+    },
+    {
+      "check": "authenticated JSON text probe",
+      "outcome": "ReadTimeout",
+      "latency_ms": 90092.19,
+      "timeout_seconds": 90
+    },
+    {
+      "check": "authenticated image probe",
+      "outcome": "ReadTimeout",
+      "latency_ms": 90060.66,
+      "timeout_seconds": 90
+    },
+    {
+      "check": "authenticated streaming text",
+      "outcome": "ReadTimeout",
+      "latency_ms": 45309,
+      "timeout_seconds": 45
+    },
+    {
+      "check": "authenticated minimal-parameter text",
+      "outcome": "ReadTimeout",
+      "latency_ms": 20409,
+      "timeout_seconds": 20
+    },
+    {
+      "check": "exact generated example via HTTPX",
+      "outcome": "ReadTimeout",
+      "latency_ms": 30395,
+      "timeout_seconds": 30
+    },
+    {
+      "check": "exact generated example via OpenAI Python client3.42.1",
+      "outcome": "APITimeoutError",
+      "latency_ms": 30527,
+      "timeout_seconds": 30
+    },
+    {
+      "check": "separate routing diagnostic only",
+      "requested_model": "meta/llama-3.2-11b-vision-instruct",
+      "http_status": 404,
+      "latency_ms": 418,
+      "product_model_changed": false
+    },
+    {
+      "check": "bounded 20-case NVIDIA evaluation",
+      "completed_cases": 0,
+      "attempted_cases": 2,
+      "unattempted_cases": 18,
+      "reason": "two consecutive timeout failures opened the circuit",
+      "accuracy": null
+    },
+    {
+      "check": "actual browser NVIDIA screenshot submission",
+      "http_status": 502,
+      "visible_error": true,
+      "completed_steps": 0,
+      "provider_stayed_nvidia": true,
+      "latency_ms": null
+    }
+  ],
+  "limits": [
+    "A catalog response does not verify inference entitlement or successful generation.",
+    "Timeouts returned no HTTP response or request ID, so asynchronous polling could not be performed.",
+    "No successful NVIDIA model output or model accuracy is claimed.",
+    "The root cause of the API timeouts has not been established; account access is a diagnostic possibility, not a confirmed cause.",
+    "Only repo-owned synthetic CodeLab screenshots were sent during these tests."
+  ]
+}

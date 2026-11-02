@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import type { Project, Provider } from "../types";
 import { api } from "../services/api";
+import { providerName, usesCloud } from "../services/providers";
 import { Badge, ErrorBanner, formatTime, Spinner } from "../components/ui";
 import { TutorialSource } from "../components/TutorialSource";
 
@@ -35,6 +36,7 @@ export function Studio({
   const [localError, setLocalError] = useState("");
   const [usageRights, setUsageRights] = useState(false);
   const digital = project.modality === "digital";
+  const unsupportedPhysical = !digital && provider?.mode === "nvidia";
   const [selectedFrame, setSelectedFrame] = useState(
     project.frames[0]?.id ?? "",
   );
@@ -281,7 +283,7 @@ export function Studio({
             <Badge variant={provider?.mode === "mock" ? "mock" : "cyan"}>
               {provider?.mode === "mock"
                 ? "MOCK EXTRACTION"
-                : "META EXTRACTION"}
+                : `${providerName(provider).toUpperCase()} EXTRACTION`}
             </Badge>
           </div>
           <h3>Understand the task</h3>
@@ -290,9 +292,12 @@ export function Studio({
               ? digital
                 ? "Create an editable workflow using the labeled CodeLab template or supplied transcript. Offline extraction is not Muse Spark inference; review every visible UI rule."
                 : "Generate the labeled four-step sample structure. Your video supplies real frames; offline steps are fixed demonstration instructions."
-              : "Send the demonstration to the configured Meta reasoner to propose structured steps and observable rules."}
+              : provider?.mode === "nvidia"
+                ? "Send locally sampled tutorial frames and the supplied transcript to the configured NVIDIA-hosted Meta model. Review its proposed steps and visible rules before approval."
+                : "Send the demonstration to the configured Meta reasoner to propose structured steps and observable rules."}
           </p>
-          {provider?.mode === "meta" && !consent && (
+          {unsupportedPhysical && <p className="consent-required">NVIDIA mode supports digital workflows. Select Offline / mock for the labeled block demonstration or Meta Model API for SAM physical analysis. ReplayLab will not substitute providers automatically.</p>}
+          {usesCloud(provider) && !consent && (
             <div className="info-note">
               <Cloud size={16} />
               <span>
@@ -307,7 +312,7 @@ export function Studio({
               (!project.video && !(digital && project.tutorial)) ||
               busy ||
               project.status === "processing" ||
-              (provider?.mode === "meta" && !consent)
+              (usesCloud(provider) && !consent) || unsupportedPhysical
             }
             onClick={() => void extract()}
           >

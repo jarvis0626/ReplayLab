@@ -23,6 +23,7 @@ import type {
   WorkflowVerification,
 } from "../types";
 import { api } from "../services/api";
+import { usesCloud } from "../services/providers";
 import { EvidenceInspector, VerificationHistory } from "../components/EvidenceInspector";
 import {
   Badge,
@@ -320,11 +321,12 @@ export function Practice({
                   <Badge variant={provider?.mode === "mock" ? "mock" : "cyan"}>
                     {provider?.mode === "mock"
                       ? "MOCK OBSERVATIONS"
-                      : "META OBSERVATIONS"}
+                      : provider?.mode === "nvidia" ? "SEGMENTATION UNAVAILABLE" : "META OBSERVATIONS"}
                   </Badge>
                 </div>
                 <h2>{step.title}</h2>
                 <p>{step.description}</p>
+                {provider?.mode === "nvidia" && <p className="consent-required">NVIDIA screenshot understanding does not replace SAM segmentation. Select Offline / mock for the labeled block fixtures or Meta Model API for physical observations. No provider is switched automatically.</p>}
                 <div className="expected-rules">
                   {step.rules.map((rule) => (
                     <span key={rule.id}>
@@ -558,7 +560,7 @@ export function Practice({
                   </div>
                   <button
                     className="button primary"
-                    disabled={busy || (provider?.mode === "meta" && !consent)}
+                    disabled={busy || provider?.mode === "nvidia" || (usesCloud(provider) && !consent)}
                     onClick={() => void verify()}
                   >
                     {busy ? (

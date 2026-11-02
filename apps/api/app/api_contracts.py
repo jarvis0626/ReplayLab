@@ -33,7 +33,7 @@ class Approval(RequestModel):
 
 
 class ProviderChoice(RequestModel):
-    mode: Literal["mock", "meta"]
+    mode: Literal["mock", "meta", "nvidia"]
 
 
 class VideoInfo(BaseModel):

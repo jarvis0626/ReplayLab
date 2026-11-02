@@ -1306,6 +1306,58 @@
           }
         }
       }
+    },
+    "/api/evaluation/nvidia": {
+      "get": {
+        "summary": "Nvidia Evaluation Report",
+        "operationId": "nvidia_evaluation_report_api_evaluation_nvidia_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/evaluation/nvidia/run": {
+      "post": {
+        "summary": "Nvidia Evaluation Run",
+        "operationId": "nvidia_evaluation_run_api_evaluation_nvidia_run_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NvidiaEvaluationConsent"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -1690,6 +1742,18 @@
         "type": "object",
         "title": "HTTPValidationError"
       },
+      "NvidiaEvaluationConsent": {
+        "properties": {
+          "cloud_consent": {
+            "type": "boolean",
+            "title": "Cloud Consent",
+            "default": false
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "title": "NvidiaEvaluationConsent"
+      },
       "Observation": {
         "properties": {
           "label": {
@@ -1955,7 +2019,8 @@
             "type": "string",
             "enum": [
               "mock",
-              "meta"
+              "meta",
+              "nvidia"
             ],
             "title": "Mode"
           }

@@ -20,6 +20,7 @@ import {
 } from "lucide-react";
 import type { Health, Modality, Project } from "./types";
 import { api } from "./services/api";
+import { providerModels, providerName, usesCloud } from "./services/providers";
 import { Badge, ErrorBanner, Spinner } from "./components/ui";
 import { Dashboard } from "./pages/Dashboard";
 import { Studio } from "./pages/Studio";
@@ -221,17 +222,17 @@ export function App() {
                 ? provider.mode === "mock"
                   ? "Offline engine"
                   : provider.available
-                    ? "Meta provider"
+                    ? `${providerName(provider)} provider`
                     : provider.configured
-                      ? "Meta access unverified"
-                      : "Meta credentials missing"
+                      ? `${providerName(provider)} access unverified`
+                      : `${providerName(provider)} credentials missing`
                 : "Connecting"}
             </span>
             <Badge variant={provider?.mode === "mock" ? "mock" : "neutral"}>
               {provider?.mode === "mock"
                 ? "MOCK MODE"
-                : provider?.mode === "meta"
-                  ? "META MODE"
+                : provider && usesCloud(provider)
+                  ? `${providerName(provider).toUpperCase()} MODE`
                   : "API"}
             </Badge>
             <button
@@ -471,10 +472,10 @@ export function App() {
             <h2 id="settings-title">Transparent by design.</h2>
             <p className="muted">
               Choose the source of observations. Verification rules stay
-              deterministic in either mode.
+              deterministic in every mode. Credentials stay on the server.
             </p>
             <div className="provider-options">
-              {(["mock", "meta"] as const).map((mode) => (
+              {(["mock", "nvidia", "meta"] as const).map((mode) => (
                 <button
                   className={`provider-option ${provider?.mode === mode ? "selected" : ""}`}
                   disabled={busy}
@@ -494,17 +495,20 @@ export function App() {
                   <span className="radio-indicator" />
                   <div>
                     <strong>
-                      {mode === "mock" ? "Offline / mock" : "Meta Model API"}
+                      {mode === "mock" ? "Offline / mock" : mode === "nvidia" ? "NVIDIA-hosted Meta model" : "Meta Model API"}
                     </strong>
                     <small>
                       {mode === "mock"
-                        ? "Known observations for labeled fixtures. Other images return UNCERTAIN."
-                        : "Muse Spark + SAM. Requires server credentials and verified provider access."}
+                        ? "Local OCR for digital screens; labeled physical fixtures. No cloud inference."
+                        : mode === "nvidia"
+                          ? "Digital screenshot and tutorial-frame understanding. Requires server credentials; no SAM segmentation."
+                          : "Muse Spark + SAM. Requires server credentials and verified provider access."}
                     </small>
                   </div>
                 </button>
               ))}
             </div>
+            {usesCloud(provider) && <p className="muted small">Model: {providerModels(provider)} · Host: {provider?.host ?? (provider?.mode === "nvidia" ? "integrate.api.nvidia.com" : "api.meta.ai")} · {provider?.live_verified ? "Live requests validated" : "Live access not yet validated"}. A configured key alone does not establish model availability.</p>}
             <div className="info-note">
               <BookOpen size={17} />
               <span>
@@ -519,11 +523,9 @@ export function App() {
                 onChange={(e) => setConsent(e.target.checked)}
               />
               <span>
-                I consent to sending this session’s uploaded videos and
-                checkpoint images to Meta for cloud processing. Local media and
-                inference caches remain until project deletion. ReplayLab
-                requests cloud file deletion after processing, with a one-hour
-                cloud expiry fallback.
+                {provider?.mode === "nvidia"
+                  ? "I consent to sending this session’s sampled tutorial frames and supplied transcript to NVIDIA for cloud processing. Provider processing and retention terms apply; no cloud deletion or expiry guarantee is made. NVIDIA mode does not provide physical segmentation. Screen analysis requires its own project consent."
+                  : "I consent to sending this session’s uploaded videos and checkpoint images to Meta for cloud processing. Local media and inference caches remain until project deletion. ReplayLab requests cloud file deletion after processing, with a one-hour cloud expiry fallback."}
               </span>
             </label>
             <button

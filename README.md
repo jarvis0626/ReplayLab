@@ -1,5 +1,17 @@
 # ReplayLab 3.0
 
+**2 November NVIDIA update:** the app now supports explicit NVIDIA-hosted Meta
+Muse Glimmer inference for screenshot observations, sampled-frame workflow
+proposals, and grounded explanations. Credentials stay server-side, with separate
+cloud consent and no silent mock fallback. **Live application API validation is
+still blocked:** text/image requests timed out, including the exact generated
+example through the official client. The owner demonstrated a successful
+Playground reply, which is a separate interface. The real NVIDIA evaluation has
+**0 completed cases**, two timeouts, and unknown accuracy. See
+[integration/setup and actual results](docs/nvidia-integration.md),
+[browser checks](docs/nvidia-browser-qa.md), and
+[NVIDIA evaluation](docs/nvidia-evaluation.md). The original demo below is offline.
+
 **Watch. Learn. Do.** Learn visual workflows with evidence, one reviewed checkpoint at a time.
 
 ReplayLab supports both physical camera tasks and digital screen workflows.
@@ -120,7 +132,9 @@ The verifier checks visible 2D geometry, not invisible joints or attachment.
 
 ## Privacy and providers
 
-The default `AI_PROVIDER=mock` needs no API key. Digital mock proposals and actual
+The default `AI_PROVIDER=mock` needs no API key. `AI_PROVIDER=nvidia` uses the
+server-only `NVIDIA_API_KEY`; run `scripts/configure-nvidia.py` with the project
+Python environment for hidden-input setup. Digital mock proposals and actual
 local OCR are labeled separately. Physical SAM and digital Muse screenshot
 observation use distinct adapters. No successful live Meta calls are claimed.
 
@@ -173,6 +187,7 @@ authentication; see [deployment](docs/deployment.md).
 - [Digital workflows](docs/digital-workflows.md) and [tutorial sources](docs/tutorial-sources.md)
 - [3.0 implementation status](docs/IMPLEMENTATION_STATUS.md), [upgrade brief](docs/replaylab-3-brief.md), and [digital evaluation](docs/digital-evaluation.md)
 - [Submission checklist and remaining external requirements](docs/submission-checklist.md)
+- [NVIDIA brief](docs/nvidia-upgrade-brief.md), [integration](docs/nvidia-integration.md), and [NVIDIA evaluation](docs/nvidia-evaluation.md)
 - [Model usage](docs/model-usage.md), [API contracts](packages/contracts/README.md), and [test results](docs/test-results.md)
 - [Original brief](docs/project-brief.md), [official-source provenance](docs/official-sources.md), [license](LICENSE), and [attribution](docs/attribution.md)
 

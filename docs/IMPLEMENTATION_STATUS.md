@@ -1,5 +1,33 @@
 # ReplayLab 3.0 implementation status
 
+## NVIDIA update — 2 November 2026
+
+The owner authorized real NVIDIA-hosted Meta calls. The local server credential
+is configured through hidden input in ignored `.env`; direct Meta Model API calls
+remain unverified. `mock`, `meta`, and `nvidia` are explicit provider modes.
+
+| NVIDIA requirement | Actual status |
+| --- | --- |
+| Text/image adapter, strict observations, sampled tutorial frames, grounded explanations | Implemented; 37 adapter contract tests passed |
+| Consent, no automatic fallback, provider switching, physical-mode boundary | Implemented; 8 route integration tests passed |
+| UI provider/model/host, consent, separate evaluation suite | Implemented; 42 frontend tests and production build passed |
+| Actual text/image API calls | Executed but unsuccessful: repeated timeouts, including the generated example via official client |
+| Owner's NVIDIA Playground | Successful reply shown by the owner; does not verify the app's key-based API |
+| Real-model evaluation | Two attempted screenshots timed out; 0 completed, 18 unattempted; accuracy/calibration/latency of successful responses unknown |
+| Real browser check | Consent required; actual HTTP 502 timeout visible; no progress/fallback; explicit mock selection later produced local OCR PASS |
+| New three-minute successful NVIDIA demo | Blocked by successful API inference; existing offline recording preserved with its original disclosures |
+| Private milestone publishing | Owner preference preserved; no visibility or eligibility claim |
+
+The final integrated suite passed **396 backend tests, 42 frontend tests**, Ruff,
+and the production build, including the metadata-concurrency fix and all NVIDIA
+routes. Browser continuation checks passed
+eight assertion groups with zero JavaScript errors and desktop/tablet layouts.
+The complete current rerun and remote milestone results are recorded in
+[test results](test-results.md). Details and safe diagnostics are in
+[NVIDIA integration](nvidia-integration.md).
+
+## Preserved 3.0 audit and offline delivery
+
 Audit date: 28 October 2026. The 3.0 brief is preserved in
 [replaylab-3-brief.md](replaylab-3-brief.md). Owner instructions retain the private
 repository and offline completion; live Meta validation remains pending.

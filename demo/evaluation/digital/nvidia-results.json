@@ -1,0 +1,215 @@
+{
+  "dataset": "ReplayLab CodeLab controlled browser challenge v1 \u2014 NVIDIA",
+  "provider_mode": "nvidia",
+  "evaluation_kind": "nvidia_controlled_browser_pixels",
+  "model": "meta/muse-glimmer-30b",
+  "host": "https://integrate.api.nvidia.com/v1",
+  "live_api_verified": false,
+  "measured_at": "2026-11-02T13:18:00.817580+00:00",
+  "target_size": 20,
+  "attempted_cases": 2,
+  "fresh_observation_count": 0,
+  "cached_observation_count": 0,
+  "failure_circuit_open": true,
+  "stop_reason": "unavailable_circuit_open",
+  "sample_size": 0,
+  "correct": 0,
+  "accuracy": null,
+  "decisive_accuracy": null,
+  "decisive_predictions": 0,
+  "false_certainty_rate": null,
+  "false_certainty_count": 0,
+  "uncertain_ground_truth_count": 0,
+  "uncertainty_recall": null,
+  "decisive_misclassifications": 0,
+  "latency_ms": {
+    "sample_size": 0,
+    "median": null,
+    "p95": null,
+    "min": null,
+    "max": null
+  },
+  "confusion_matrix": {
+    "pass": {
+      "pass": 0,
+      "fail": 0,
+      "uncertain": 0
+    },
+    "fail": {
+      "pass": 0,
+      "fail": 0,
+      "uncertain": 0
+    },
+    "uncertain": {
+      "pass": 0,
+      "fail": 0,
+      "uncertain": 0
+    }
+  },
+  "confusion_matrix_axes": {
+    "rows": "expected",
+    "columns": "predicted"
+  },
+  "metric_definitions": {
+    "accuracy": "Correct three-class verdicts / all completed cases.",
+    "decisive_accuracy": "Correct PASS or FAIL predictions / all PASS or FAIL predictions, including predictions on UNCERTAIN ground truth.",
+    "false_certainty_rate": "PASS or FAIL predictions on UNCERTAIN ground truth / all UNCERTAIN ground-truth cases.",
+    "uncertainty_recall": "UNCERTAIN predictions on UNCERTAIN ground truth / all UNCERTAIN ground-truth cases.",
+    "decisive_misclassifications": "PASS ground truth predicted FAIL plus FAIL ground truth predicted PASS; excludes abstentions and uncertain ground truth.",
+    "p95": "Nearest-rank 95th percentile of completed-case processing latency."
+  },
+  "uncached_latency_ms": {
+    "sample_size": 0,
+    "median": null,
+    "p95": null,
+    "min": null,
+    "max": null
+  },
+  "details": [],
+  "skipped": [
+    {
+      "id": "correct-market",
+      "attempted": true,
+      "code": "timeout",
+      "reason": "NVIDIA timed out. Retry this checkpoint later.",
+      "processing_latency_ms": 13049.26
+    },
+    {
+      "id": "correct-search",
+      "attempted": true,
+      "code": "timeout",
+      "reason": "NVIDIA timed out. Retry this checkpoint later.",
+      "processing_latency_ms": 12217.54
+    },
+    {
+      "id": "correct-details",
+      "attempted": false,
+      "code": "unavailable_circuit_open",
+      "reason": "Not attempted after two consecutive unavailable NVIDIA requests."
+    },
+    {
+      "id": "correct-installed",
+      "attempted": false,
+      "code": "unavailable_circuit_open",
+      "reason": "Not attempted after two consecutive unavailable NVIDIA requests."
+    },
+    {
+      "id": "correct-tablet",
+      "attempted": false,
+      "code": "unavailable_circuit_open",
+      "reason": "Not attempted after two consecutive unavailable NVIDIA requests."
+    },
+    {
+      "id": "wrong-settings-market",
+      "attempted": false,
+      "code": "unavailable_circuit_open",
+      "reason": "Not attempted after two consecutive unavailable NVIDIA requests."
+    },
+    {
+      "id": "wrong-settings-search",
+      "attempted": false,
+      "code": "unavailable_circuit_open",
+      "reason": "Not attempted after two consecutive unavailable NVIDIA requests."
+    },
+    {
+      "id": "wrong-dialog-market",
+      "attempted": false,
+      "code": "unavailable_circuit_open",
+      "reason": "Not attempted after two consecutive unavailable NVIDIA requests."
+    },
+    {
+      "id": "wrong-not-installed",
+      "attempted": false,
+      "code": "unavailable_circuit_open",
+      "reason": "Not attempted after two consecutive unavailable NVIDIA requests."
+    },
+    {
+      "id": "wrong-dialog-details",
+      "attempted": false,
+      "code": "unavailable_circuit_open",
+      "reason": "Not attempted after two consecutive unavailable NVIDIA requests."
+    },
+    {
+      "id": "ambiguous-welcome",
+      "attempted": false,
+      "code": "unavailable_circuit_open",
+      "reason": "Not attempted after two consecutive unavailable NVIDIA requests."
+    },
+    {
+      "id": "ambiguous-empty-search",
+      "attempted": false,
+      "code": "unavailable_circuit_open",
+      "reason": "Not attempted after two consecutive unavailable NVIDIA requests."
+    },
+    {
+      "id": "ambiguous-obscured",
+      "attempted": false,
+      "code": "unavailable_circuit_open",
+      "reason": "Not attempted after two consecutive unavailable NVIDIA requests."
+    },
+    {
+      "id": "ambiguous-cropped",
+      "attempted": false,
+      "code": "unavailable_circuit_open",
+      "reason": "Not attempted after two consecutive unavailable NVIDIA requests."
+    },
+    {
+      "id": "ambiguous-blurred",
+      "attempted": false,
+      "code": "unavailable_circuit_open",
+      "reason": "Not attempted after two consecutive unavailable NVIDIA requests."
+    },
+    {
+      "id": "version-market",
+      "attempted": false,
+      "code": "unavailable_circuit_open",
+      "reason": "Not attempted after two consecutive unavailable NVIDIA requests."
+    },
+    {
+      "id": "version-search",
+      "attempted": false,
+      "code": "unavailable_circuit_open",
+      "reason": "Not attempted after two consecutive unavailable NVIDIA requests."
+    },
+    {
+      "id": "version-details",
+      "attempted": false,
+      "code": "unavailable_circuit_open",
+      "reason": "Not attempted after two consecutive unavailable NVIDIA requests."
+    },
+    {
+      "id": "version-installed",
+      "attempted": false,
+      "code": "unavailable_circuit_open",
+      "reason": "Not attempted after two consecutive unavailable NVIDIA requests."
+    },
+    {
+      "id": "version-settings",
+      "attempted": false,
+      "code": "unavailable_circuit_open",
+      "reason": "Not attempted after two consecutive unavailable NVIDIA requests."
+    }
+  ],
+  "limitations": [
+    "This is a small controlled CodeLab screenshot challenge, not a representative real-world model benchmark.",
+    "Labels were authored by the implementing coding agent before inference and have not been independently reviewed by human annotators.",
+    "The same frozen screenshots and reviewed mock workflow are reused from the local OCR challenge. The target is simulated software, not a real extension installation.",
+    "NVIDIA-hosted model observations are combined with actual local OCR and deterministic constraints. This is pipeline agreement, not standalone visual-language-model accuracy or tutorial-extraction accuracy.",
+    "The observer/verifier never receives the ground-truth classification. Any disagreement or unavailable inference is retained rather than replaced with a requested verdict.",
+    "Latency covers local screenshot preparation, local OCR, cloud observation or validated cache lookup, and deterministic verification. It excludes browser capture, user think time, API upload to ReplayLab, and explanation generation.",
+    "Cached and fresh cloud observations are identified separately. Overall latency can include cache hits; uncached latency is also reported with its actual sample size.",
+    "There is no evidence here of broad application support, calibrated confidence, independent annotation, or physical SAM inference."
+  ],
+  "manifest_sha256": "f6f1477e7923f7d218124924723af9ec677333230ca855fcc5e696201dbb3a72",
+  "manifest_hash_method": "sha256_utf8_crlf_normalized_to_lf",
+  "capture_metadata": {
+    "browser": "Chromium",
+    "browser_version": "148.0.7778.96",
+    "device_scale_factor": 1
+  },
+  "label_provenance": "Coding-agent-authored challenge labels fixed in label-plan.json before capture and before OCR inference; not independent human annotation.",
+  "environment": {
+    "python": "3.12.3",
+    "platform": "Windows-11-10.0.26200-SP0"
+  }
+}

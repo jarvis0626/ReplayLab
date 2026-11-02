@@ -22,7 +22,7 @@ from app.services.media import decode_image
 
 _EMAIL = re.compile(r"[\w.+-]+@[\w.-]+\.[A-Za-z]{2,}", re.ASCII)
 _KEY = re.compile(
-    r"\b(?:(?:sk|pk|ghp|gho|github_pat|xox[baprs])[-_][A-Za-z0-9_-]{8,}|AKIA[A-Z0-9]{12,}|AIza[A-Za-z0-9_-]{20,})\b"
+    r"\b(?:(?:sk|pk|ghp|gho|github_pat|nvapi|xox[baprs])[-_][A-Za-z0-9_-]{8,}|AKIA[A-Z0-9]{12,}|AIza[A-Za-z0-9_-]{20,})\b"
 )
 _ASSIGNED_SECRET = re.compile(
     r"\b(?:api[ _-]?key|access[ _-]?token|secret|password|authorization|bearer)\s*[:=]\s*[\"']?[^\s\"']{6,}",
@@ -40,9 +40,11 @@ def clear_screen_cache():
         _cache.clear()
     from app.providers.meta_screen import clear_meta_screen_cache
     from app.providers.grounded_explanation import clear_explanation_cache
+    from app.providers.nvidia import clear_nvidia_screen_cache
 
     clear_meta_screen_cache()
     clear_explanation_cache()
+    clear_nvidia_screen_cache()
 
 
 def redact_text(text: str) -> str:
@@ -271,10 +273,10 @@ def redact_screenshot(image_bytes: bytes, observation: ScreenObservation) -> byt
 def observe_screen(
     image_bytes: bytes, mode: str = "mock", meta_provider=None, *, cloud_consent: bool = False
 ) -> ScreenObservation:
-    if mode not in {"mock", "meta"}:
-        raise ValueError("Screen provider mode must be mock or meta.")
-    if mode == "meta" and not cloud_consent:
-        raise ValueError("Explicit cloud consent is required before sending screen content to Meta.")
+    if mode not in {"mock", "meta", "nvidia"}:
+        raise ValueError("Screen provider mode must be mock, meta, or nvidia.")
+    if mode in {"meta", "nvidia"} and not cloud_consent:
+        raise ValueError("Explicit cloud consent is required before sending screen content to the provider.")
     local = _local_observation(image_bytes)
     if mode == "mock":
         return local

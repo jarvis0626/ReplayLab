@@ -263,6 +263,26 @@ describe("workspace navigation and project lifecycle", () => {
       fetcher.mock.calls.filter(([path]) => String(path).includes("extract")),
     ).toHaveLength(0);
   });
+  it("shows NVIDIA host/model without claiming live availability or sending media", async () => {
+    const fetcher = mockApi({
+      "POST /api/provider": {
+        provider: { ...provider, mode: "nvidia", configured: true, available: false,
+          live_verified: false, model: "meta/configured-test-model", host: "integrate.api.nvidia.com",
+          message: "NVIDIA credential configured; live access unverified." },
+      },
+    });
+    const user = userEvent.setup();
+    render(<App />);
+    await screen.findByText("MOCK MODE");
+    await user.click(screen.getByRole("button", { name: "Open provider settings" }));
+    await user.click(screen.getByRole("button", { name: /NVIDIA-hosted Meta model/ }));
+    expect(await screen.findByText("NVIDIA MODE")).toBeInTheDocument();
+    expect(screen.getByText("NVIDIA access unverified")).toBeInTheDocument();
+    expect(screen.getByText(/meta\/configured-test-model.*integrate.api.nvidia.com/)).toBeInTheDocument();
+    expect(screen.getByText(/no cloud deletion or expiry guarantee/)).toBeInTheDocument();
+    expect(screen.queryByText(/Live requests validated/)).not.toBeInTheDocument();
+    expect(fetcher.mock.calls.filter(([path]) => /extract|screen-check/.test(String(path)))).toHaveLength(0);
+  });
 });
 
 describe("video studio", () => {

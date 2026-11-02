@@ -282,10 +282,10 @@ describe("digital screen privacy and lifecycle", () => {
     expect(device.track.stop).toHaveBeenCalledOnce();
     expect(api.screenCheck).not.toHaveBeenCalled();
   });
-  it("requires separate per-project Meta screen consent before sharing or upload", async () => {
+  it.each(["meta", "nvidia"] as const)("requires separate per-project %s screen consent before sharing or upload", async (mode) => {
     captureDevice();
     const user = userEvent.setup();
-    mount({ provider: { ...provider, mode: "meta", configured: false } });
+    mount({ provider: { ...provider, mode, configured: false } });
     expect(
       screen.getByRole("button", { name: "Choose screen or window" }),
     ).toBeDisabled();
@@ -296,6 +296,20 @@ describe("digital screen privacy and lifecycle", () => {
     expect(
       screen.getByRole("button", { name: "Choose screen or window" }),
     ).toBeEnabled();
+  });
+  it("does not carry Meta screen consent into NVIDIA after a provider switch", async () => {
+    captureDevice();
+    const user = userEvent.setup();
+    const props = { project, onUpdate: vi.fn(), onError: vi.fn(), onReview: vi.fn() };
+    const view = render(<LiveScreenAssistant {...props} provider={{ ...provider, mode: "meta" }} />);
+    await user.click(screen.getByRole("checkbox", { name: /I consent to sending this project/ }));
+    expect(screen.getByRole("button", { name: "Upload screenshot" })).toBeEnabled();
+    view.rerender(<LiveScreenAssistant {...props} provider={{ ...provider, mode: "nvidia" }} />);
+    expect(screen.getByRole("button", { name: "Upload screenshot" })).toBeDisabled();
+    expect(screen.getByRole("button", { name: "Choose screen or window" })).toBeDisabled();
+    expect(screen.getByRole("checkbox", { name: /I consent to sending this project/ })).not.toBeChecked();
+    expect(screen.queryByText(/with store:false requested/)).not.toBeInTheDocument();
+    expect(api.screenCheck).not.toHaveBeenCalled();
   });
   it("pauses capture and voice, and manual next cannot complete prerequisites", async () => {
     captureDevice();

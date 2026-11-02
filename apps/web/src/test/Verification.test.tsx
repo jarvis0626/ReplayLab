@@ -61,6 +61,29 @@ describe("inspectable shared verification evidence", () => {
 });
 
 describe("digital evaluation calibration", () => {
+  it("keeps NVIDIA evaluation unknown and requires separate consent before spending API credits", async () => {
+    vi.spyOn(api, "digitalEvaluation").mockResolvedValue(report);
+    const load = vi.spyOn(api, "nvidiaEvaluation").mockResolvedValue({
+      ...report, provider_mode: "nvidia", sample_size: 0, correct: 0, accuracy: null,
+      details: [], decisive_accuracy: null, false_certainty_rate: null, uncertainty_recall: null,
+      model: "meta/configured-test-model", host: "integrate.api.nvidia.com",
+      skipped: [{ id: "case-auth", reason: "NVIDIA authentication failed; no prediction." }],
+    });
+    const run = vi.spyOn(api, "runNvidiaEvaluation").mockResolvedValue({ ...report, provider_mode: "nvidia" });
+    const user = userEvent.setup();
+    render(<EvaluationPage project={{ id: "workflow-1", modality: "digital" } as Project} onError={vi.fn()} />);
+    await screen.findByText("2 cases");
+    await user.click(screen.getByRole("button", { name: "NVIDIA model evaluation" }));
+    expect(await screen.findByText("0 cases")).toBeInTheDocument();
+    expect(load).toHaveBeenCalledOnce();
+    expect(screen.getByText(/No completed live model cases/)).toBeInTheDocument();
+    expect(screen.getByText(/NVIDIA authentication failed; no prediction/)).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Run evaluation" })).toBeDisabled();
+    expect(run).not.toHaveBeenCalled();
+    await user.click(screen.getByRole("checkbox", { name: /I consent to sending up to 20/ }));
+    await user.click(screen.getByRole("button", { name: "Run evaluation" }));
+    await waitFor(() => expect(run).toHaveBeenCalledWith(true));
+  });
   it("shows actual incomplete count, false certainty, latency and visible failures without inventing results", async () => {
     vi.spyOn(api, "digitalEvaluation").mockResolvedValue(report);
     const run = vi.spyOn(api, "runDigitalEvaluation").mockResolvedValue(report);

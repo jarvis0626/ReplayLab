@@ -8,6 +8,7 @@
 - Do not force-push, rewrite shared history, or delete remote branches without explicit authorization.
 - Do not create background commit/push automation. Review and validate each milestone before pushing.
 - On 26 October 2026 the owner chose "Finish offline; leave live validation pending." Complete the offline application and retain the implemented Meta adapters without claiming successful live calls or asking again for a key during this task.
+- On 2 November 2026 the owner authorized live NVIDIA-hosted Meta inference and supplied a credential for local server configuration. This supersedes offline-only work for NVIDIA validation; direct Meta Model API validation remains pending. Never echo the credential. Use the hidden-input setup script for replacements and explicit in-app consent for uploaded cloud media.
 
 ## Build timing and scope
 

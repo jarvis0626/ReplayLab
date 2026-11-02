@@ -1,0 +1,12 @@
+{
+  "actual_nvidia_screen_requests": 1,
+  "actual_nvidia_status": 502,
+  "actual_nvidia_latency_ms": null,
+  "completed_step_count": 0,
+  "provider_after_failure": "nvidia",
+  "live_verified": false,
+  "actual_nvidia_success": false,
+  "no_mock_result_returned": true,
+  "evidence_source": "Assertions completed in the first real browser run before an escaped-slash harness selector failed during the later offline provider selection.",
+  "latency_note": "The first browser process did not preserve the timing before its selector failure. No timing is invented and the cloud request is not repeated."
+}

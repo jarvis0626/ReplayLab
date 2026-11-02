@@ -66,7 +66,8 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     demo_directory = data_directory / "demo"
     media_directory.mkdir(parents=True, exist_ok=True)
     store = Store(data_directory / "replaylab.sqlite3")
-    mode = {"value": settings.ai_provider if settings.ai_provider in {"mock", "meta"} else "mock"}
+    mode = {"value": settings.ai_provider if settings.ai_provider in {"mock", "meta", "nvidia"} else "mock"}
+    nvidia_instance = {"identity": None, "provider": None}
     job_locks: dict[str, threading.RLock] = {}
 
     @asynccontextmanager
@@ -106,7 +107,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         sessions = getattr(api.state, "screen_sessions", None)
         if request.method == "POST" and screen_request and sessions is not None:
             with sessions.lock:
-                request.state.screen_generation = sessions.generations.get(screen_request.group(1), 0)
+                request.state.screen_generation = sessions.generations.setdefault(screen_request.group(1), 0)
         length = request.headers.get("content-length")
         limit = (
             settings.max_video_bytes + 2 * 1024 * 1024
@@ -160,6 +161,19 @@ def create_app(settings: Settings | None = None) -> FastAPI:
 
     def provider_status() -> dict:
         selected = mode["value"]
+        if selected == "nvidia":
+            live = nvidia_instance["provider"]
+            verified = bool(live and getattr(live, "live_verified", False))
+            configured = bool(settings.nvidia_api_key)
+            return {
+                "mode": "nvidia", "configured": configured, "available": verified,
+                "live_verified": verified, "models": [settings.nvidia_model],
+                "model": settings.nvidia_model, "host": settings.nvidia_base_url,
+                "message": "NVIDIA-hosted Meta inference verified by an actual successful request."
+                if verified else "NVIDIA credential configured; live requests have not been verified in this server session."
+                if configured else "Configure NVIDIA_API_KEY on the server to use NVIDIA inference.",
+                "physical_supported": False,
+            }
         configured = bool(settings.model_api_key) if selected == "meta" else True
         return {
             "mode": selected,
@@ -179,6 +193,24 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     def provider_for(selected: str):
         if selected == "mock":
             return MockProvider(demo_directory)
+        if selected == "nvidia":
+            if not settings.nvidia_api_key:
+                raise HTTPException(503, "NVIDIA credentials are missing. Configure NVIDIA_API_KEY on the server.")
+            from app.providers.nvidia import NvidiaProvider
+
+            identity = hashlib.sha256(json.dumps([
+                settings.nvidia_api_key, settings.nvidia_base_url, settings.nvidia_model,
+                settings.nvidia_timeout_seconds, settings.nvidia_max_tokens, settings.nvidia_reasoning_effort,
+            ]).encode()).hexdigest()
+            with store.lock:
+                if nvidia_instance["identity"] != identity:
+                    nvidia_instance.update(identity=identity, provider=NvidiaProvider(
+                        settings.nvidia_api_key, data_directory / "inference-cache",
+                        base_url=settings.nvidia_base_url, model=settings.nvidia_model,
+                        timeout_seconds=settings.nvidia_timeout_seconds,
+                        max_tokens=settings.nvidia_max_tokens, reasoning_effort=settings.nvidia_reasoning_effort,
+                    ))
+                return nvidia_instance["provider"]
         if not settings.model_api_key:
             raise HTTPException(
                 503,
@@ -191,9 +223,9 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         )
 
     def require_consent(selected: str, consent: bool):
-        if selected == "meta" and not consent:
+        if selected in {"meta", "nvidia"} and not consent:
             raise HTTPException(
-                422, "Explicit cloud-processing consent is required before sending media to Meta."
+                422, "Explicit cloud-processing consent is required before sending media to the selected provider."
             )
 
     def new_project(name: str, modality: str = "physical") -> dict:
@@ -268,9 +300,13 @@ def create_app(settings: Settings | None = None) -> FastAPI:
                 if selected == "meta" and path:
                     path = prepare_meta_video(path)
                 if project.get("modality", "physical") == "digital":
-                    from app.providers.digital_reasoner import extract_workflow
+                    if selected == "nvidia":
+                        frames = [{**frame, "path": media_directory / project_id / frame["url"].rsplit("/", 1)[-1]} for frame in project["frames"]]
+                        task = provider.extract_workflow(project, frames)
+                    else:
+                        from app.providers.digital_reasoner import extract_workflow
 
-                    task = extract_workflow(project, provider, selected, path)
+                        task = extract_workflow(project, provider, selected, path)
                 else:
                     task = Task.model_validate(provider.extract_task(path, project["frames"]))
                 validate_task_media(task, project, require_rules=task.modality == "physical")
@@ -333,6 +369,11 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         if any(project["status"] == "processing" for project in store.projects()):
             raise HTTPException(409, "Wait for processing jobs before changing the provider.")
         mode["value"] = choice.mode
+        if hasattr(api.state, "screen_sessions"):
+            sessions = api.state.screen_sessions
+            with sessions.lock:
+                for identifier in set(sessions.generations) | set(sessions.records) | set(sessions.inflight):
+                    sessions.clear(identifier)
         return {"provider": provider_status()}
 
     @api.get("/api/projects", response_model=list[Project])
@@ -472,6 +513,8 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             if not digital_source and (not project["video"] or not project["frames"]):
                 raise HTTPException(409, "Upload and process a video before extracting steps.")
             selected = mode["value"]
+            if selected == "nvidia" and project.get("modality", "physical") != "digital":
+                raise HTTPException(422, "NVIDIA Muse Glimmer does not provide SAM segmentation. Explicitly select Meta or mock mode for physical workflows.")
             require_consent(selected, consent.cloud_consent)
             provider_for(selected)
             project.update(
@@ -631,6 +674,8 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             if not set(step.dependencies).issubset(project["completed_step_ids"]):
                 raise HTTPException(409, "Complete the prerequisites before verifying this step.")
             selected = mode["value"]
+            if selected == "nvidia":
+                raise HTTPException(422, "NVIDIA Muse Glimmer is configured for digital workflows, not SAM segmentation. Select Meta or mock for physical practice.")
             require_consent(selected, consent.cloud_consent)
             provider = provider_for(selected)
             attempt.update(status="verifying", error=None, result=None, verification=None)

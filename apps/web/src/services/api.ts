@@ -10,6 +10,7 @@ import type {
   Task,
   WorkflowVerification,
   Verdict,
+  ProviderMode,
 } from "../types";
 
 export async function request<T>(
@@ -144,8 +145,10 @@ export const api = {
   evaluation: (id: string) => request<Evaluation>(`/projects/${id}/evaluation`),
   digitalEvaluation: () => request<Evaluation>("/evaluation/digital"),
   runDigitalEvaluation: () => post<Evaluation>("/evaluation/digital/run", {}),
+  nvidiaEvaluation: () => request<Evaluation>("/evaluation/nvidia"),
+  runNvidiaEvaluation: (cloud_consent: boolean) => post<Evaluation>("/evaluation/nvidia/run", { cloud_consent }),
   verifications: (id: string) => request<WorkflowVerification[]>(`/projects/${id}/verifications`),
   reportVerification: (id: string, verificationId: string, expected_verdict: Verdict, notes: string) =>
     post<{ id: string }>(`/projects/${id}/verifications/${verificationId}/feedback`, { expected_verdict, notes }),
-  provider: (mode: "mock" | "meta") => post<Health>("/provider", { mode }),
+  provider: (mode: ProviderMode) => post<Health>("/provider", { mode }),
 };

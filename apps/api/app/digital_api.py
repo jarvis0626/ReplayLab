@@ -199,13 +199,17 @@ def install_digital_routes(
             await file.close()
             raise HTTPException(404, "Workflow step not found.")
         selected = mode["value"]
-        if selected == "meta" and not cloud_consent:
+        if selected in {"meta", "nvidia"} and not cloud_consent:
             await file.close()
-            raise HTTPException(422, "Explicit screen cloud-processing consent is required for Meta.")
+            raise HTTPException(422, "Explicit screen cloud-processing consent is required for the selected provider.")
         if selected == "meta":
             from app.providers.meta_screen import MetaScreenProvider
 
             provider = MetaScreenProvider(provider_for(selected))
+        elif selected == "nvidia":
+            from app.providers.nvidia import NvidiaScreenProvider
+
+            provider = NvidiaScreenProvider(provider_for(selected))
         else:
             provider = None
         if file.content_type not in {"image/png", "image/jpeg", "image/webp"}:
@@ -238,7 +242,7 @@ def install_digital_routes(
                     "A screen check is already running. Wait before retrying.",
                     headers={"Retry-After": "2"},
                 )
-            interval = settings.screen_meta_interval if selected == "meta" else settings.screen_local_interval
+            interval = settings.screen_nvidia_interval if selected == "nvidia" else settings.screen_meta_interval if selected == "meta" else settings.screen_local_interval
             if time.monotonic() - sessions.started.get(project_id, -1e9) < interval:
                 raise HTTPException(
                     429,
@@ -261,7 +265,7 @@ def install_digital_routes(
             # The authoritative decision below is recomputed against fresh progress.
             guidance = None
             proposed_result = None
-            if selected == "meta":
+            if selected in {"meta", "nvidia"}:
                 from app.providers.grounded_explanation import explain_verification
 
                 with sessions.lock:
