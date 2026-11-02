@@ -26,6 +26,10 @@ The complete current rerun and remote milestone results are recorded in
 [test results](test-results.md). Details and safe diagnostics are in
 [NVIDIA integration](nvidia-integration.md).
 
+The NVIDIA application source passed Ubuntu [GitHub Actions](https://github.com/jarvis0626/ReplayLab/actions/runs/41454722961)
+at `810149c`. A previously intermittent stale-task test was subsequently made
+deterministic; its three-case suite passed without a production behavior change.
+
 ## Preserved 3.0 audit and offline delivery
 
 Audit date: 28 October 2026. The 3.0 brief is preserved in

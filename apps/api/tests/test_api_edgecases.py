@@ -62,36 +62,33 @@ def test_concurrent_task_edit_does_not_return_a_stale_verdict(prepared, monkeypa
     attempt = checkpoint(client, project)
     observation_started = threading.Event()
     release_observation = threading.Event()
-    edit_finished = threading.Event()
     original = MockProvider.observe
 
     def controlled_observe(self, path, prompts):
         if not observation_started.is_set():
             observation_started.set()
-            assert release_observation.wait(10), "Test did not release the provider."
+            assert release_observation.wait(30), "Test did not release the provider."
         return original(self, path, prompts)
-
-    def edit():
-        try:
-            return client.patch(
-                f"/api/projects/{project['id']}/steps/step-1", json={"title": "Changed during verification"}
-            )
-        finally:
-            edit_finished.set()
 
     monkeypatch.setattr(MockProvider, "observe", controlled_observe)
     with ThreadPoolExecutor(max_workers=2) as executor:
         verifying = executor.submit(client.post, f"/api/attempts/{attempt['id']}/verify", json={})
-        assert observation_started.wait(10)
-        editing = executor.submit(edit)
-        changed_while_verifying = edit_finished.wait(0.3)
-        release_observation.set()
+        try:
+            assert observation_started.wait(10)
+            editing = executor.submit(
+                client.patch,
+                f"/api/projects/{project['id']}/steps/step-1",
+                json={"title": "Changed during verification"},
+            )
+            # Confirm the edit actually committed before inference can finish;
+            # scheduler timing must not choose this test's expected response.
+            edit_response = editing.result(timeout=15)
+            assert edit_response.status_code == 200, edit_response.text
+        finally:
+            release_observation.set()
         verification_response = verifying.result(timeout=15)
-        edit_response = editing.result(timeout=15)
-    if changed_while_verifying and edit_response.status_code == 200:
-        assert verification_response.status_code == 409, (
-            "Verification returned a result for a task edited during inference."
-        )
-    else:
-        assert verification_response.status_code == 200, verification_response.text
-        assert edit_response.status_code in {200, 409}, edit_response.text
+    assert verification_response.status_code == 409, verification_response.text
+    saved_attempt = client.get(f"/api/attempts/{attempt['id']}").json()
+    assert saved_attempt["result"] is None and saved_attempt["verification"] is None
+    assert client.get(f"/api/projects/{project['id']}").json()["completed_step_ids"] == []
+    assert client.get(f"/api/projects/{project['id']}/verifications").json() == []

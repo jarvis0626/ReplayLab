@@ -10,6 +10,14 @@ unit/integration tests uses mocked transport; these counts are not model accurac
 The OpenAPI snapshot, Docker Compose configuration, helper-script Ruff checks,
 and local document links also validate.
 
+The application source passed [GitHub Actions on Ubuntu](https://github.com/jarvis0626/ReplayLab/actions/runs/41454722961),
+commit `810149c`. Reviewing older workflow results also uncovered a test race:
+the stale-task regression assumed that an edit would finish within300ms. The
+application correctly returned409 after an edit, while that timing branch
+occasionally expected200. The test now waits for the actual edit response before
+releasing inference, then requires409 and no stale result/evidence/progress.
+All three affected API edge-case tests and Ruff passed after this test-only fix.
+
 Actual authenticated text/image probes, streaming, minimal requests, and the
 exact NVIDIA example via HTTPX and the official client all timed out. The owner
 demonstrated a successful Playground response, which does not establish this
@@ -19,10 +27,10 @@ preserves the actual failures without keys or invented model responses.
 The real [NVIDIA evaluation](nvidia-evaluation.md) attempted two controlled images
 with a ten-second timeout and opened its failure circuit. **0/20 cases completed**,
 18 were not attempted, and all accuracy/calibration/successful-response latency
-metrics remain unknown. The original local OCR20/20 result stays separate.
+metrics remain unknown. The original local OCR 20/20 result stays separate.
 
 The [actual browser test](nvidia-browser-qa.md) sent one controlled screenshot with
-explicit in-app consent and observed HTTP502, a visible timeout, zero progression,
+explicit in-app consent and observed HTTP 502, a visible timeout, zero progression,
 and NVIDIA still selected. Explicitly selecting mock afterward produced real
 local OCR PASS. Eight continuation assertion groups passed with zero JavaScript
 errors and desktop/tablet layout checks. The failed first harness phase and its
