@@ -5,12 +5,16 @@ Muse Glimmer inference for screenshot observations, sampled-frame workflow
 proposals, and grounded explanations. Credentials stay server-side, with separate
 cloud consent and no silent mock fallback. **Live application API validation is
 still blocked:** text/image requests timed out, including the exact generated
-example through the official client. The owner demonstrated a successful
+example through the official client; a replacement-key test received HTTP 504.
+The owner demonstrated a successful
 Playground reply, which is a separate interface. The real NVIDIA evaluation has
 **0 completed cases**, two timeouts, and unknown accuracy. See
 [integration/setup and actual results](docs/nvidia-integration.md),
 [browser checks](docs/nvidia-browser-qa.md), and
-[NVIDIA evaluation](docs/nvidia-evaluation.md). The original demo below is offline.
+[NVIDIA evaluation](docs/nvidia-evaluation.md). Run
+`.venv\Scripts\python.exe scripts/diagnose-nvidia.py` for a safe text-first check;
+[support details](docs/nvidia-support-request.md) contain request IDs, without a
+credential. The original demo below is offline.
 
 **Watch. Learn. Do.** Learn visual workflows with evidence, one reviewed checkpoint at a time.
 

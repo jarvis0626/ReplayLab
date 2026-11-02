@@ -18,7 +18,7 @@ import time
 import unicodedata
 from collections import OrderedDict, deque
 from pathlib import Path
-from uuid import uuid4
+from uuid import UUID, uuid4
 
 import httpx
 from PIL import Image, ImageOps, UnidentifiedImageError
@@ -32,6 +32,7 @@ from app.services.screen_observation import redact_text
 
 NVIDIA_MODEL = "meta/muse-glimmer-30b"
 NVIDIA_BASE_URL = "https://integrate.api.nvidia.com/v1"
+MAX_STATUS_POLLS = 24
 logger = logging.getLogger("replaylab.provider")
 
 _ERRORS = {
@@ -43,7 +44,12 @@ _ERRORS = {
     413: ("This image or request exceeds an NVIDIA payload limit.", "payload_too_large"),
     422: ("NVIDIA rejected the request schema or model parameters.", "invalid_request"),
     429: ("NVIDIA is rate limiting requests. Pause briefly and retry.", "rate_limit"),
+    504: ("NVIDIA returned HTTP 504 (gateway timeout). Retry this checkpoint later.", "upstream_error"),
 }
+
+
+class _ConnectionNotEstablished(ProviderError):
+    """The connection failed before any generation could be submitted."""
 
 
 class NvidiaContract(BaseModel):
@@ -129,6 +135,8 @@ class NvidiaProvider(MetaProvider):
         self.last_latency_ms = 0.0
         self.last_response_id: str | None = None
         self.last_model: str | None = None
+        self.last_request_id: str | None = None
+        self.last_http_status: int | None = None
         self.live_verified = False
 
     @property
@@ -163,6 +171,100 @@ class NvidiaProvider(MetaProvider):
     def last_model(self, value: str | None):
         self._call_state.model = value
 
+    @property
+    def last_request_id(self) -> str | None:
+        return getattr(self._call_state, "request_id", None)
+
+    @last_request_id.setter
+    def last_request_id(self, value: str | None):
+        self._call_state.request_id = value
+
+    @property
+    def last_http_status(self) -> int | None:
+        return getattr(self._call_state, "http_status", None)
+
+    @last_http_status.setter
+    def last_http_status(self, value: int | None):
+        self._call_state.http_status = value
+
+    @staticmethod
+    def _request_id(value: str | None) -> str | None:
+        """Only canonical UUIDs can enter diagnostics or a polling URL."""
+        if not isinstance(value, str) or len(value) != 36:
+            return None
+        try:
+            canonical = str(UUID(value))
+        except ValueError:
+            return None
+        return canonical if canonical == value.lower() else None
+
+    @staticmethod
+    def _remaining(deadline: float) -> float:
+        remaining = deadline - time.perf_counter()
+        if remaining <= 0:
+            raise ProviderError("NVIDIA timed out. Retry this checkpoint later.", "timeout")
+        return remaining
+
+    def _completion_request(self, method: str, path: str, payload: dict | None, *, deadline: float, started: float):
+        remaining = self._remaining(deadline)
+        kwargs = {
+            "headers": {"Authorization": "Bearer " + self._api_key, "Accept": "application/json"},
+            # HTTPX applies this remaining budget to each network phase. The
+            # elapsed check below rejects late responses; it cannot cancel an
+            # actively receiving response at a strict wall-clock deadline.
+            "timeout": httpx.Timeout(remaining, connect=min(15.0, remaining)),
+            # Never send a credential to a provider-supplied Location, even
+            # when an injected/shared client enables redirects by default.
+            "follow_redirects": False,
+        }
+        if method == "GET":
+            kwargs["headers"]["NVCF-POLL-SECONDS"] = "5"
+        if payload is not None:
+            kwargs["json"] = payload
+        try:
+            if self._client is None:
+                with httpx.Client(follow_redirects=False) as client:
+                    response = client.request(method, self.base_url + path, **kwargs)
+            else:
+                response = self._client.request(method, self.base_url + path, **kwargs)
+            self.last_http_status = response.status_code
+            self.last_request_id = self._request_id(response.headers.get("NVCF-REQID"))
+            self._remaining(deadline)
+        except (httpx.ConnectError, httpx.ConnectTimeout, httpx.PoolTimeout):
+            raise _ConnectionNotEstablished("The NVIDIA connection could not be established. Retry later.", "connection") from None
+        except httpx.TimeoutException:
+            raise ProviderError("NVIDIA timed out. Retry this checkpoint later.", "timeout") from None
+        except httpx.RequestError:
+            raise ProviderError("The NVIDIA request could not be sent. Retry later.", "connection") from None
+        finally:
+            self.last_latency_ms = round((time.perf_counter() - started) * 1000, 3)
+        operation = "chat_completions" if method == "POST" else "status_poll"
+        logger.info("provider=nvidia operation=%s status=%s request_id=%s latency_ms=%.3f",
+                    operation, response.status_code, self.last_request_id, self.last_latency_ms)
+        if response.is_redirect:
+            raise ProviderError("NVIDIA returned an unsupported redirect. No credentials were forwarded.", "unsafe_redirect", response.status_code)
+        return response
+
+    def _poll_completion(self, response: httpx.Response, *, deadline: float, started: float):
+        request_id = response.headers.get("NVCF-REQID")
+        if not request_id:
+            raise ProviderError("NVIDIA analysis is pending without a polling identifier. Retry later.", "pending", 202)
+        canonical = self._request_id(request_id)
+        if canonical is None:
+            raise ProviderError("NVIDIA returned an invalid polling identifier. No status request was sent.", "invalid_response", 202) from None
+        polls = 0
+        while response.status_code == 202:
+            if polls >= MAX_STATUS_POLLS:
+                raise ProviderError("NVIDIA analysis remains pending after bounded status polling. Retry later.", "pending", 202)
+            # Only the documented, same-base status path is used. URLs from
+            # response bodies, redirect headers, or cookies are never accepted.
+            time.sleep(min(0.25, self._remaining(deadline)))
+            response = self._completion_request(
+                "GET", "/status/" + canonical, None, deadline=deadline, started=started,
+            )
+            polls += 1
+        return response
+
     def complete(self, messages: list[dict], *, max_tokens: int | None = None) -> str:
         budget = max_tokens if max_tokens is not None else self.max_tokens
         if isinstance(budget, bool) or not isinstance(budget, int) or not 1 <= budget <= 32768:
@@ -173,43 +275,33 @@ class NvidiaProvider(MetaProvider):
             "reasoning_effort": self.reasoning_effort,
         }
         started = time.perf_counter()
+        deadline = started + self.timeout_seconds
         self.last_usage, self.last_response_id, self.last_model = {}, None, None
+        self.last_request_id, self.last_http_status = None, None
         for attempt in range(2):
             try:
-                kwargs = {
-                    "headers": {"Authorization": "Bearer " + self._api_key, "Accept": "application/json"},
-                    "json": payload,
-                }
-                if self._client is None:
-                    with httpx.Client(timeout=httpx.Timeout(self.timeout_seconds, connect=15)) as client:
-                        response = client.post(self.base_url + "/chat/completions", **kwargs)
-                else:
-                    response = self._client.post(self.base_url + "/chat/completions", **kwargs)
-            except httpx.TimeoutException:
-                self.last_latency_ms = round((time.perf_counter() - started) * 1000, 3)
-                # A timed-out generation may still consume provider resources;
-                # do not automatically submit a second expensive generation.
-                raise ProviderError("NVIDIA timed out. Retry this checkpoint later.", "timeout") from None
-            except httpx.NetworkError:
-                self.last_latency_ms = round((time.perf_counter() - started) * 1000, 3)
+                response = self._completion_request(
+                    "POST", "/chat/completions", payload, deadline=deadline, started=started,
+                )
+            except _ConnectionNotEstablished:
+                # Only a failure before submission may retry automatically.
+                # Read/write/protocol errors may follow an accepted generation.
                 if attempt == 0:
-                    time.sleep(0.5)
+                    time.sleep(min(0.5, self._remaining(deadline)))
                     continue
-                raise ProviderError("NVIDIA could not be reached or timed out. Retry later.", "connection") from None
-            except httpx.RequestError:
-                raise ProviderError("The NVIDIA request could not be sent.", "connection") from None
-            self.last_latency_ms = round((time.perf_counter() - started) * 1000, 3)
-            logger.info("provider=nvidia operation=chat_completions status=%s attempt=%s latency_ms=%.3f",
-                        response.status_code, attempt + 1, self.last_latency_ms)
-            if response.status_code in {429, 500, 502, 503, 504} and attempt == 0:
+                raise
+            queued = response.status_code == 202
+            if queued:
+                response = self._poll_completion(response, deadline=deadline, started=started)
+            # A gateway/server error can follow an accepted generation. A 429
+            # explicitly rejects the submission, so only that status retries.
+            if response.status_code == 429 and attempt == 0 and not queued:
                 try:
                     retry = min(5.0, max(0.5, float(response.headers.get("Retry-After", "0.5"))))
                 except (ValueError, OverflowError):
                     retry = 0.5
-                time.sleep(retry)
+                time.sleep(min(retry, self._remaining(deadline)))
                 continue
-            if response.status_code == 202:
-                raise ProviderError("NVIDIA analysis is pending. Retry the checkpoint later.", "pending", 202)
             if not response.is_success:
                 message, code = _ERRORS.get(response.status_code, (
                     "NVIDIA analysis is temporarily unavailable. Retry later.", "upstream_error",

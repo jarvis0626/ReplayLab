@@ -75,13 +75,67 @@
       "completed_steps": 0,
       "provider_stayed_nvidia": true,
       "latency_ms": null
+    },
+    {
+      "check": "authenticated Cloud Functions metadata",
+      "http_status": 200,
+      "function_id": "fd21cc19-b4ff-4949-ba07-90dd663c416a",
+      "function_version": "bcb668ff-7814-4970-bebd-0fe44ba0dc69",
+      "function_name": "ai-muse-glimmer-30b",
+      "function_status": "ACTIVE",
+      "inference_verified": false
+    },
+    {
+      "check": "direct Cloud Functions invocation",
+      "http_status": 504,
+      "latency_ms": 7701,
+      "nvcf_request_id": "cb225164-568a-4266-862d-8ed54d77b527"
+    },
+    {
+      "check": "authenticated integrate text over HTTP/2",
+      "http_status": 504,
+      "latency_ms": 5146,
+      "nvcf_request_id": "73681f5c-7827-4570-8647-502cec9d33e5",
+      "request_id": "a8f4615d-f235-4e9c-bc5f-dc2983d0e2e5"
+    },
+    {
+      "check": "authenticated integrate text after key replacement",
+      "http_status": 504,
+      "latency_ms": 7842,
+      "nvcf_request_id": "f7ef4837-6a8d-4286-a446-890a9183fb6f"
+    },
+    {
+      "check": "earlier new-key application-path text diagnosis with forced polling header",
+      "checked_at": "2026-11-02T16:29:02.732272+00:00",
+      "http_status": 504,
+      "error_code": "upstream_error",
+      "latency_ms": 15540.57,
+      "text_verified": false,
+      "image_verified": false,
+      "image_sent": false,
+      "live_202_observed": false
+    },
+    {
+      "check": "final new-key production-path text diagnosis without forced polling header",
+      "checked_at": "2026-11-02T16:32:43.401796+00:00",
+      "http_status": null,
+      "request_id": null,
+      "error_code": "timeout",
+      "timeout_seconds": 35,
+      "latency_ms": 35766.98,
+      "text_verified": false,
+      "image_verified": false,
+      "image_sent": false,
+      "live_202_observed": false
     }
   ],
   "limits": [
     "A catalog response does not verify inference entitlement or successful generation.",
-    "Timeouts returned no HTTP response or request ID, so asynchronous polling could not be performed.",
+    "Initial timeouts returned no HTTP response or request ID. Later gateway failures included request IDs but no live HTTP 202 to poll.",
     "No successful NVIDIA model output or model accuracy is claimed.",
-    "The root cause of the API timeouts has not been established; account access is a diagnostic possibility, not a confirmed cause.",
+    "The root cause of API timeouts and HTTP 504 has not been established; neither account permissions nor a global outage is confirmed.",
+    "Replacing the locally stored API key did not resolve the observed inference failures.",
+    "HTTP 202 handling is contract-tested; successful live polling has not been observed.",
     "Only repo-owned synthetic CodeLab screenshots were sent during these tests."
   ]
 }

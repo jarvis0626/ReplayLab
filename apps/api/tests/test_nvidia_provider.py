@@ -113,7 +113,7 @@ def test_safe_errors_do_not_echo_provider_content_or_become_mock(tmp_path, statu
         provider.complete([{"role": "user", "content": "probe"}])
     assert caught.value.code == code
     assert "SECRET" not in str(caught.value) and provider.live_verified is False
-    assert len(calls) == (2 if status in {429, 500} else 1)
+    assert len(calls) == (2 if status == 429 else 1)
 
 
 @pytest.mark.parametrize("content", [None, "", [], 123])
@@ -335,7 +335,8 @@ def test_shared_provider_keeps_concurrent_observation_metadata_with_its_request(
         return httpx.Response(200, json=completed(
             json.dumps(screen_payload()), id="response-" + label,
             usage={"prompt_tokens": tokens, "completion_tokens": 1, "total_tokens": tokens + 1},
-        ))
+        ), headers={"NVCF-REQID": ("11111111-1111-4111-8111-111111111111" if label == "controlled-A"
+                                  else "22222222-2222-4222-8222-222222222222")})
 
     provider = adapter(tmp_path, handler)
     structured = provider._structured
@@ -355,16 +356,265 @@ def test_shared_provider_keeps_concurrent_observation_metadata_with_its_request(
         data = io.BytesIO()
         Image.new("RGB", (64, 64), color).save(data, format="PNG")
         result = NvidiaScreenProvider(provider).observe(data.getvalue(), local("Extensions"))
-        return result.provenance
+        return result.provenance, provider.last_request_id, provider.last_http_status
 
     with ThreadPoolExecutor(max_workers=2) as workers:
         a = workers.submit(observe, "controlled-A", "navy")
         b = workers.submit(observe, "controlled-B", "green")
-        first, second = a.result(timeout=10), b.result(timeout=10)
+        first_result, second_result = a.result(timeout=10), b.result(timeout=10)
+    first, second = first_result[0], second_result[0]
+    assert first_result[1:] == ("11111111-1111-4111-8111-111111111111", 200)
+    assert second_result[1:] == ("22222222-2222-4222-8222-222222222222", 200)
     assert first["request_id"] == "response-controlled-A"
     assert first["token_usage"]["prompt_tokens"] == 11
     assert second["request_id"] == "response-controlled-B"
     assert second["token_usage"]["prompt_tokens"] == 22
     assert first["response_model"] == second["response_model"] == NVIDIA_MODEL
     assert provider.last_response_id is None  # this calling thread made no request
+    assert provider.last_request_id is None and provider.last_http_status is None
     assert provider.live_verified is True  # successful inference is app-visible
+
+
+def test_accepted_generation_polls_same_origin_without_resubmitting(tmp_path, monkeypatch):
+    monkeypatch.setattr("app.providers.nvidia.time.sleep", lambda _: None)
+    identifier = "0d5919a3-e790-46bb-80c6-5c8f43830316"
+    calls = []
+
+    def handler(request):
+        calls.append(request)
+        if request.method == "POST":
+            assert "NVCF-POLL-SECONDS" not in request.headers
+            return httpx.Response(202, headers={"NVCF-REQID": identifier})
+        assert request.headers["NVCF-POLL-SECONDS"] == "5"
+        assert request.url == f"https://integrate.api.nvidia.com/v1/status/{identifier}"
+        assert request.content == b""
+        if len(calls) == 2:
+            return httpx.Response(202)
+        return httpx.Response(200, json=completed("Polled response"))
+
+    provider = adapter(tmp_path, handler)
+    assert provider.complete([{"role": "user", "content": "probe"}]) == "Polled response"
+    assert [request.method for request in calls] == ["POST", "GET", "GET"]
+    assert all(request.headers["Authorization"] == "Bearer " + provider._api_key for request in calls)
+    assert provider.live_verified is True and provider.last_response_id == "chatcmpl-controlled-test"
+
+
+def test_pending_generation_has_bounded_polls_and_exactly_one_submission(tmp_path, monkeypatch):
+    monkeypatch.setattr("app.providers.nvidia.time.sleep", lambda _: None)
+    monkeypatch.setattr("app.providers.nvidia.MAX_STATUS_POLLS", 2)
+    calls = []
+
+    def handler(request):
+        calls.append(request)
+        return httpx.Response(202, headers={"NVCF-REQID": "0d5919a3-e790-46bb-80c6-5c8f43830316"})
+
+    provider = adapter(tmp_path, handler)
+    with pytest.raises(ProviderError, match="bounded status polling") as caught:
+        provider.complete([{"role": "user", "content": "probe"}])
+    assert caught.value.code == "pending" and provider.live_verified is False
+    assert [request.method for request in calls] == ["POST", "GET", "GET"]
+
+
+@pytest.mark.parametrize("identifier", [
+    "https://untrusted.invalid/steal", "../../outside", "not-a-uuid", "0d5919a3e79046bb80c65c8f43830316",
+])
+def test_invalid_pending_identifier_never_becomes_a_request_url(tmp_path, identifier):
+    calls = []
+
+    def handler(request):
+        calls.append(request)
+        return httpx.Response(202, headers={"NVCF-REQID": identifier})
+
+    provider = adapter(tmp_path, handler)
+    with pytest.raises(ProviderError, match="invalid polling identifier"):
+        provider.complete([{"role": "user", "content": "probe"}])
+    assert len(calls) == 1 and calls[0].method == "POST"
+
+
+def test_pending_without_request_id_is_explicit_and_not_resubmitted(tmp_path):
+    calls = []
+
+    def handler(request):
+        calls.append(request)
+        return httpx.Response(202, json={"message": "queued"})
+
+    provider = adapter(tmp_path, handler)
+    with pytest.raises(ProviderError, match="pending without a polling identifier") as caught:
+        provider.complete([{"role": "user", "content": "probe"}])
+    assert caught.value.code == "pending" and len(calls) == 1
+
+
+@pytest.mark.parametrize("phase", ["submit", "poll"])
+def test_provider_redirect_never_forwards_a_key_even_with_redirect_enabled_client(tmp_path, phase, monkeypatch):
+    monkeypatch.setattr("app.providers.nvidia.time.sleep", lambda _: None)
+    calls = []
+
+    def handler(request):
+        calls.append(request)
+        assert request.url.host == "integrate.api.nvidia.com"
+        if phase == "poll" and request.method == "POST":
+            return httpx.Response(202, headers={"NVCF-REQID": "0d5919a3-e790-46bb-80c6-5c8f43830316"})
+        return httpx.Response(302, headers={"Location": "https://untrusted.invalid/collect"})
+
+    provider = NvidiaProvider("test-redirect-only", tmp_path / "unused", client=httpx.Client(
+        transport=httpx.MockTransport(handler), follow_redirects=True,
+    ))
+    with pytest.raises(ProviderError, match="No credentials were forwarded") as caught:
+        provider.complete([{"role": "user", "content": "probe"}])
+    assert caught.value.code == "unsafe_redirect"
+    assert len(calls) == (1 if phase == "submit" else 2)
+
+
+def test_submission_and_polls_use_remaining_budget_and_reject_late_responses(tmp_path, monkeypatch):
+    now = [0.0]
+    calls = []
+    monkeypatch.setattr("app.providers.nvidia.time.perf_counter", lambda: now[0])
+    monkeypatch.setattr("app.providers.nvidia.time.sleep", lambda delay: now.__setitem__(0, now[0] + delay))
+
+    def handler(request):
+        calls.append(request)
+        if request.method == "POST":
+            now[0] += 2
+            return httpx.Response(202, headers={"NVCF-REQID": "0d5919a3-e790-46bb-80c6-5c8f43830316"})
+        now[0] += 3
+        return httpx.Response(200, json=completed("Too late"))
+
+    provider = NvidiaProvider("test-deadline-only", tmp_path / "unused", timeout_seconds=5,
+                              client=httpx.Client(transport=httpx.MockTransport(handler)))
+    with pytest.raises(ProviderError, match="timed out") as caught:
+        provider.complete([{"role": "user", "content": "probe"}])
+    assert caught.value.code == "timeout" and provider.live_verified is False
+    assert [request.method for request in calls] == ["POST", "GET"]
+    assert calls[0].extensions["timeout"]["read"] == 5
+    assert calls[1].extensions["timeout"]["read"] == 2.75
+
+
+def test_status_poll_timeout_does_not_start_another_generation(tmp_path, monkeypatch):
+    monkeypatch.setattr("app.providers.nvidia.time.sleep", lambda _: None)
+    calls = []
+
+    def handler(request):
+        calls.append(request)
+        if request.method == "POST":
+            return httpx.Response(202, headers={"NVCF-REQID": "0d5919a3-e790-46bb-80c6-5c8f43830316"})
+        raise httpx.ReadTimeout("private transport information", request=request)
+
+    provider = adapter(tmp_path, handler)
+    with pytest.raises(ProviderError, match="timed out") as caught:
+        provider.complete([{"role": "user", "content": "probe"}])
+    assert caught.value.code == "timeout" and "private" not in str(caught.value)
+    assert [request.method for request in calls] == ["POST", "GET"]
+
+
+@pytest.mark.parametrize("status,code", [(429, "rate_limit"), (503, "upstream_error")])
+def test_terminal_status_poll_errors_do_not_resubmit_queued_work(tmp_path, monkeypatch, status, code):
+    monkeypatch.setattr("app.providers.nvidia.time.sleep", lambda _: None)
+    calls = []
+
+    def handler(request):
+        calls.append(request)
+        if request.method == "POST":
+            return httpx.Response(202, headers={"NVCF-REQID": "0d5919a3-e790-46bb-80c6-5c8f43830316"})
+        return httpx.Response(status, json={"error": "upstream private details"})
+
+    provider = adapter(tmp_path, handler)
+    with pytest.raises(ProviderError) as caught:
+        provider.complete([{"role": "user", "content": "probe"}])
+    assert caught.value.code == code
+    assert [request.method for request in calls] == ["POST", "GET"]
+
+
+@pytest.mark.parametrize("error_type", [httpx.ConnectError, httpx.ConnectTimeout, httpx.PoolTimeout])
+def test_only_connection_establishment_failures_can_retry_submission(tmp_path, monkeypatch, error_type):
+    monkeypatch.setattr("app.providers.nvidia.time.sleep", lambda _: None)
+    calls = []
+
+    def handler(request):
+        calls.append(request)
+        if len(calls) == 1:
+            raise error_type("private network diagnostics", request=request)
+        return httpx.Response(200, json=completed("Recovered before submission"))
+
+    provider = adapter(tmp_path, handler)
+    assert provider.complete([{"role": "user", "content": "probe"}]) == "Recovered before submission"
+    assert len(calls) == 2 and all(request.method == "POST" for request in calls)
+
+
+@pytest.mark.parametrize("error_type", [
+    httpx.ReadError, httpx.WriteError, httpx.RemoteProtocolError, httpx.ReadTimeout, httpx.WriteTimeout,
+])
+def test_ambiguous_transport_failure_never_submits_a_second_generation(tmp_path, monkeypatch, error_type):
+    monkeypatch.setattr("app.providers.nvidia.time.sleep", lambda _: None)
+    calls = []
+
+    def handler(request):
+        calls.append(request)
+        raise error_type("private transport diagnostics after possible submission", request=request)
+
+    provider = adapter(tmp_path, handler)
+    with pytest.raises(ProviderError) as caught:
+        provider.complete([{"role": "user", "content": "probe"}])
+    assert len(calls) == 1
+    assert caught.value.code == ("timeout" if issubclass(error_type, httpx.TimeoutException) else "connection")
+    assert "private" not in str(caught.value) and provider.live_verified is False
+
+
+@pytest.mark.parametrize("status", [500, 502, 503, 504])
+def test_server_error_never_automatically_duplicates_a_possible_generation(tmp_path, status):
+    calls = []
+    identifier = "0d5919a3-e790-46bb-80c6-5c8f43830316"
+
+    def handler(request):
+        calls.append(request)
+        return httpx.Response(status, headers={"NVCF-REQID": identifier}, json={"error": "private upstream body"})
+
+    provider = adapter(tmp_path, handler)
+    with pytest.raises(ProviderError) as caught:
+        provider.complete([{"role": "user", "content": "probe"}])
+    assert len(calls) == 1 and caught.value.status_code == status
+    assert provider.last_http_status == status and provider.last_request_id == identifier
+    assert "private" not in str(caught.value)
+    if status == 504:
+        assert "HTTP 504" in str(caught.value) and "gateway timeout" in str(caught.value)
+
+
+@pytest.mark.parametrize("header", [
+    "https://untrusted.invalid/private-value", "private\r\nINJECTED", "x" * 500,
+    "0d5919a3e79046bb80c65c8f43830316", "not-a-uuid",
+])
+def test_only_canonical_request_uuid_can_enter_safe_diagnostics(tmp_path, caplog, header):
+    def handler(request):
+        return httpx.Response(200, headers={"NVCF-REQID": header, "x-request-id": "private-other-header"},
+                              json=completed("Safe final response"))
+
+    provider = adapter(tmp_path, handler)
+    with caplog.at_level("INFO", logger="replaylab.provider"):
+        assert provider.complete([{"role": "user", "content": "probe"}]) == "Safe final response"
+    assert provider.last_request_id is None and provider.last_http_status == 200
+    assert header not in caplog.text and "private-other-header" not in caplog.text
+    assert provider._api_key not in caplog.text
+
+
+def test_safe_request_diagnostics_reset_before_each_completion(tmp_path, caplog):
+    identifier = "0D5919A3-E790-46BB-80C6-5C8F43830316"
+    calls = []
+
+    def handler(request):
+        calls.append(request)
+        if len(calls) == 1:
+            return httpx.Response(200, headers={"NVCF-REQID": identifier}, json=completed("First"))
+        if len(calls) == 2:
+            return httpx.Response(200, json=completed("No transport identifier"))
+        raise httpx.ReadTimeout("private network data", request=request)
+
+    provider = adapter(tmp_path, handler)
+    with caplog.at_level("INFO", logger="replaylab.provider"):
+        assert provider.complete([{"role": "user", "content": "probe"}]) == "First"
+    assert provider.last_request_id == identifier.lower() and provider.last_http_status == 200
+    assert identifier.lower() in caplog.text
+    assert provider.complete([{"role": "user", "content": "probe"}]) == "No transport identifier"
+    assert provider.last_request_id is None and provider.last_http_status == 200
+    with pytest.raises(ProviderError, match="timed out"):
+        provider.complete([{"role": "user", "content": "probe"}])
+    assert provider.last_request_id is None and provider.last_http_status is None
+    assert provider.last_response_id is None and provider.last_usage == {}
