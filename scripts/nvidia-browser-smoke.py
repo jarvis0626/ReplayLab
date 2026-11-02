@@ -45,7 +45,7 @@ def main():
 
         def choose(mode):
             page.get_by_role("button", name="Open provider settings", exact=True).click()
-            name = "NVIDIA-hosted Meta model" if mode == "nvidia" else "Offline / mock"
+            name = "NVIDIA cloud vision" if mode == "nvidia" else "Offline / mock"
             page.get_by_role("dialog").get_by_role("button").filter(has=page.get_by_text(name, exact=True)).click()
             expect(page.get_by_text("NVIDIA MODE" if mode == "nvidia" else "MOCK MODE", exact=True)).to_be_visible()
 

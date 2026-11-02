@@ -1,5 +1,30 @@
 # Recorded validation
 
+## Local Meta inference — 2 November 2026
+
+- Backend: **486 passed** in 58.26 seconds; Ruff passed.
+- Frontend: **52 passed**; TypeScript and Vite production build passed.
+- Helpers: setup/runner/browser-script Ruff and development-launcher syntax passed.
+- Native setup: pinned model/runtime SHA256, archive/path containment, occupied-port
+  refusal, explicit activation preserving existing credentials, and loopback startup checked.
+- Actual model/browser: **12 assertions**, two owned screenshot submissions,
+  correct PASS/contradictory FAIL, actual Meta grounded explanations, zero browser
+  JavaScript errors, and desktop/tablet layout checks.
+- Actual workflow API: a two-step Meta transcript proposal in **44.14 seconds**;
+  no invented interface version, no automatic approval or progress; preapproval
+  screen verification returned HTTP 409.
+
+The two screenshot requests took **28.18 s** and **17.84 s** on this CPU. These
+are two controlled, authored simulation cases, not an accuracy benchmark. OCR
+supplies observations; Llama performs text reasoning. No Meta vision or SAM
+success is claimed. Earlier UNCERTAIN and unavailable-server runs are preserved.
+
+Evidence: [local model setup](local-meta-setup.md),
+[browser report](assets/local-meta/browser-validation.json), and
+[workflow report](validation/local-meta-workflow.json). Cloud credentials remain
+ignored and were not required by the local model. The NVIDIA results below refer
+to the earlier Muse cloud milestone, not local Llama.
+
 ## NVIDIA integration — 2 November 2026
 
 The final `npm.cmd run check` passed **396 backend tests**, **42 frontend tests**,

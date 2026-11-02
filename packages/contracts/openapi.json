@@ -2020,7 +2020,8 @@
             "enum": [
               "mock",
               "meta",
-              "nvidia"
+              "nvidia",
+              "local_meta"
             ],
             "title": "Mode"
           }

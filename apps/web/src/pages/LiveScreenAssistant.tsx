@@ -16,7 +16,7 @@ import {
   VolumeX,
   X,
 } from "lucide-react";
-import type { Project, Provider, ScreenCheck } from "../types";
+import type { Project, Provider, ProviderMode, ScreenCheck } from "../types";
 import { api } from "../services/api";
 import { providerModels, providerName, usesCloud } from "../services/providers";
 import {
@@ -36,6 +36,7 @@ interface Props {
   onUpdate: (project: Project) => void;
   onError: (message: string) => void;
   onReview: () => void;
+  onProviderValidated?: (mode: ProviderMode) => void;
 }
 export function LiveScreenAssistant({
   project,
@@ -43,6 +44,7 @@ export function LiveScreenAssistant({
   onUpdate,
   onError,
   onReview,
+  onProviderValidated,
 }: Props) {
   const steps = project.task?.steps ?? [];
   const available = steps.filter(
@@ -125,6 +127,13 @@ export function LiveScreenAssistant({
     );
     if (signal.aborted || !mounted.current) return;
     setCheck(value);
+    if (provider?.mode === "local_meta" && value.observation.provider_mode === "local_meta"
+      && value.observation.provenance.api_response_validated === true
+      && value.observation.provenance.live_api_verified === true
+      && value.observation.provenance.local_only === true
+      && value.observation.provenance.vision_inference === false) {
+      onProviderValidated?.("local_meta");
+    }
     onUpdate({ ...project, completed_step_ids: value.completed_step_ids });
     if (value.result.status === "pass" && value.current_step_id)
       setStepId(value.current_step_id);
@@ -133,7 +142,7 @@ export function LiveScreenAssistant({
     projectId: project.id,
     enabled: canAnalyze,
     paused: paused || redacting,
-    interval: usesCloud(provider) ? 12000 : 4000,
+    interval: usesCloud(provider) || provider?.mode === "local_meta" ? 12000 : 4000,
     redactions,
     onCapture: analyze,
     onStop: clearSession,
@@ -292,7 +301,8 @@ export function LiveScreenAssistant({
           </p>
         </div>
         <Badge variant="cyan">
-          {usesCloud(provider) ? `${providerName(provider).toUpperCase()} · ${provider?.live_verified ? "LIVE VALIDATED" : "ACCESS UNVERIFIED"}` : "LOCAL OCR"}
+          {provider?.mode === "local_meta" ? "LOCAL META LLAMA · OCR + TEXT"
+            : usesCloud(provider) ? `${providerName(provider).toUpperCase()} · ${provider?.live_verified ? "LIVE VALIDATED" : "ACCESS UNVERIFIED"}` : "LOCAL OCR"}
         </Badge>
       </div>
       <div className="screen-layout">
@@ -370,6 +380,8 @@ export function LiveScreenAssistant({
                   <small>
                     {usesCloud(provider)
                       ? "Cloud consent is required before analysis."
+                      : provider?.mode === "local_meta"
+                        ? "Your selection authorizes local OCR and Meta Llama text reasoning on this PC. No cloud calls."
                       : "Your selection authorizes processing by local OCR. No Meta calls in offline mode."}
                   </small>
                 </div>
@@ -508,6 +520,7 @@ export function LiveScreenAssistant({
             </label>
           )}
           {provider?.mode === "nvidia" && <p className="muted small">NVIDIA model: {providerModels(provider)}. Model descriptions are observations, not completion proof. The verifier checks approved constraints against qualified evidence, including local OCR; model-reported confidence is not a calibrated success probability.</p>}
+          {provider?.mode === "local_meta" && <p className="muted small">Local Meta model: {providerModels(provider)}. Local OCR reads screenshot pixels; Meta Llama receives only redacted OCR text. Deterministic rules decide completion, and model explanations cannot change the verdict.</p>}
           <label className="panel checkbox-row screen-evidence-consent">
             <input type="checkbox" checked={retainEvidence} onChange={(event) => setRetainEvidence(event.target.checked)} />
             <span>Save relevant redacted decision evidence for this project. This saves up to 100 decisions until project deletion or history eviction, never screenshots. Leave this off for temporary screen-session evidence.</span>
@@ -523,6 +536,8 @@ export function LiveScreenAssistant({
                   <Badge>
                     {check.result.provider_mode === "local_ocr"
                       ? "LOCAL OCR · REAL SCREEN PIXELS"
+                      : check.result.provider_mode === "local_meta"
+                        ? "LOCAL META LLAMA · OCR + TEXT"
                       : check.result.provider_mode.toUpperCase()}
                   </Badge>
                 </div>
@@ -691,9 +706,10 @@ export function LiveScreenAssistant({
               inferred from a manually supplied label.
             </p>
             <p>
-              Local OCR reads actual pixels. Workflow extraction in offline mode
-              uses clearly labeled templates. Unsupported or unclear screens
-              remain UNCERTAIN.
+              {provider?.mode === "local_meta"
+                ? "Local OCR reads actual pixels. Meta Llama reasons over redacted OCR text and supplied transcripts on this PC. This is text reasoning, not vision-model inference."
+                : "Local OCR reads actual pixels. Workflow extraction in offline mode uses clearly labeled templates."}
+              {" "}Unsupported or unclear screens remain UNCERTAIN.
             </p>
           </section>
         </aside>

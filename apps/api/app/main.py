@@ -66,8 +66,9 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     demo_directory = data_directory / "demo"
     media_directory.mkdir(parents=True, exist_ok=True)
     store = Store(data_directory / "replaylab.sqlite3")
-    mode = {"value": settings.ai_provider if settings.ai_provider in {"mock", "meta", "nvidia"} else "mock"}
+    mode = {"value": settings.ai_provider if settings.ai_provider in {"mock", "meta", "nvidia", "local_meta"} else "mock"}
     nvidia_instance = {"identity": None, "provider": None}
+    local_meta_instance = {"identity": None, "provider": None}
     job_locks: dict[str, threading.RLock] = {}
 
     @asynccontextmanager
@@ -161,6 +162,17 @@ def create_app(settings: Settings | None = None) -> FastAPI:
 
     def provider_status() -> dict:
         selected = mode["value"]
+        if selected == "local_meta":
+            live = local_meta_instance["provider"]
+            verified = bool(live and getattr(live, "live_verified", False))
+            return {
+                "mode": "local_meta", "configured": True, "available": verified,
+                "live_verified": verified, "models": [settings.local_meta_model],
+                "model": settings.local_meta_model, "host": settings.local_meta_base_url,
+                "message": "Local Meta Llama inference verified in this session. Screen text is read by local OCR; Llama reasons over that text."
+                if verified else "Local Meta Llama selected. Start the local model server; inference has not yet been verified in this session.",
+                "physical_supported": False, "local_only": True,
+            }
         if selected == "nvidia":
             live = nvidia_instance["provider"]
             verified = bool(live and getattr(live, "live_verified", False))
@@ -169,7 +181,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
                 "mode": "nvidia", "configured": configured, "available": verified,
                 "live_verified": verified, "models": [settings.nvidia_model],
                 "model": settings.nvidia_model, "host": settings.nvidia_base_url,
-                "message": "NVIDIA-hosted Meta inference verified by an actual successful request."
+                "message": "NVIDIA-hosted inference verified by an actual successful request."
                 if verified else "NVIDIA credential configured; live requests have not been verified in this server session."
                 if configured else "Configure NVIDIA_API_KEY on the server to use NVIDIA inference.",
                 "physical_supported": False,
@@ -193,6 +205,17 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     def provider_for(selected: str):
         if selected == "mock":
             return MockProvider(demo_directory)
+        if selected == "local_meta":
+            from app.providers.local_meta import LocalMetaProvider
+
+            identity = (settings.local_meta_base_url, settings.local_meta_model, settings.local_meta_timeout_seconds)
+            with store.lock:
+                if local_meta_instance["identity"] != identity:
+                    local_meta_instance.update(identity=identity, provider=LocalMetaProvider(
+                        data_directory / "inference-cache", base_url=settings.local_meta_base_url,
+                        model=settings.local_meta_model, timeout_seconds=settings.local_meta_timeout_seconds,
+                    ))
+                return local_meta_instance["provider"]
         if selected == "nvidia":
             if not settings.nvidia_api_key:
                 raise HTTPException(503, "NVIDIA credentials are missing. Configure NVIDIA_API_KEY on the server.")
@@ -300,7 +323,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
                 if selected == "meta" and path:
                     path = prepare_meta_video(path)
                 if project.get("modality", "physical") == "digital":
-                    if selected == "nvidia":
+                    if selected in {"nvidia", "local_meta"}:
                         frames = [{**frame, "path": media_directory / project_id / frame["url"].rsplit("/", 1)[-1]} for frame in project["frames"]]
                         task = provider.extract_workflow(project, frames)
                     else:
@@ -513,8 +536,8 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             if not digital_source and (not project["video"] or not project["frames"]):
                 raise HTTPException(409, "Upload and process a video before extracting steps.")
             selected = mode["value"]
-            if selected == "nvidia" and project.get("modality", "physical") != "digital":
-                raise HTTPException(422, "NVIDIA Muse Glimmer does not provide SAM segmentation. Explicitly select Meta or mock mode for physical workflows.")
+            if selected in {"nvidia", "local_meta"} and project.get("modality", "physical") != "digital":
+                raise HTTPException(422, "This provider supports digital workflows, not SAM segmentation. Explicitly select Meta Model API or mock mode for physical workflows.")
             require_consent(selected, consent.cloud_consent)
             provider_for(selected)
             project.update(
@@ -674,8 +697,8 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             if not set(step.dependencies).issubset(project["completed_step_ids"]):
                 raise HTTPException(409, "Complete the prerequisites before verifying this step.")
             selected = mode["value"]
-            if selected == "nvidia":
-                raise HTTPException(422, "NVIDIA Muse Glimmer is configured for digital workflows, not SAM segmentation. Select Meta or mock for physical practice.")
+            if selected in {"nvidia", "local_meta"}:
+                raise HTTPException(422, "This provider supports digital workflows, not SAM segmentation. Select Meta Model API or mock for physical practice.")
             require_consent(selected, consent.cloud_consent)
             provider = provider_for(selected)
             attempt.update(status="verifying", error=None, result=None, verification=None)

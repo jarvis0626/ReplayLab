@@ -50,6 +50,7 @@ export function Practice({
   onReview,
 }: Props) {
   const steps = project.task?.steps ?? [];
+  const segmentationUnavailable = provider?.mode === "nvidia" || provider?.mode === "local_meta";
   const eligible = steps.filter(
     (s) =>
       !project.completed_step_ids.includes(s.id) &&
@@ -321,12 +322,13 @@ export function Practice({
                   <Badge variant={provider?.mode === "mock" ? "mock" : "cyan"}>
                     {provider?.mode === "mock"
                       ? "MOCK OBSERVATIONS"
-                      : provider?.mode === "nvidia" ? "SEGMENTATION UNAVAILABLE" : "META OBSERVATIONS"}
+                      : segmentationUnavailable ? "SEGMENTATION UNAVAILABLE" : "META OBSERVATIONS"}
                   </Badge>
                 </div>
                 <h2>{step.title}</h2>
                 <p>{step.description}</p>
                 {provider?.mode === "nvidia" && <p className="consent-required">NVIDIA screenshot understanding does not replace SAM segmentation. Select Offline / mock for the labeled block fixtures or Meta Model API for physical observations. No provider is switched automatically.</p>}
+                {provider?.mode === "local_meta" && <p className="consent-required">Local Meta Llama reasons over OCR text and does not provide SAM segmentation. Select Offline / mock for the labeled block fixtures or Meta Model API for physical observations. No provider is switched automatically.</p>}
                 <div className="expected-rules">
                   {step.rules.map((rule) => (
                     <span key={rule.id}>
@@ -560,7 +562,7 @@ export function Practice({
                   </div>
                   <button
                     className="button primary"
-                    disabled={busy || provider?.mode === "nvidia" || (usesCloud(provider) && !consent)}
+                    disabled={busy || segmentationUnavailable || (usesCloud(provider) && !consent)}
                     onClick={() => void verify()}
                   >
                     {busy ? (

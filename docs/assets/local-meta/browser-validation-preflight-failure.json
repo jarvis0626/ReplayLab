@@ -1,0 +1,27 @@
+{
+  "checked_at": "2026-11-02T17:21:28.442222+00:00",
+  "success": false,
+  "provider_mode": "local_meta",
+  "expected_model": "meta-llama/Llama-3.2-3B-Instruct",
+  "ui_only": false,
+  "browser": null,
+  "phase": "connect",
+  "screen_submission_budget": 2,
+  "actual_screen_submissions": 0,
+  "cases": [],
+  "checks": [],
+  "page_errors": [],
+  "nonlocal_browser_hosts": [],
+  "cleanup": [],
+  "limitations": [
+    "Meta Llama reasons over actual local OCR text; image pixels are not Llama model input.",
+    "The approved workflow and test screenshots are the explicitly simulated CodeLab demo.",
+    "This small browser check does not establish model accuracy, general application support, or hackathon eligibility.",
+    "Manual screenshot upload is exercised; a human screen picker and live tab stream are not tested here.",
+    "No tutorial extraction is measured by this approved-template workflow."
+  ],
+  "error": {
+    "type": "Error",
+    "phase": "connect"
+  }
+}

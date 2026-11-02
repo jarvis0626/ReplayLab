@@ -273,17 +273,17 @@ def redact_screenshot(image_bytes: bytes, observation: ScreenObservation) -> byt
 def observe_screen(
     image_bytes: bytes, mode: str = "mock", meta_provider=None, *, cloud_consent: bool = False
 ) -> ScreenObservation:
-    if mode not in {"mock", "meta", "nvidia"}:
-        raise ValueError("Screen provider mode must be mock, meta, or nvidia.")
+    if mode not in {"mock", "meta", "nvidia", "local_meta"}:
+        raise ValueError("Screen provider mode must be mock, meta, nvidia, or local_meta.")
     if mode in {"meta", "nvidia"} and not cloud_consent:
         raise ValueError("Explicit cloud consent is required before sending screen content to the provider.")
     local = _local_observation(image_bytes)
     if mode == "mock":
         return local
     if meta_provider is None:
-        raise ValueError("A configured Meta screenshot provider is required; no mock fallback is selected.")
+        raise ValueError("A configured screenshot provider is required; no mock fallback is selected.")
     if not local.provenance.get("ocr_available"):
-        raise ValueError("The privacy OCR scan is unavailable; no screenshot was sent to Meta.")
+        raise ValueError("The privacy OCR scan is unavailable; no screenshot or text was sent to the model.")
     if local.provenance.get("self_capture"):
         return local
     redacted = redact_screenshot(image_bytes, local)

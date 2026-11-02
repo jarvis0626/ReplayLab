@@ -1,0 +1,10 @@
+Built with Llama.
+
+Llama 3.2 is licensed under the Llama 3.2 Community License, Copyright © Meta Platforms, Inc. All Rights Reserved.
+
+ReplayLab uses Meta Llama 3.2 3B Instruct through a community Q4_K_M GGUF quantization by bartowski.
+Original model: https://huggingface.co/meta-llama/Llama-3.2-3B-Instruct
+Quantized distribution: https://huggingface.co/bartowski/Llama-3.2-3B-Instruct-GGUF
+This local model processes text from local OCR and supplied transcripts; it is not Muse Glimmer and does not receive images as model input.
+
+The local CPU inference runtime is llama.cpp, licensed under MIT. See LLAMA_CPP_LICENSE.

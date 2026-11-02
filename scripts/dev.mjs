@@ -49,7 +49,27 @@ if (!existsSync(python) || !existsSync(join(root, 'apps/web/node_modules/vite/bi
   console.error('Dependencies are missing. Run npm run setup first.');
   process.exitCode = 1;
 } else {
-  console.log('ReplayLab: http://127.0.0.1:5173 | API: http://127.0.0.1:8010 | Ctrl+C stops both.');
-  launch(python, ['-m', 'uvicorn', 'app.main:app', '--host', '127.0.0.1', '--port', '8010', '--reload'], join(root, 'apps/api'));
-  launch(process.execPath, [join(root, 'apps/web/node_modules/vite/bin/vite.js'), '--host', '127.0.0.1', '--port', '5173', '--strictPort'], join(root, 'apps/web'));
+  const selected = spawnSync(python, ['-c', 'from app.core.config import Settings; print(Settings().ai_provider)'], {
+    cwd: join(root, 'apps/api'), encoding: 'utf8', windowsHide: true, shell: false,
+  });
+  if (selected.status !== 0) {
+    console.error('Could not load server settings. Check apps/api/.env.');
+    process.exitCode = 1;
+  } else if (selected.stdout.trim() === 'local_meta') {
+    const ready = spawnSync(python, [join(root, 'scripts/run-local-meta.py'), '--check-ready'], {
+      cwd: root, stdio: 'ignore', windowsHide: true, shell: false,
+    });
+    if (ready.status !== 0) {
+      launch(python, [join(root, 'scripts/run-local-meta.py')], root);
+    } else {
+      console.log('Using the existing local Meta model server.');
+    }
+  }
+  if (process.exitCode) {
+    stop(process.exitCode);
+  } else {
+    console.log('ReplayLab: http://127.0.0.1:5173 | API: http://127.0.0.1:8010 | Ctrl+C stops owned development services.');
+    launch(python, ['-m', 'uvicorn', 'app.main:app', '--host', '127.0.0.1', '--port', '8010', '--reload'], join(root, 'apps/api'));
+    launch(process.execPath, [join(root, 'apps/web/node_modules/vite/bin/vite.js'), '--host', '127.0.0.1', '--port', '5173', '--strictPort'], join(root, 'apps/web'));
+  }
 }

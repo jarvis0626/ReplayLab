@@ -1,20 +1,23 @@
 # ReplayLab 3.0
 
-**2 November NVIDIA update:** the app now supports explicit NVIDIA-hosted Meta
-Muse Glimmer inference for screenshot observations, sampled-frame workflow
-proposals, and grounded explanations. Credentials stay server-side, with separate
-cloud consent and no silent mock fallback. **Live application API validation is
-still blocked:** text/image requests timed out, including the exact generated
-example through the official client; a replacement-key test received HTTP 504.
-The owner demonstrated a successful
-Playground reply, which is a separate interface. The real NVIDIA evaluation has
-**0 completed cases**, two timeouts, and unknown accuracy. See
-[integration/setup and actual results](docs/nvidia-integration.md),
-[browser checks](docs/nvidia-browser-qa.md), and
-[NVIDIA evaluation](docs/nvidia-evaluation.md). Run
-`.venv\Scripts\python.exe scripts/diagnose-nvidia.py` for a safe text-first check;
-[support details](docs/nvidia-support-request.md) contain request IDs, without a
-credential. The original demo below is offline.
+**2 November local Meta update:** ReplayLab can run **Meta Llama 3.2 3B Instruct**
+on this Windows PC's CPU. Local OCR reads screenshots; Meta reasons over redacted
+text, proposes reviewed digital workflows, and plans grounded explanations.
+Deterministic rules retain every qualified OCR fact and decide completion.
+**Built with Llama.** See [local setup and measured limits](docs/local-meta-setup.md).
+Watch the [actual local Meta demonstration](docs/local-meta-demo.md) (88 seconds).
+
+```powershell
+.venv\Scripts\python.exe scripts/setup-local-meta.py --activate
+npm.cmd run dev
+```
+
+The original NVIDIA Muse Glimmer adapter remains available, but its actual cloud
+requests still timed out or returned HTTP 504. A different NVIDIA model responded
+successfully during diagnosis; the owner requires a Meta model, so that alternative
+was not selected. Local Llama is text reasoning over OCR, not Muse/SAM vision, and
+hackathon eligibility remains unconfirmed. See [NVIDIA evidence](docs/nvidia-integration.md).
+The original three-minute recording below remains explicitly offline.
 
 **Watch. Learn. Do.** Learn visual workflows with evidence, one reviewed checkpoint at a time.
 

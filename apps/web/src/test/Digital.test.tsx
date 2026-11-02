@@ -297,6 +297,28 @@ describe("digital screen privacy and lifecycle", () => {
       screen.getByRole("button", { name: "Choose screen or window" }),
     ).toBeEnabled();
   });
+  it("uses local Meta OCR text reasoning without cloud consent or vision-model claims", async () => {
+    captureDevice();
+    const user = userEvent.setup();
+    const onProviderValidated = vi.fn();
+    vi.mocked(api.screenCheck).mockResolvedValue({
+      ...check, result: { ...check.result, provider_mode: "local_meta" },
+      observation: { ...check.observation, provider_mode: "local_meta" },
+    });
+    mount({ provider: { ...provider, mode: "local_meta", model: "Llama-3.2-3B-Instruct" }, onProviderValidated });
+    expect(screen.getByRole("button", { name: "Choose screen or window" })).toBeEnabled();
+    expect(screen.getByRole("button", { name: "Upload screenshot" })).toBeEnabled();
+    expect(screen.queryByRole("checkbox", { name: /I consent to sending/ })).not.toBeInTheDocument();
+    expect(screen.queryByText(/No Meta calls in offline mode/)).not.toBeInTheDocument();
+    expect(screen.getByText(/Meta Llama receives only redacted OCR text/)).toBeInTheDocument();
+    const file = new File(["test screenshot bytes"], "local-screen.png", { type: "image/png" });
+    await user.upload(screen.getByLabelText("Upload screen screenshot"), file);
+    await screen.findByRole("region", { name: "Screen verification result" });
+    expect(screen.getAllByText("LOCAL META LLAMA · OCR + TEXT")).toHaveLength(2);
+    expect(api.screenCheck).toHaveBeenCalledWith(project.id, "one", file, false, "",
+      "manually selected screenshot", expect.any(AbortSignal), false);
+    expect(onProviderValidated).not.toHaveBeenCalled(); // A mode label alone is not validated model provenance.
+  });
   it("does not carry Meta screen consent into NVIDIA after a provider switch", async () => {
     captureDevice();
     const user = userEvent.setup();

@@ -210,6 +210,10 @@ def install_digital_routes(
             from app.providers.nvidia import NvidiaScreenProvider
 
             provider = NvidiaScreenProvider(provider_for(selected))
+        elif selected == "local_meta":
+            from app.providers.local_meta import LocalMetaScreenProvider
+
+            provider = LocalMetaScreenProvider(provider_for(selected))
         else:
             provider = None
         if file.content_type not in {"image/png", "image/jpeg", "image/webp"}:
@@ -242,7 +246,9 @@ def install_digital_routes(
                     "A screen check is already running. Wait before retrying.",
                     headers={"Retry-After": "2"},
                 )
-            interval = settings.screen_nvidia_interval if selected == "nvidia" else settings.screen_meta_interval if selected == "meta" else settings.screen_local_interval
+            intervals = {"nvidia": settings.screen_nvidia_interval, "meta": settings.screen_meta_interval,
+                         "local_meta": settings.screen_local_meta_interval}
+            interval = intervals.get(selected, settings.screen_local_interval)
             if time.monotonic() - sessions.started.get(project_id, -1e9) < interval:
                 raise HTTPException(
                     429,
@@ -265,7 +271,7 @@ def install_digital_routes(
             # The authoritative decision below is recomputed against fresh progress.
             guidance = None
             proposed_result = None
-            if selected in {"meta", "nvidia"}:
+            if selected in {"meta", "nvidia", "local_meta"}:
                 from app.providers.grounded_explanation import explain_verification
 
                 with sessions.lock:

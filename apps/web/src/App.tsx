@@ -18,7 +18,7 @@ import {
   Video,
   X,
 } from "lucide-react";
-import type { Health, Modality, Project } from "./types";
+import type { Health, Modality, Project, ProviderMode } from "./types";
 import { api } from "./services/api";
 import { providerModels, providerName, usesCloud } from "./services/providers";
 import { Badge, ErrorBanner, Spinner } from "./components/ui";
@@ -64,6 +64,15 @@ export function App() {
     else setError(responses[1].reason.message);
     setLoading(false);
   }, []);
+  const refreshProviderStatus = useCallback((verifiedMode: ProviderMode) => {
+    void api.health().then((latest) => {
+      setHealth((current) => current?.provider.mode === verifiedMode && latest.provider.mode === verifiedMode
+        ? latest : current);
+    }, () => {
+      // A failed status refresh keeps the previous unverified status. The
+      // independently validated screen decision remains visible.
+    });
+  }, []);
   useEffect(() => {
     void reload();
   }, [reload]);
@@ -75,11 +84,16 @@ export function App() {
     const timer = window.setInterval(() => {
       void api
         .project(project.id)
-        .then(updateProject)
+        .then((latest) => {
+          updateProject(latest);
+          if (latest.status === "ready" && latest.task?.provider_mode === "local_meta") {
+            refreshProviderStatus("local_meta");
+          }
+        })
         .catch((e: Error) => setError(e.message));
     }, 1800);
     return () => clearInterval(timer);
-  }, [project, updateProject]);
+  }, [project, updateProject, refreshProviderStatus]);
   async function create(demo: false | true | "digital" = false) {
     setBusy(true);
     setError("");
@@ -120,6 +134,8 @@ export function App() {
     }
   }
   const provider = health?.provider;
+  const usesNvidiaModel = provider?.mode === "nvidia"
+    && /^(?:private\/)?nvidia\//.test(provider.model ?? "");
   const progress = project?.task?.steps.length
     ? Math.round(
         (project.completed_step_ids.length / project.task.steps.length) * 100,
@@ -225,12 +241,16 @@ export function App() {
                     ? `${providerName(provider)} provider`
                     : provider.configured
                       ? `${providerName(provider)} access unverified`
+                      : provider.mode === "local_meta"
+                        ? "Local Meta setup missing"
                       : `${providerName(provider)} credentials missing`
                 : "Connecting"}
             </span>
             <Badge variant={provider?.mode === "mock" ? "mock" : "neutral"}>
               {provider?.mode === "mock"
                 ? "MOCK MODE"
+                : provider?.mode === "local_meta"
+                  ? "LOCAL META MODE"
                 : provider && usesCloud(provider)
                   ? `${providerName(provider).toUpperCase()} MODE`
                   : "API"}
@@ -338,6 +358,7 @@ export function App() {
                   onUpdate={updateProject}
                   onError={setError}
                   onReview={() => setTab("task")}
+                  onProviderValidated={refreshProviderStatus}
                 />
               ) : (
                 <Suspense fallback={<Spinner label="Loading physical practice…" />}><Practice
@@ -475,7 +496,7 @@ export function App() {
               deterministic in every mode. Credentials stay on the server.
             </p>
             <div className="provider-options">
-              {(["mock", "nvidia", "meta"] as const).map((mode) => (
+              {(["mock", "local_meta", "nvidia", "meta"] as const).map((mode) => (
                 <button
                   className={`provider-option ${provider?.mode === mode ? "selected" : ""}`}
                   disabled={busy}
@@ -495,11 +516,15 @@ export function App() {
                   <span className="radio-indicator" />
                   <div>
                     <strong>
-                      {mode === "mock" ? "Offline / mock" : mode === "nvidia" ? "NVIDIA-hosted Meta model" : "Meta Model API"}
+                      {mode === "mock" ? "Offline / mock"
+                        : mode === "local_meta" ? "Local Meta Llama · OCR + text"
+                        : mode === "nvidia" ? "NVIDIA cloud vision" : "Meta Model API"}
                     </strong>
                     <small>
                       {mode === "mock"
                         ? "Local OCR for digital screens; labeled physical fixtures. No cloud inference."
+                        : mode === "local_meta"
+                          ? "Meta Llama reasons over local OCR text and supplied transcripts on this PC. No cloud calls, image-model input, or SAM segmentation."
                         : mode === "nvidia"
                           ? "Digital screenshot and tutorial-frame understanding. Requires server credentials; no SAM segmentation."
                           : "Muse Spark + SAM. Requires server credentials and verified provider access."}
@@ -509,6 +534,8 @@ export function App() {
               ))}
             </div>
             {usesCloud(provider) && <p className="muted small">Model: {providerModels(provider)} · Host: {provider?.host ?? (provider?.mode === "nvidia" ? "integrate.api.nvidia.com" : "api.meta.ai")} · {provider?.live_verified ? "Live requests validated" : "Live access not yet validated"}. A configured key alone does not establish model availability.</p>}
+            {provider?.mode === "local_meta" && <p className="muted small">Model: {providerModels(provider)} · Host: {provider.host ?? "Local server"} · {provider.live_verified ? "Local model requests validated" : "Local model access not yet validated"}. Local OCR reads screenshots; Meta Llama receives redacted text. Built with Llama.</p>}
+            {usesNvidiaModel && <p className="muted small">The active NVIDIA model is not Meta Muse. Meta model submission requirements remain unverified.</p>}
             <div className="info-note">
               <BookOpen size={17} />
               <span>
@@ -516,7 +543,7 @@ export function App() {
                   "Provider status is unavailable. Start the backend and reconnect."}
               </span>
             </div>
-            <label className="checkbox-row">
+            {usesCloud(provider) && <label className="checkbox-row">
               <input
                 type="checkbox"
                 checked={consent}
@@ -527,7 +554,7 @@ export function App() {
                   ? "I consent to sending this session’s sampled tutorial frames and supplied transcript to NVIDIA for cloud processing. Provider processing and retention terms apply; no cloud deletion or expiry guarantee is made. NVIDIA mode does not provide physical segmentation. Screen analysis requires its own project consent."
                   : "I consent to sending this session’s uploaded videos and checkpoint images to Meta for cloud processing. Local media and inference caches remain until project deletion. ReplayLab requests cloud file deletion after processing, with a one-hour cloud expiry fallback."}
               </span>
-            </label>
+            </label>}
             <button
               className="button primary full-width"
               onClick={() => setSettings(false)}

@@ -3,9 +3,16 @@
 Checked on 2 November 2026. The owner authorized NVIDIA-hosted Meta inference;
 the direct Meta Model API remains unverified. The repository stays private.
 
+The owner subsequently required a working Meta model for the deadline. A
+[local Meta Llama OCR/text provider](local-meta-setup.md) now supplies that route
+without using this cloud endpoint. A diagnostic Nemotron request established
+that the saved NVIDIA key can make successful calls; Muse Glimmer's failures
+remain model-specific evidence, not proof that the key is absent or invalid.
+
 ## Implemented
 
-The server supports explicit `mock`, `meta`, and `nvidia` modes. NVIDIA uses
+The cloud adapter supports explicit `nvidia` mode alongside mock, direct Meta,
+and local Meta modes. NVIDIA uses
 `meta/muse-glimmer-30b` at `https://integrate.api.nvidia.com/v1/chat/completions`,
 with the documented OpenAI-compatible text/image messages. Screenshots pass local
 OCR/privacy preparation first. NVIDIA returns Pydantic-validated observations;
@@ -67,7 +74,7 @@ Tutorial frames/transcripts are not sanitized by screen redaction. Review them
 before cloud consent. NVIDIA trial processing/retention terms apply; Meta's
 `store:false` and Files-expiration controls are not claimed for NVIDIA requests.
 
-## Actual result: API inference is blocked
+## Actual result: Muse Glimmer API inference is blocked
 
 The owner demonstrated a successful NVIDIA Playground reply. Application API
 requests on this machine still fail. Public catalog GET succeeded and listed
@@ -96,7 +103,7 @@ timings are preserved in [live checks](validation/nvidia-live-checks.json) and t
 [NVIDIA evaluation report](../demo/evaluation/digital/nvidia-results.json).
 
 The application/adapter is implemented and contract-tested, but successful live
-NVIDIA inference and a real-model submission demo are **not verified**. The
+Muse Glimmer inference and a Muse submission demo are **not verified**. The
 existing [three-minute recording](v3-demo.md) remains explicitly offline and must
 not be relabeled as NVIDIA inference. The cause of the API timeouts and gateway
 errors is not established.

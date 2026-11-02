@@ -1,0 +1,282 @@
+{
+  "recorded_at": "2026-11-02T17:33:36.670706+00:00",
+  "success": true,
+  "model": "meta-llama/Llama-3.2-3B-Instruct",
+  "provider_mode": "local_meta",
+  "browser": "148.0.7778.96",
+  "screen_submission_budget": 2,
+  "actual_screen_submissions": 2,
+  "underlying_local_model_request_budget": 4,
+  "fresh_observation_response_ids": [
+    "chatcmpl-YR25eLalAleIVMS3dskLgy7QOpEb04Qk",
+    "chatcmpl-gjQ1OXy02PQ1mXsaG6imDPr972wzzj3q"
+  ],
+  "actual_underlying_local_model_request_count": null,
+  "model_request_count_limit": "Two fresh observation requests plus up to two explanation requests; existing explanation cache hits are not exposed by the API.",
+  "chapters": [
+    {
+      "name": "Local Meta model, OCR/text disclosure, and Built with Llama attribution",
+      "at_seconds": 0.96
+    },
+    {
+      "name": "Read-only review of the existing Meta-generated graph; approval remains pending",
+      "at_seconds": 4.35
+    },
+    {
+      "name": "correct-market: approve a separate known CodeLab fixture workflow",
+      "at_seconds": 10.07
+    },
+    {
+      "name": "correct-market: submit the owned screenshot for real local OCR and Meta text reasoning",
+      "at_seconds": 12.0
+    },
+    {
+      "name": "correct-market: actual PASS and evidence-driven progress",
+      "at_seconds": 40.61
+    },
+    {
+      "name": "wrong-settings-market: approve a separate known CodeLab fixture workflow",
+      "at_seconds": 50.78
+    },
+    {
+      "name": "wrong-settings-market: submit the owned screenshot for real local OCR and Meta text reasoning",
+      "at_seconds": 52.71
+    },
+    {
+      "name": "wrong-settings-market: actual FAIL and evidence-driven progress",
+      "at_seconds": 79.26
+    },
+    {
+      "name": "Finished: actual local Meta screen decisions; generated proposal remains unapproved",
+      "at_seconds": 87.86
+    }
+  ],
+  "cases": [
+    {
+      "id": "correct-market",
+      "expected": "pass",
+      "actual": "pass",
+      "http_status": 200,
+      "latency_ms": 28454.97,
+      "provider_mode": "local_meta",
+      "observation_provenance": {
+        "engine": "rapidocr-3.10.0/onnxruntime",
+        "ocr_available": true,
+        "real_ocr": true,
+        "fixture": false,
+        "cache_hit": false,
+        "redaction_applied": true,
+        "redacted_regions": 0,
+        "screenshots_stored": false,
+        "interface_version_ambiguous": false,
+        "self_capture": false,
+        "quality_source": "Screenshot contrast and sharpness heuristic; not calibrated model confidence",
+        "redaction_limits": "Best effort for detected email addresses and key-like text; review the selected sharing scope.",
+        "provider": "local_meta",
+        "model": "meta-llama/Llama-3.2-3B-Instruct",
+        "response_model": "meta-llama/Llama-3.2-3B-Instruct",
+        "request_id": "chatcmpl-YR25eLalAleIVMS3dskLgy7QOpEb04Qk",
+        "latency_ms": 19145.138,
+        "token_usage": {
+          "completion_tokens": 80,
+          "prompt_tokens": 483,
+          "total_tokens": 563
+        },
+        "local_only": true,
+        "vision_inference": false,
+        "api_response_validated": true,
+        "live_api_verified": true,
+        "ocr_selected_count": 8,
+        "pipeline": "local_ocr_plus_meta_text_reasoning",
+        "ocr_fact_count": 21,
+        "meta_focus_evidence_ids": [
+          "O8",
+          "O9",
+          "O10",
+          "O13",
+          "O14",
+          "O15",
+          "O16",
+          "O17"
+        ],
+        "meta_focus_labels": [
+          "Show unexpected dialog",
+          "\u53e3",
+          "\u65e5",
+          "\u65e5",
+          "Find a package by name",
+          "Extensions",
+          "A space for your tools.",
+          "Search for the package named in your tutorial."
+        ],
+        "visible_application": "CodeLab 1.0",
+        "current_window": "practice-workspace",
+        "missing_information": [
+          "This Meta text model cannot inspect icons, visual appearance or hidden application state."
+        ],
+        "grounding": "All deterministic evidence, roles, boxes and confidence remain actual local OCR. Meta attention IDs annotate semantic focus and cannot discard or override observed facts."
+      },
+      "explanation_provider": "local_meta_grounded_plan",
+      "explanation": "All 1 approved screen constraint(s) are supported by visible UI evidence. Visible evidence: Visible text: Extensions Marketplace (confidence 1.00, source local_ocr)..",
+      "rule_results": [
+        {
+          "rule_id": "digital-step-1-text-1",
+          "status": "pass",
+          "expected": "Extensions Marketplace",
+          "observed": "Expected text Extensions Marketplace is reliably visible.",
+          "evidence": [
+            "Visible text: Extensions Marketplace (confidence 1.00, source local_ocr)."
+          ],
+          "correction": null
+        }
+      ],
+      "completed_step_ids": [
+        "digital-step-1"
+      ]
+    },
+    {
+      "id": "wrong-settings-market",
+      "expected": "fail",
+      "actual": "fail",
+      "http_status": 200,
+      "latency_ms": 26454.37,
+      "provider_mode": "local_meta",
+      "observation_provenance": {
+        "engine": "rapidocr-3.10.0/onnxruntime",
+        "ocr_available": true,
+        "real_ocr": true,
+        "fixture": false,
+        "cache_hit": false,
+        "redaction_applied": true,
+        "redacted_regions": 0,
+        "screenshots_stored": false,
+        "interface_version_ambiguous": false,
+        "self_capture": false,
+        "quality_source": "Screenshot contrast and sharpness heuristic; not calibrated model confidence",
+        "redaction_limits": "Best effort for detected email addresses and key-like text; review the selected sharing scope.",
+        "provider": "local_meta",
+        "model": "meta-llama/Llama-3.2-3B-Instruct",
+        "response_model": "meta-llama/Llama-3.2-3B-Instruct",
+        "request_id": "chatcmpl-gjQ1OXy02PQ1mXsaG6imDPr972wzzj3q",
+        "latency_ms": 16148.734,
+        "token_usage": {
+          "completion_tokens": 69,
+          "prompt_tokens": 456,
+          "total_tokens": 525
+        },
+        "local_only": true,
+        "vision_inference": false,
+        "api_response_validated": true,
+        "live_api_verified": true,
+        "ocr_selected_count": 7,
+        "pipeline": "local_ocr_plus_meta_text_reasoning",
+        "ocr_fact_count": 20,
+        "meta_focus_evidence_ids": [
+          "O8",
+          "O15",
+          "O16",
+          "O17",
+          "O18",
+          "O19",
+          "O20"
+        ],
+        "meta_focus_labels": [
+          "Show unexpected dialog",
+          "Editor theme",
+          "Midnight",
+          "Settings",
+          "CodeLab 1.0",
+          "Local sandbox - Changes are simulated",
+          "-T-8"
+        ],
+        "visible_application": null,
+        "current_window": null,
+        "missing_information": [
+          "This Meta text model cannot inspect icons, visual appearance or hidden application state."
+        ],
+        "grounding": "All deterministic evidence, roles, boxes and confidence remain actual local OCR. Meta attention IDs annotate semantic focus and cannot discard or override observed facts."
+      },
+      "explanation_provider": "local_meta_grounded_plan",
+      "explanation": "A known contradictory UI state is reliably visible. Return to the approved Extensions Marketplace state, then capture the target window again. Visible evidence: Visible text: Preferences (confidence 1.00, source local_ocr)..",
+      "rule_results": [
+        {
+          "rule_id": "digital-step-1-text-1",
+          "status": "fail",
+          "expected": "Extensions Marketplace",
+          "observed": "A known contradictory UI state is reliably visible.",
+          "evidence": [
+            "Visible text: Preferences (confidence 1.00, source local_ocr)."
+          ],
+          "correction": "Return to the approved Extensions Marketplace state, then capture the target window again."
+        }
+      ],
+      "completed_step_ids": []
+    }
+  ],
+  "page_errors": [],
+  "nonlocal_browser_hosts": [],
+  "review_project": "0c226ec5213b4c568d6cad78f31fdc9e",
+  "review_project_unchanged": true,
+  "cleanup": [
+    {
+      "owned_project": "ca5e005bd0eb4900a72f84cbeda7893e",
+      "http_status": 204
+    },
+    {
+      "owned_project": "91c51ce34c144a21be040df3c70fc0dd",
+      "http_status": 204
+    }
+  ],
+  "video": {
+    "programs": [],
+    "stream_groups": [],
+    "streams": [
+      {
+        "width": 1440,
+        "height": 1000,
+        "nb_frames": "2197"
+      }
+    ],
+    "format": {
+      "duration": "87.880000",
+      "size": "2773451"
+    }
+  },
+  "limitations": [
+    "Meta Llama receives redacted OCR text, not image pixels. Deterministic rules own PASS/FAIL/UNCERTAIN.",
+    "The existing Meta-generated proposal was generated before recording and remains unapproved and unchanged.",
+    "The two screen checks use separate approved CodeLab fixture workflows, not the pending model-generated proposal.",
+    "CodeLab simulates software changes. These two controlled screenshots are not a real-world accuracy benchmark.",
+    "Manual screenshot upload is exercised, not a human screen picker or live tab stream.",
+    "No hosted Meta/NVIDIA success, SAM segmentation, or hackathon eligibility is established by this recording.",
+    "Waiting is recorded at actual speed. No padding, time compression, or response substitution is used."
+  ],
+  "review_proposal_provenance": {
+    "provider": "local_meta",
+    "model": "meta-llama/Llama-3.2-3B-Instruct",
+    "response_model": "meta-llama/Llama-3.2-3B-Instruct",
+    "requires_approval": true,
+    "input": "local_ocr_and_optional_transcript",
+    "source_frame_count": 0,
+    "local_only": true,
+    "vision_inference": false,
+    "request_id": "chatcmpl-6YJjC0a4dnWU2VSYJcuZTzLlMJCXQBLO",
+    "latency_ms": 43432.059,
+    "token_usage": {
+      "completion_tokens": 335,
+      "prompt_tokens": 202,
+      "total_tokens": 537
+    },
+    "cache_hit": false,
+    "interface_version_source": null,
+    "observed_interface_versions": [],
+    "interface_version_ambiguous": false,
+    "screen_rule_grounding": "Every expected label, alternative and contradiction is quoted from supplied transcript or local frame OCR text.",
+    "limitation": "Meta text reasoning over locally extracted OCR; visual appearance and hidden state are unknown.",
+    "instruction_warnings": []
+  },
+  "review_proposal_step_count": 2,
+  "review_project_write_requests": [],
+  "uncut_browser_elapsed_seconds": 87.86,
+  "fresh_observation_request_count": 2
+}

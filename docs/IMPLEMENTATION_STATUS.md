@@ -1,5 +1,26 @@
 # ReplayLab 3.0 implementation status
 
+## Local Meta update — 2 November 2026
+
+The owner required a working Meta model. **Meta Llama 3.2 3B Instruct** now runs
+on the Windows CPU with pinned community Q4_K_M weights and a verified portable
+runtime. It reasons over redacted local OCR and transcripts; it is not model
+vision, Muse Glimmer, or SAM. The app exposes a separate `local_meta` mode.
+
+Actual browser validation passed twelve assertions: a correct owned screenshot
+returned PASS, a contradictory panel returned FAIL, and only PASS advanced the
+approved template. Both explanations used actual local Meta plans. A real API
+request generated a two-step transcript workflow in 44.14 seconds and rejected
+verification before approval. That proposal remains in the local workspace for
+the owner to review.
+
+**486 backend tests, 52 frontend tests**, Ruff, TypeScript, and production build
+passed. Contract tests use mocks; actual model requests are recorded separately.
+See [local setup and measured limitations](local-meta-setup.md),
+[browser evidence](assets/local-meta/browser-validation.json), and
+[workflow evidence](validation/local-meta-workflow.json). Earlier milestone
+results below remain historical, including the unresolved Muse cloud failures.
+
 ## NVIDIA update — 2 November 2026
 
 The owner authorized real NVIDIA-hosted Meta calls. The local server credential

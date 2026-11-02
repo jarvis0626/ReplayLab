@@ -1,6 +1,6 @@
 export type Verdict = "pass" | "fail" | "uncertain";
 export type Modality = "physical" | "digital";
-export type ProviderMode = "mock" | "meta" | "nvidia";
+export type ProviderMode = "mock" | "meta" | "nvidia" | "local_meta";
 export interface ScreenRule {
   id: string;
   kind:

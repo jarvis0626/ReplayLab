@@ -1,0 +1,67 @@
+{
+  "checked_at": "2026-11-02T17:15:23.566959+00:00",
+  "success": false,
+  "provider_mode": "local_meta",
+  "expected_model": "meta-llama/Llama-3.2-3B-Instruct",
+  "ui_only": false,
+  "browser": "148.0.7778.96",
+  "phase": "infer-correct-market",
+  "screen_submission_budget": 2,
+  "actual_screen_submissions": 1,
+  "cases": [
+    {
+      "id": "correct-market",
+      "screenshot": "case-correct-market.png",
+      "expected_verdict": "pass",
+      "http_status": 200,
+      "browser_request_latency_ms": 15903.6,
+      "actual_verdict": "uncertain",
+      "matches_expected": false,
+      "result_provider": "local_meta",
+      "observation_provider": "local_meta",
+      "requested_model": "meta-llama/Llama-3.2-3B-Instruct",
+      "response_model": "meta-llama/Llama-3.2-3B-Instruct",
+      "local_only": true,
+      "vision_inference": false,
+      "api_response_validated": true,
+      "live_api_verified": true,
+      "observation_latency_ms": 13333.1,
+      "request_id": "chatcmpl-vXzQgy4p0T120qbCn7F1KxLmgzmeRQnb",
+      "token_usage": {
+        "completion_tokens": 74,
+        "prompt_tokens": 483,
+        "total_tokens": 557
+      },
+      "ocr_selected_count": 8,
+      "completed_step_ids": [],
+      "screen_stored": false,
+      "explanation_provider": "deterministic_template",
+      "warnings": []
+    }
+  ],
+  "checks": [
+    "local Meta mode, configured model, OCR/text disclosure, and no cloud consent gate",
+    "local Meta settings fit desktop 1440px",
+    "local Meta settings fit tablet 1024px",
+    "correct-market: actual approved template is ready without cloud consent"
+  ],
+  "page_errors": [],
+  "nonlocal_browser_hosts": [],
+  "cleanup": [
+    {
+      "owned_project": "9fb41e732f4b4b66b007773f28375178",
+      "http_status": 204
+    }
+  ],
+  "limitations": [
+    "Meta Llama reasons over actual local OCR text; image pixels are not Llama model input.",
+    "The approved workflow and test screenshots are the explicitly simulated CodeLab demo.",
+    "This small browser check does not establish model accuracy, general application support, or hackathon eligibility.",
+    "Manual screenshot upload is exercised; a human screen picker and live tab stream are not tested here.",
+    "No tutorial extraction is measured by this approved-template workflow."
+  ],
+  "error": {
+    "type": "AssertionError",
+    "phase": "infer-correct-market"
+  }
+}

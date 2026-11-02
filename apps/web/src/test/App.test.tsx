@@ -14,6 +14,7 @@ import type {
   Evaluation,
   Graph,
   Project,
+  ScreenCheck,
   VerificationResult,
 } from "../types";
 
@@ -263,11 +264,15 @@ describe("workspace navigation and project lifecycle", () => {
       fetcher.mock.calls.filter(([path]) => String(path).includes("extract")),
     ).toHaveLength(0);
   });
-  it("shows NVIDIA host/model without claiming live availability or sending media", async () => {
+  it.each([
+    { model: "meta/muse-glimmer-30b", requiresMetaNotice: false },
+    { model: "nvidia/nemotron-3.5-super-vl-120b-a12b", requiresMetaNotice: true },
+    { model: "private/nvidia/nemotron-3.5-super-120b-a12b", requiresMetaNotice: true },
+  ])("shows the NVIDIA model $model honestly without sending media", async ({ model, requiresMetaNotice }) => {
     const fetcher = mockApi({
       "POST /api/provider": {
         provider: { ...provider, mode: "nvidia", configured: true, available: false,
-          live_verified: false, model: "meta/configured-test-model", host: "integrate.api.nvidia.com",
+          live_verified: false, model, host: "integrate.api.nvidia.com",
           message: "NVIDIA credential configured; live access unverified." },
       },
     });
@@ -275,13 +280,102 @@ describe("workspace navigation and project lifecycle", () => {
     render(<App />);
     await screen.findByText("MOCK MODE");
     await user.click(screen.getByRole("button", { name: "Open provider settings" }));
-    await user.click(screen.getByRole("button", { name: /NVIDIA-hosted Meta model/ }));
+    await user.click(screen.getByRole("button", { name: /NVIDIA cloud vision/ }));
     expect(await screen.findByText("NVIDIA MODE")).toBeInTheDocument();
     expect(screen.getByText("NVIDIA access unverified")).toBeInTheDocument();
-    expect(screen.getByText(/meta\/configured-test-model.*integrate.api.nvidia.com/)).toBeInTheDocument();
+    expect(screen.getByText((text) => text.includes(model) && text.includes("integrate.api.nvidia.com"))).toBeInTheDocument();
+    const metaNotice = screen.queryByText(/The active NVIDIA model is not Meta Muse/);
+    if (requiresMetaNotice) expect(metaNotice).toBeInTheDocument();
+    else expect(metaNotice).not.toBeInTheDocument();
     expect(screen.getByText(/no cloud deletion or expiry guarantee/)).toBeInTheDocument();
     expect(screen.queryByText(/Live requests validated/)).not.toBeInTheDocument();
     expect(fetcher.mock.calls.filter(([path]) => /extract|screen-check/.test(String(path)))).toHaveLength(0);
+  });
+  it("selects local Meta text reasoning without requesting cloud consent", async () => {
+    const fetcher = mockApi({
+      "POST /api/provider": {
+        provider: { ...provider, mode: "local_meta", configured: true, available: false,
+          live_verified: false, model: "Llama-3.2-3B-Instruct", host: "http://127.0.0.1:8083/v1",
+          message: "Local Meta Llama configured; model requests remain unverified." },
+      },
+    });
+    const user = userEvent.setup();
+    render(<App />);
+    await screen.findByText("MOCK MODE");
+    await user.click(screen.getByRole("button", { name: "Open provider settings" }));
+    await user.click(screen.getByRole("button", { name: /Local Meta Llama · OCR \+ text/ }));
+    expect(await screen.findByText("LOCAL META MODE")).toBeInTheDocument();
+    expect(screen.getByText("Local Meta Llama access unverified")).toBeInTheDocument();
+    expect(screen.getByText((text) => text.includes("Llama-3.2-3B-Instruct") && text.includes("127.0.0.1:8083"))).toBeInTheDocument();
+    expect(screen.queryByRole("checkbox", { name: /I consent to sending/ })).not.toBeInTheDocument();
+    expect(screen.getByText(/Built with Llama\./)).toBeInTheDocument();
+    const change = fetcher.mock.calls.find(([path]) => path === "/api/provider");
+    expect(JSON.parse(String(change?.[1]?.body))).toEqual({ mode: "local_meta" });
+    expect(fetcher.mock.calls.filter(([path]) => /extract|screen-check/.test(String(path)))).toHaveLength(0);
+  });
+  it("refreshes local Meta status only after a validated local model screen response", async () => {
+    let verified = false;
+    const digital = { ...project, name: "Local text workflow", modality: "digital" as const };
+    const local = { ...provider, mode: "local_meta", configured: true,
+      model: "meta-llama/Llama-3.2-3B-Instruct", host: "http://127.0.0.1:8083/v1" };
+    const decision: ScreenCheck = {
+      result: { step_id: "step-1", status: "uncertain", rule_results: [], evidence: [],
+        explanation: "The local model read the OCR text; the checkpoint remains uncertain.",
+        provider_mode: "local_meta", warnings: [] },
+      observation: { elements: [], visible_text: "Observed OCR label", image_quality: 0.9,
+        confidence: null, complete: false, provider_mode: "local_meta",
+        provenance: { api_response_validated: true, live_api_verified: true, local_only: true, vision_inference: false } },
+      completed_step_ids: [], current_step_id: "step-1", upcoming_step_id: "step-2", screen_stored: false,
+    };
+    const fetcher = mockApi({
+      "GET /api/health": () => Response.json({ status: "ok", provider: {
+        ...local, available: verified, live_verified: verified,
+      } }),
+      "GET /api/projects": [digital],
+      "GET /api/projects/abc123": digital,
+      "POST /api/projects/abc123/screen-check": () => {
+        verified = true;
+        return Response.json(decision);
+      },
+    });
+    const user = userEvent.setup();
+    render(<App />);
+    await screen.findByText("Local Meta Llama access unverified");
+    await user.click(screen.getByRole("button", { name: /Local text workflow.*Ready/ }));
+    await user.click(screen.getByRole("button", { name: "Guided practice" }));
+    await user.upload(screen.getByLabelText("Upload screen screenshot"),
+      new File(["owned test pixels"], "local.png", { type: "image/png" }));
+    expect(await screen.findByText("Local Meta Llama provider")).toBeInTheDocument();
+    expect(screen.getByRole("region", { name: "Screen verification result" })).toHaveTextContent("checkpoint remains uncertain");
+    expect(fetcher.mock.calls.filter(([path]) => path === "/api/health")).toHaveLength(2);
+  });
+  it("refreshes local Meta status when the first workflow finishes processing", async () => {
+    let verified = false;
+    let projectRequests = 0;
+    const pending = { ...freshProject, name: "First local generation", modality: "digital" as const, status: "processing" as const };
+    const ready = { ...pending, status: "ready" as const, task: {
+      ...project.task!, modality: "digital" as const, provider_mode: "local_meta",
+      provenance: { local_only: true, vision_inference: false },
+    } };
+    const fetcher = mockApi({
+      "GET /api/health": () => Response.json({ status: "ok", provider: {
+        ...provider, mode: "local_meta", configured: true, available: verified, live_verified: verified,
+      } }),
+      "GET /api/projects": [pending],
+      "GET /api/projects/new123": () => {
+        projectRequests++;
+        if (projectRequests > 1) verified = true;
+        return Response.json(verified ? ready : pending);
+      },
+    });
+    const user = userEvent.setup();
+    render(<App />);
+    await screen.findByText("Local Meta Llama access unverified");
+    await user.click(screen.getByRole("button", { name: "First local generation" }));
+    await waitFor(() => expect(screen.getByText("Local Meta Llama provider")).toBeInTheDocument(), { timeout: 4000 });
+    expect(projectRequests).toBe(2);
+    expect(fetcher.mock.calls.filter(([path]) => path === "/api/health")).toHaveLength(2);
+    expect(fetcher.mock.calls.filter(([path]) => /screen-check/.test(String(path)))).toHaveLength(0);
   });
 });
 
@@ -363,6 +457,27 @@ describe("video studio", () => {
     expect(
       screen.getByText(/Enable cloud-processing consent/),
     ).toBeInTheDocument();
+  });
+  it("extracts digital steps with local Meta OCR text reasoning without cloud consent", async () => {
+    const digital = { ...project, modality: "digital" as const };
+    const fetcher = mockApi({ "POST /api/projects/abc123/extract": digital });
+    const onUpdate = vi.fn();
+    const user = userEvent.setup();
+    render(<Studio project={digital} provider={{ ...provider, mode: "local_meta" }} consent={false}
+      onUpdate={onUpdate} onTask={vi.fn()} onError={vi.fn()} />);
+    expect(screen.getByText(/Image pixels are not sent to Llama/)).toBeInTheDocument();
+    const generate = screen.getByRole("button", { name: /Generate task steps/ });
+    expect(generate).toBeEnabled();
+    await user.click(generate);
+    await waitFor(() => expect(onUpdate).toHaveBeenCalledWith(digital));
+    expect(JSON.parse(String(fetcher.mock.calls[0][1]?.body))).toEqual({ cloud_consent: false });
+  });
+  it.each(["nvidia", "local_meta"] as const)("disables physical extraction for %s without SAM", (mode) => {
+    mockApi();
+    render(<Studio project={project} provider={{ ...provider, mode }} consent={true}
+      onUpdate={vi.fn()} onTask={vi.fn()} onError={vi.fn()} />);
+    expect(screen.getByRole("button", { name: /Generate task steps/ })).toBeDisabled();
+    expect(screen.getByText(/supports digital workflows without SAM segmentation/)).toBeInTheDocument();
   });
 });
 
@@ -459,6 +574,17 @@ describe("task review and dependency graph", () => {
 });
 
 describe("guided practice and evidence", () => {
+  it("disables local Meta physical verification because Llama does not provide SAM", async () => {
+    const fetcher = mockApi({ "POST /api/projects/abc123/attempts": attempt });
+    const user = userEvent.setup();
+    render(<Practice project={project} provider={{ ...provider, mode: "local_meta" }} consent={false}
+      onUpdate={vi.fn()} onError={vi.fn()} onReview={vi.fn()} />);
+    expect(screen.getByText(/Local Meta Llama reasons over OCR text and does not provide SAM/)).toBeInTheDocument();
+    await user.upload(screen.getByLabelText("Upload checkpoint image"),
+      new File(["image bytes"], "checkpoint.png", { type: "image/png" }));
+    expect(await screen.findByRole("button", { name: "Verify checkpoint" })).toBeDisabled();
+    expect(fetcher.mock.calls.filter(([path]) => String(path).endsWith("/verify"))).toHaveLength(0);
+  });
   it("blocks verification before the user approves instructions", () => {
     mockApi();
     render(
