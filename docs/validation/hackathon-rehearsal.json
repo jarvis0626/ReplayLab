@@ -1,0 +1,406 @@
+{
+  "started_at": "2026-11-03T14:05:13.354577+00:00",
+  "success": true,
+  "recorded": false,
+  "recording_requested": false,
+  "project_id": "82b709be44c04ea4a80aa015dee30d1a",
+  "provider": "local_meta",
+  "model": "meta-llama/Llama-3.2-3B-Instruct",
+  "script_sha256": "fe8c2854188204fbbcb6d893d11785bd3c83b5200ef6b5f96e1cc1f7af1a47dc",
+  "recording_scope": "One actual ReplayLab browser page, captured continuously. Target tab appears through its real shared-stream preview.",
+  "source_selection": "Chromium test-only tab title selector after the real application share gesture; no human OS picker is claimed.",
+  "chapters": [
+    {
+      "name": "Running ReplayLab dashboard; local Meta provider selected",
+      "at_seconds": 0.34
+    },
+    {
+      "name": "Prepared tutorial: actual source video and timestamped transcript",
+      "at_seconds": 1.112
+    },
+    {
+      "name": "Prepared genuinely Meta-generated graph; review observable expected states",
+      "at_seconds": 8.773
+    },
+    {
+      "name": "intentional-settings-mistake: observe actual target tab at natural speed",
+      "at_seconds": 11.594
+    },
+    {
+      "name": "intentional-settings-mistake: actual FAIL, evidence and correction",
+      "at_seconds": 35.662
+    },
+    {
+      "name": "corrected-extensions-panel: observe actual target tab at natural speed",
+      "at_seconds": 42.398
+    },
+    {
+      "name": "corrected-extensions-panel: actual PASS, evidence and correction",
+      "at_seconds": 60.254
+    },
+    {
+      "name": "unrelated-explorer-screen: observe actual target tab at natural speed",
+      "at_seconds": 66.891
+    },
+    {
+      "name": "unrelated-explorer-screen: actual UNCERTAIN, evidence and correction",
+      "at_seconds": 80.497
+    },
+    {
+      "name": "Actual executed controlled local OCR evaluation; separate from Meta inference cases",
+      "at_seconds": 85.153
+    },
+    {
+      "name": "Actual local Meta Llama model; OCR/text boundary and evidence-backed decisions",
+      "at_seconds": 91.819
+    },
+    {
+      "name": "Finish on the working graph, with verified progress and an honest pending checkpoint",
+      "at_seconds": 94.407
+    }
+  ],
+  "cases": [
+    {
+      "id": "intentional-settings-mistake",
+      "expected": "fail",
+      "actual": "fail",
+      "http_status": 200,
+      "latency_ms": 24033.83,
+      "observation_provenance": {
+        "engine": "rapidocr-3.10.0/onnxruntime",
+        "ocr_available": true,
+        "real_ocr": true,
+        "fixture": false,
+        "cache_hit": false,
+        "redaction_applied": true,
+        "redacted_regions": 0,
+        "screenshots_stored": false,
+        "interface_version_ambiguous": false,
+        "self_capture": false,
+        "quality_source": "Screenshot contrast and sharpness heuristic; not calibrated model confidence",
+        "redaction_limits": "Best effort for detected email addresses and key-like text; review the selected sharing scope.",
+        "provider": "local_meta",
+        "model": "meta-llama/Llama-3.2-3B-Instruct",
+        "response_model": "meta-llama/Llama-3.2-3B-Instruct",
+        "request_id": "chatcmpl-52htQ5zfCWXI8r1ECAmoBs6ji38edYN4",
+        "latency_ms": 13782.373,
+        "token_usage": {
+          "completion_tokens": 74,
+          "prompt_tokens": 458,
+          "total_tokens": 532
+        },
+        "local_only": true,
+        "vision_inference": false,
+        "api_response_validated": true,
+        "live_api_verified": true,
+        "ocr_selected_count": 8,
+        "pipeline": "local_ocr_plus_meta_text_reasoning",
+        "ocr_fact_count": 20,
+        "meta_focus_evidence_ids": [
+          "O8",
+          "O14",
+          "O15",
+          "O16",
+          "O17",
+          "O18",
+          "O19",
+          "O20"
+        ],
+        "meta_focus_labels": [
+          "Show unexpected dialog",
+          "This is a different destination from the tutorial workflow.",
+          "Editor theme",
+          "Midnight",
+          "Settings",
+          "CodeLab 1.0",
+          "Local sandbox\u00b7 Changes are simulated",
+          "UT-T-8"
+        ],
+        "visible_application": null,
+        "current_window": null,
+        "missing_information": [
+          "This Meta text model cannot inspect icons, visual appearance or hidden application state."
+        ],
+        "grounding": "All deterministic evidence, roles, boxes and confidence remain actual local OCR. Meta attention IDs annotate semantic focus and cannot discard or override observed facts."
+      },
+      "source_scope": "browser tab",
+      "explanation": "A known contradictory UI state is reliably visible. Return to the approved Extensions Marketplace state, then capture the target window again. Visible evidence: Visible text: Preferences (confidence 0.97, source local_ocr)..",
+      "rule_results": [
+        {
+          "rule_id": "1",
+          "status": "fail",
+          "expected": "Extensions Marketplace",
+          "observed": "A known contradictory UI state is reliably visible.",
+          "evidence": [
+            "Visible text: Preferences (confidence 0.97, source local_ocr)."
+          ],
+          "correction": "Return to the approved Extensions Marketplace state, then capture the target window again."
+        }
+      ],
+      "completed_step_ids": [],
+      "explanation_provider": "local_meta_grounded_plan"
+    },
+    {
+      "id": "corrected-extensions-panel",
+      "expected": "pass",
+      "actual": "pass",
+      "http_status": 200,
+      "latency_ms": 17825.37,
+      "observation_provenance": {
+        "engine": "rapidocr-3.10.0/onnxruntime",
+        "ocr_available": true,
+        "real_ocr": true,
+        "fixture": false,
+        "cache_hit": false,
+        "redaction_applied": true,
+        "redacted_regions": 0,
+        "screenshots_stored": false,
+        "interface_version_ambiguous": false,
+        "self_capture": false,
+        "quality_source": "Screenshot contrast and sharpness heuristic; not calibrated model confidence",
+        "redaction_limits": "Best effort for detected email addresses and key-like text; review the selected sharing scope.",
+        "provider": "local_meta",
+        "model": "meta-llama/Llama-3.2-3B-Instruct",
+        "response_model": "meta-llama/Llama-3.2-3B-Instruct",
+        "request_id": "chatcmpl-AEdfbBAfx6by35Jb8zzGRKMUkaTj8qoH",
+        "latency_ms": 11934.259,
+        "token_usage": {
+          "completion_tokens": 71,
+          "prompt_tokens": 461,
+          "total_tokens": 532
+        },
+        "local_only": true,
+        "vision_inference": false,
+        "api_response_validated": true,
+        "live_api_verified": true,
+        "ocr_selected_count": 7,
+        "pipeline": "local_ocr_plus_meta_text_reasoning",
+        "ocr_fact_count": 20,
+        "meta_focus_evidence_ids": [
+          "O8",
+          "O9",
+          "O10",
+          "O17",
+          "O18",
+          "O19",
+          "O20"
+        ],
+        "meta_focus_labels": [
+          "Show unexpected dialog",
+          "\u53e3",
+          "\u65e5",
+          "Settings",
+          "CodeLab 1.0",
+          "Local sandbox - Changes are simulated",
+          "UT-T-8"
+        ],
+        "visible_application": null,
+        "current_window": null,
+        "missing_information": [
+          "This Meta text model cannot inspect icons, visual appearance or hidden application state."
+        ],
+        "grounding": "All deterministic evidence, roles, boxes and confidence remain actual local OCR. Meta attention IDs annotate semantic focus and cannot discard or override observed facts."
+      },
+      "source_scope": "browser tab",
+      "explanation": "All 1 approved screen constraint(s) are supported by visible UI evidence. Visible evidence: Visible text: Extensions Marketplace (confidence 1.00, source local_ocr)..",
+      "rule_results": [
+        {
+          "rule_id": "1",
+          "status": "pass",
+          "expected": "Extensions Marketplace",
+          "observed": "Expected text Extensions Marketplace is reliably visible.",
+          "evidence": [
+            "Visible text: Extensions Marketplace (confidence 1.00, source local_ocr)."
+          ],
+          "correction": null
+        }
+      ],
+      "completed_step_ids": [
+        "1"
+      ],
+      "explanation_provider": "local_meta_grounded_plan"
+    },
+    {
+      "id": "unrelated-explorer-screen",
+      "expected": "uncertain",
+      "actual": "uncertain",
+      "http_status": 200,
+      "latency_ms": 13570.11,
+      "observation_provenance": {
+        "engine": "rapidocr-3.10.0/onnxruntime",
+        "ocr_available": true,
+        "real_ocr": true,
+        "fixture": false,
+        "cache_hit": false,
+        "redaction_applied": true,
+        "redacted_regions": 0,
+        "screenshots_stored": false,
+        "interface_version_ambiguous": false,
+        "self_capture": false,
+        "quality_source": "Screenshot contrast and sharpness heuristic; not calibrated model confidence",
+        "redaction_limits": "Best effort for detected email addresses and key-like text; review the selected sharing scope.",
+        "provider": "local_meta",
+        "model": "meta-llama/Llama-3.2-3B-Instruct",
+        "response_model": "meta-llama/Llama-3.2-3B-Instruct",
+        "request_id": "chatcmpl-XHJh6JN1StMm4Y9feQjLvTbTaRaN2ph4",
+        "latency_ms": 11732.546,
+        "token_usage": {
+          "completion_tokens": 68,
+          "prompt_tokens": 479,
+          "total_tokens": 547
+        },
+        "local_only": true,
+        "vision_inference": false,
+        "api_response_validated": true,
+        "live_api_verified": true,
+        "ocr_selected_count": 7,
+        "pipeline": "local_ocr_plus_meta_text_reasoning",
+        "ocr_fact_count": 20,
+        "meta_focus_evidence_ids": [
+          "O12",
+          "O13",
+          "O14",
+          "O15",
+          "O18",
+          "O19",
+          "O20"
+        ],
+        "meta_focus_labels": [
+          "Your next skill starts here.",
+          "A small, safe workspace for visual learning.",
+          "Open a panel from the sidebar to begin.",
+          "Follow the tutorial in ReplayLab. Changes here affect only this sandbox.",
+          "CodeLab 1.0",
+          "Local sandbox - Changes are simulated",
+          "UT-T-8"
+        ],
+        "visible_application": null,
+        "current_window": null,
+        "missing_information": [
+          "This Meta text model cannot inspect icons, visual appearance or hidden application state."
+        ],
+        "grounding": "All deterministic evidence, roles, boxes and confidence remain actual local OCR. Meta attention IDs annotate semantic focus and cannot discard or override observed facts."
+      },
+      "source_scope": "browser tab",
+      "explanation": "No adequately qualified observation establishes Search results. A missing label alone is not a mismatch. No adequately qualified observation establishes Replay Formatter. A missing label alone is not a mismatch. Recheck the target window or clarify the checkpoint.",
+      "rule_results": [
+        {
+          "rule_id": "2",
+          "status": "uncertain",
+          "expected": "Search results",
+          "observed": "No adequately qualified observation establishes Search results. A missing label alone is not a mismatch.",
+          "evidence": [],
+          "correction": null
+        },
+        {
+          "rule_id": "package-name",
+          "status": "uncertain",
+          "expected": "Replay Formatter",
+          "observed": "No adequately qualified observation establishes Replay Formatter. A missing label alone is not a mismatch.",
+          "evidence": [],
+          "correction": null
+        }
+      ],
+      "completed_step_ids": [
+        "1"
+      ],
+      "explanation_provider": "deterministic_template"
+    }
+  ],
+  "page_errors": [],
+  "nonlocal_browser_hosts": [],
+  "screen_submission_count": 3,
+  "stream": {
+    "settings": {
+      "aspectRatio": 1.6,
+      "cursor": "motion",
+      "deviceId": "web-contents-media-stream://5:1",
+      "displaySurface": "browser",
+      "frameRate": 5,
+      "height": 1080,
+      "logicalSurface": true,
+      "resizeMode": "crop-and-scale",
+      "screenPixelRatio": 1.25,
+      "width": 1728
+    },
+    "state": "live",
+    "width": 1728,
+    "height": 1080
+  },
+  "video": null,
+  "limitations": [
+    "CodeLab is a clearly labeled interactive simulation; no real VS Code extension is installed.",
+    "The workflow was genuinely extracted before the take and is presented as prepared, not live extraction.",
+    "Local OCR reads actual captured pixels. Meta Llama receives redacted OCR text, not images.",
+    "The evaluation dashboard is a separate controlled local OCR suite, not a Meta model accuracy benchmark.",
+    "This small demonstration does not establish broad accuracy, SAM/camera performance, hosted Muse availability or hackathon eligibility.",
+    "The recording is silent. Separate narration instructions are supplied; no synthetic audio is presented as live speech."
+  ],
+  "task_fingerprint": "a94e3ca39b40be833be46f2c1552f1bf637fedf61764caf405b3896d7243b73d",
+  "workflow_provenance": {
+    "provider": "local_meta",
+    "model": "meta-llama/Llama-3.2-3B-Instruct",
+    "response_model": "meta-llama/Llama-3.2-3B-Instruct",
+    "requires_approval": true,
+    "input": "local_ocr_and_optional_transcript",
+    "source_frame_count": 4,
+    "local_only": true,
+    "vision_inference": false,
+    "request_id": "chatcmpl-QEzCvU71OXmu5GqBbWQyxOl9LsLORCvg",
+    "latency_ms": 110047.619,
+    "token_usage": {
+      "completion_tokens": 797,
+      "prompt_tokens": 474,
+      "total_tokens": 1271
+    },
+    "cache_hit": false,
+    "interface_version_source": "local_frame_ocr",
+    "observed_interface_versions": [
+      "CodeLab 1.0"
+    ],
+    "interface_version_ambiguous": false,
+    "screen_rule_grounding": "Every expected label, alternative and contradiction is quoted from supplied transcript or local frame OCR text.",
+    "limitation": "Meta text reasoning over locally extracted OCR; visual appearance and hidden state are unknown.",
+    "instruction_warnings": [],
+    "demo_review": {
+      "actor": "Owner-authorized coding agent preparing the demonstration, not an independent human annotator",
+      "original_proposal_sha256": "1225956930bc4dbe943410bb2f9b7ad888f634a91bf1586e32b36b3a5545e9f6",
+      "original_step_count": 5,
+      "retained_step_count": 2,
+      "changes": [
+        "Retained two transcript actions; removed duplicated and incidental OCR-derived actions.",
+        "Removed navigation-only alternatives and replaced always-visible Settings contradiction with transcript-quoted content heading Preferences.",
+        "Required both Search results and Replay Formatter; removed ambiguous/no-result intermediate typing states.",
+        "Selected the actual Marketplace source frame at 2.984 seconds for step 1, instead of the next action at 6.714 seconds."
+      ],
+      "approved_automatically": false
+    },
+    "user_edited": true,
+    "prepared_copy_from": "ad5a6f05ad534681a07e785fe87c0809"
+  },
+  "evaluation": {
+    "sample_size": 20,
+    "correct": 20,
+    "accuracy": 1.0,
+    "false_certainty_rate": 0.0,
+    "uncertainty_recall": 1.0,
+    "latency_ms": {
+      "sample_size": 20,
+      "median": 3575.15,
+      "p95": 5204.44,
+      "min": 967.19,
+      "max": 7802.53
+    },
+    "measured_at": "2026-11-03T13:49:35.294926+00:00",
+    "dataset": "ReplayLab CodeLab controlled browser challenge v1"
+  },
+  "browser": "148.0.7778.96",
+  "stream_stopped": true,
+  "final_project": {
+    "approved": true,
+    "completed_step_ids": [
+      "1"
+    ]
+  },
+  "elapsed_seconds": 94.408
+}

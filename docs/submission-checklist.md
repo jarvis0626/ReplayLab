@@ -1,5 +1,13 @@
 # Submission readiness
 
+**3 November demonstration update:** the [actual continuous MP4](../ReplayLab_Meta_Hackathon_Demo.mp4)
+is **176.4 s, 1080p, H.264, 30 FPS**, with real local Meta tab-stream observations,
+FAIL → correction → PASS → UNCERTAIN, measured OCR evaluation, and exact provider
+disclosure. The workflow was prepared from a real recorded CodeLab tutorial and
+reviewed before recording; CodeLab is visibly a simulation. The video is silent.
+See [current verification](DEMO_VERIFICATION.md), [setup](DEMO_SETUP.md), and
+[narration](DEMO_SCRIPT.md). The earlier milestones below retain their dates.
+
 As of 2 November 2026, a genuine **local Meta Llama 3.2 3B** route is running on
 the owner's Windows CPU. Actual browser checks returned PASS for a correct owned
 capture and FAIL for a contradictory panel, with real model-grounded explanation
@@ -27,7 +35,7 @@ stays private under owner instructions.
 | Separate provider modes | Explicit local Meta, mock, NVIDIA, and direct Meta; no silent replacement of failed model calls |
 | Automated tests and measured evaluation | Actual pytest/Vitest/build checks; frozen 20-case controlled browser evaluation with case evidence and latency |
 | Independent evaluation | Agent-authored labels fixed before inference; independent human annotation and unseen application studies are not delivered |
-| Reproducible digital demonstration | Verified 180-second CodeLab walkthrough with actual tutorial upload/transcript review, four live and three manual OCR checks, decisions, physical shared inspector, and evaluation; no real VS Code extension installation |
+| Reproducible digital demonstration | Current uncut 176.4-second Meta-backed tab-stream demonstration with reviewed tutorial graph, mistake/correction, uncertainty, and separately labeled executed OCR evaluation; no real VS Code extension installation |
 | Physical transfer | Controlled colored-block fixtures use the same graph/result inspector; labeled fixture observations are not live SAM |
 | Public repository | Intentionally private under owner instructions; no visibility change or submission publication performed |
 | Hosted application | Deployment configuration prepared; Docker runtime and public hosting remain unverified |
@@ -36,8 +44,9 @@ stays private under owner instructions.
 Current evidence and exact checks are recorded in
 [implementation status](IMPLEMENTATION_STATUS.md), [test results](test-results.md),
 and [digital evaluation](digital-evaluation.md). Original physical demonstration
-evidence remains available in [demo-script.md](demo-script.md).
-The current recording and its reproduction/limitations are in [v3-demo.md](v3-demo.md).
+evidence remains available in [offline-demo-script.md](offline-demo-script.md).
+The earlier offline recording remains documented in [v3-demo.md](v3-demo.md).
+The current recording and its reproduction/limitations are in [DEMO_SETUP.md](DEMO_SETUP.md).
 
 Before submission, the owner must verify allowed model/API requirements,
 eligibility/acceptance, repository visibility requirements, and any hosted-demo

@@ -231,6 +231,7 @@ class LocalMetaProvider(MetaProvider):
         frames = sorted(frame_paths, key=lambda frame: frame["timestamp"])[:4]
         evidence, source_texts, used, frame_count = [], [], 0, 0
         observed_versions = {}
+        seen_frame_text = set()
         ambiguous_version = False
         for segment in segments:
             text = redact_text(segment["text"])
@@ -249,8 +250,18 @@ class LocalMetaProvider(MetaProvider):
             facts = _ocr_facts(observation, maximum_characters=700)
             if not observation.provenance.get("ocr_available") or not facts:
                 continue
-            evidence.append(f"Frame OCR at {frame['timestamp']:.3f}: " + json.dumps([item.text for item in facts.values()]))
-            source_texts.extend(item.text for item in facts.values())
+            # Repeated navigation/chrome across sampled frames is the same
+            # evidence, not another action. Keep its first source timestamp
+            # and retain new labels from subsequent frames.
+            fresh_text = []
+            for item in facts.values():
+                normalized = " ".join(item.text.casefold().split())
+                if normalized not in seen_frame_text:
+                    fresh_text.append(item.text)
+                    seen_frame_text.add(normalized)
+            if fresh_text:
+                evidence.append(f"Frame OCR at {frame['timestamp']:.3f}: " + json.dumps(fresh_text))
+                source_texts.extend(fresh_text)
             frame_ambiguous = bool(observation.provenance.get("interface_version_ambiguous"))
             ambiguous_version = ambiguous_version or frame_ambiguous
             if observation.interface_version and not frame_ambiguous:
@@ -264,7 +275,9 @@ class LocalMetaProvider(MetaProvider):
             "Propose a finite DAG for user review, never mark anything complete. Quote only supplied labels as rules. "
             "Return interface_version:null; the application supplies any independently observed source version. "
             "No invented settings, versions, paths, hidden state, commands, automation, downloads or credentials. "
-            "Each step needs observable screen rules and source timestamps. State missing visual evidence in descriptions.")
+            "Each step needs observable screen rules and source timestamps. State missing visual evidence in descriptions. "
+            "Be concise: descriptions at most one short sentence; one or two rules per checkpoint. "
+            "With a transcript, follow its action sequence; incidental OCR navigation labels and discussed mistakes are not extra actions.")
         try:
             validated = LocalWorkflowPlan.model_validate(proposal)
             for step in validated.steps:
@@ -294,7 +307,14 @@ class LocalMetaProvider(MetaProvider):
                 raise ValueError("Source timestamp exceeded")
             for step in task.steps:
                 if frames:
-                    step.reference_frame_id = min(frames, key=lambda frame: abs(frame["timestamp"] - step.timestamp_end))["id"]
+                    # An end timestamp can border the next action. Prefer an
+                    # actual frame inside this step instead of the next UI.
+                    within_step = [frame for frame in frames
+                                   if step.timestamp_start <= frame["timestamp"] < step.timestamp_end]
+                    target = ((step.timestamp_start + step.timestamp_end) / 2
+                              if within_step else step.timestamp_end)
+                    step.reference_frame_id = min(within_step or frames,
+                        key=lambda frame: abs(frame["timestamp"] - target))["id"]
             task.provenance["instruction_warnings"] = instruction_warnings(" ".join(step.description for step in task.steps))
             return task
         except (ValueError, TypeError, KeyError, ValidationError):

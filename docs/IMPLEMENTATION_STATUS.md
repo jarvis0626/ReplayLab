@@ -1,5 +1,35 @@
 # ReplayLab 3.0 implementation status
 
+## Live demonstration preparation — 3 November 2026
+
+The accepted [continuous MP4](../ReplayLab_Meta_Hackathon_Demo.mp4) is **176.4 s**,
+1920 × 1080, H.264 at 30 FPS. FFprobe, full decoding, real Chromium playback,
+and visual review passed. It shows three fresh Meta-backed observations with
+FAIL/PASS/UNCERTAIN, then the separately labeled OCR evaluation. The video is
+silent, with [narration supplied separately](DEMO_SCRIPT.md).
+
+The actual application passed a fresh **94.408-second rehearsal** using a real
+shared CodeLab browser tab, local OCR, and three fresh Meta Llama observations:
+**FAIL → correction → PASS → UNCERTAIN**. Only PASS advanced the reviewed task.
+The target is visibly a simulation; it does not install a third-party extension.
+
+A real recorded tutorial was uploaded and sampled into four frames. Actual Meta
+text reasoning over its OCR and transcript produced a proposal in **110.048 s**;
+review reduced five proposed steps to two source actions and corrected ambiguous
+navigation labels. Extraction is prepared before the demonstration, and review
+changes remain in provenance. The owner's earlier proposal remains unchanged.
+
+The Windows launcher starts a stable backend without autoreload. Source-frame
+selection now prefers the step's own interval, and the sidebar cannot label the
+last pending step complete. **489 backend tests, 53 frontend tests**, Ruff,
+TypeScript, and production build passed. The separate fresh 20-case OCR evaluation
+matched all authored labels; it does not measure Meta model accuracy.
+
+See [readiness](DEMO_READINESS.md), [executed verification](DEMO_VERIFICATION.md),
+[recording setup](DEMO_SETUP.md), and [narration](DEMO_SCRIPT.md) for final artifact
+status, actual timings, retained unsuccessful attempts, and capability limits.
+Earlier milestones below remain historical.
+
 ## Local Meta update — 2 November 2026
 
 The owner required a working Meta model. **Meta Llama 3.2 3B Instruct** now runs

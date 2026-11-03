@@ -59,6 +59,9 @@ export function LiveScreenAssistant({
     (item) =>
       item.id !== step?.id && !project.completed_step_ids.includes(item.id),
   );
+  const allComplete = steps.length > 0 && steps.every(
+    (item) => project.completed_step_ids.includes(item.id),
+  );
   const frame = project.frames.find(
     (item) => item.id === step?.reference_frame_id,
   );
@@ -278,7 +281,7 @@ export function LiveScreenAssistant({
     );
   return (
     <div className="screen-assistant page-enter">
-      {steps.length > 0 && available.length === 0 && (
+      {allComplete && (
         <div className="approval-banner approved">
           <ShieldCheck size={23} />
           <div>
@@ -675,7 +678,9 @@ export function LiveScreenAssistant({
               )}
               <div className="screen-upcoming">
                 <span className="eyebrow">UP NEXT</span>
-                <strong>{upcoming?.title ?? "All checkpoints verified"}</strong>
+                <strong>{upcoming?.title ?? (allComplete
+                  ? "All checkpoints verified"
+                  : "Verify this checkpoint to finish")}</strong>
               </div>
               <button className="button secondary full-width" onClick={next}>
                 Next eligible step

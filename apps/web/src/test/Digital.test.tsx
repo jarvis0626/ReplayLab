@@ -319,6 +319,16 @@ describe("digital screen privacy and lifecycle", () => {
       "manually selected screenshot", expect.any(AbortSignal), false);
     expect(onProviderValidated).not.toHaveBeenCalled(); // A mode label alone is not validated model provenance.
   });
+  it("keeps the final pending checkpoint unfinished until evidence completes it", () => {
+    const view = mount({ project: { ...project, completed_step_ids: ["one"] } });
+    expect(screen.getByText("Verify this checkpoint to finish")).toBeInTheDocument();
+    expect(screen.queryByText("All checkpoints verified", { exact: true })).not.toBeInTheDocument();
+    expect(screen.queryByText("All digital checkpoints are verified.")).not.toBeInTheDocument();
+    view.rerender(<LiveScreenAssistant project={{ ...project, completed_step_ids: ["one", "two"] }}
+      provider={provider} onUpdate={vi.fn()} onError={vi.fn()} onReview={vi.fn()} />);
+    expect(screen.getByText("All checkpoints verified", { exact: true })).toBeInTheDocument();
+    expect(screen.getByText("All digital checkpoints are verified.")).toBeInTheDocument();
+  });
   it("does not carry Meta screen consent into NVIDIA after a provider switch", async () => {
     captureDevice();
     const user = userEvent.setup();

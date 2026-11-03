@@ -5,6 +5,7 @@ import { fileURLToPath } from 'node:url';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const windows = process.platform === 'win32';
+const demo = process.argv.includes('--demo');
 const python = join(root, '.venv', windows ? 'Scripts/python.exe' : 'bin/python');
 const children = [];
 let stopping = false;
@@ -68,8 +69,11 @@ if (!existsSync(python) || !existsSync(join(root, 'apps/web/node_modules/vite/bi
   if (process.exitCode) {
     stop(process.exitCode);
   } else {
-    console.log('ReplayLab: http://127.0.0.1:5173 | API: http://127.0.0.1:8010 | Ctrl+C stops owned development services.');
-    launch(python, ['-m', 'uvicorn', 'app.main:app', '--host', '127.0.0.1', '--port', '8010', '--reload'], join(root, 'apps/api'));
+    console.log(`ReplayLab: http://127.0.0.1:5173 | API: http://127.0.0.1:8010 | Ctrl+C stops owned ${demo ? 'demo' : 'development'} services.`);
+    if (demo) console.log('Demo mode: backend file watching is disabled. Restart the launcher after backend changes.');
+    const apiArguments = ['-m', 'uvicorn', 'app.main:app', '--host', '127.0.0.1', '--port', '8010'];
+    if (!demo) apiArguments.push('--reload');
+    launch(python, apiArguments, join(root, 'apps/api'));
     launch(process.execPath, [join(root, 'apps/web/node_modules/vite/bin/vite.js'), '--host', '127.0.0.1', '--port', '5173', '--strictPort'], join(root, 'apps/web'));
   }
 }

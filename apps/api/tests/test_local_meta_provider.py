@@ -326,6 +326,54 @@ def test_missing_source_never_causes_a_model_request(tmp_path):
     assert caught.value.code == "missing_source" and requests == []
 
 
+def test_workflow_repeated_frame_text_keeps_first_timestamp_and_new_evidence(tmp_path, monkeypatch):
+    frames, observations, requests = [], {}, []
+    for index, labels in enumerate([
+        ["Extensions Marketplace", "Preferences"],
+        ["Extensions Marketplace", "Preferences", "Search results"],
+    ]):
+        path = tmp_path / f"source-{index}.png"
+        path.write_bytes(str(index).encode())
+        observations[path.read_bytes()] = ocr(*labels)
+        frames.append({"id": str(index), "path": str(path), "timestamp": index + 1})
+    monkeypatch.setattr("app.services.screen_observation._local_observation", lambda value: observations[value])
+
+    def handle(request):
+        requests.append(json.loads(request.content))
+        return httpx.Response(200, json=completed(json.dumps(workflow())))
+
+    task = provider(tmp_path, handle).extract_workflow({"video": {"duration": 6}}, frames)
+    source = requests[0]["messages"][1]["content"]
+    assert source.count('"Extensions Marketplace"') == 1
+    assert 'Frame OCR at 1.000: ["Extensions Marketplace", "Preferences"]' in source
+    assert 'Frame OCR at 2.000: ["Search results"]' in source
+    assert task.provenance["source_frame_count"] == 2
+
+
+def test_workflow_reference_prefers_its_interval_over_next_action(tmp_path, monkeypatch):
+    frames = []
+    for index, timestamp in enumerate([3.0, 6.1]):
+        path = tmp_path / f"source-{index}.png"
+        path.write_bytes(str(index).encode())
+        frames.append({"id": f"frame-{index}", "path": str(path), "timestamp": timestamp})
+    monkeypatch.setattr("app.services.screen_observation._local_observation", lambda value: ocr("Extensions Marketplace"))
+    adapter = provider(tmp_path, lambda request: httpx.Response(200, json=completed(json.dumps(
+        workflow(timestamp_start=0, timestamp_end=6)))))
+    task = adapter.extract_workflow({"video": {"duration": 8}}, frames)
+    assert task.steps[0].reference_frame_id == "frame-0"
+
+
+def test_workflow_reference_without_a_frame_in_interval_uses_nearest_end(tmp_path, monkeypatch):
+    path = tmp_path / "source.png"
+    path.write_bytes(b"frame")
+    monkeypatch.setattr("app.services.screen_observation._local_observation", lambda value: ocr("Extensions Marketplace"))
+    adapter = provider(tmp_path, lambda request: httpx.Response(200, json=completed(json.dumps(
+        workflow(timestamp_start=0, timestamp_end=1)))))
+    task = adapter.extract_workflow({"video": {"duration": 8}},
+        [{"id": "available", "path": str(path), "timestamp": 5}])
+    assert task.steps[0].reference_frame_id == "available"
+
+
 def test_diagnostics_belong_to_each_concurrent_calling_worker(tmp_path):
     barrier = threading.Barrier(2)
 

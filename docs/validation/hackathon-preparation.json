@@ -1,0 +1,555 @@
+{
+  "success": true,
+  "created_at": "2026-11-03T13:46:59.938276+00:00",
+  "source": "Actual continuous browser interactions in labeled CodeLab simulation",
+  "model": "meta-llama/Llama-3.2-3B-Instruct",
+  "approved": false,
+  "transcript": "00:00 In the CodeLab simulation, open \"Extensions Marketplace\". \"Preferences\" is the wrong destination; use Extensions instead of Settings.\n00:06 Search for \"Replay Formatter\" and confirm \"Search results\". This tutorial demonstrates searching, not installing real software.",
+  "tutorial_sha256": "697c3bcfbc4181daeaa6ceb959548fa7bd96b1534f5f45064f88f635de392110",
+  "tutorial_file": ".artifacts\\hackathon-preparation-20261103T134659Z\\CodeLab-real-interaction-tutorial.mp4",
+  "project_id": "ad5a6f05ad534681a07e785fe87c0809",
+  "proposal": {
+    "id": "01794893fe7d4c9381d894b1e15dec44",
+    "title": "Prepared CodeLab extension search",
+    "description": "Prepared Meta proposal reviewed against the two tutorial actions. CodeLab is an interactive simulation.",
+    "objects": [],
+    "steps": [
+      {
+        "id": "1",
+        "title": "Open Extensions Marketplace",
+        "description": "Open the Extensions Marketplace",
+        "dependencies": [],
+        "timestamp_start": 0.0,
+        "timestamp_end": 6.0,
+        "reference_frame_id": "6a3e90e1f5ad408e871b15f13c42da26",
+        "object_labels": [],
+        "rules": [],
+        "expected_state": "Extensions Marketplace",
+        "screen_rules": [
+          {
+            "id": "1",
+            "kind": "text_present",
+            "expected": "Extensions Marketplace",
+            "alternatives": [],
+            "contradictions": [
+              "Preferences"
+            ],
+            "description": "Require the content heading Extensions Marketplace; Preferences is the contradictory content heading, while Settings is always a sidebar label."
+          }
+        ]
+      },
+      {
+        "id": "2",
+        "title": "Search for Replay Formatter",
+        "description": "Search for 'Replay Formatter' in the Extensions Marketplace",
+        "dependencies": [
+          "1"
+        ],
+        "timestamp_start": 6.0,
+        "timestamp_end": 14.92,
+        "reference_frame_id": "a59eaf3087be4cb28ad194fb43e48581",
+        "object_labels": [],
+        "rules": [],
+        "expected_state": "Search results",
+        "screen_rules": [
+          {
+            "id": "2",
+            "kind": "text_present",
+            "expected": "Search results",
+            "alternatives": [],
+            "contradictions": [],
+            "description": "Search for 'Replay Formatter' and confirm 'Search results'."
+          },
+          {
+            "id": "package-name",
+            "kind": "text_present",
+            "expected": "Replay Formatter",
+            "alternatives": [],
+            "contradictions": [],
+            "description": "Require the package name together with Search results."
+          }
+        ]
+      }
+    ],
+    "provider_mode": "local_meta",
+    "provenance": {
+      "provider": "local_meta",
+      "model": "meta-llama/Llama-3.2-3B-Instruct",
+      "response_model": "meta-llama/Llama-3.2-3B-Instruct",
+      "requires_approval": true,
+      "input": "local_ocr_and_optional_transcript",
+      "source_frame_count": 4,
+      "local_only": true,
+      "vision_inference": false,
+      "request_id": "chatcmpl-QEzCvU71OXmu5GqBbWQyxOl9LsLORCvg",
+      "latency_ms": 110047.619,
+      "token_usage": {
+        "completion_tokens": 797,
+        "prompt_tokens": 474,
+        "total_tokens": 1271
+      },
+      "cache_hit": false,
+      "interface_version_source": "local_frame_ocr",
+      "observed_interface_versions": [
+        "CodeLab 1.0"
+      ],
+      "interface_version_ambiguous": false,
+      "screen_rule_grounding": "Every expected label, alternative and contradiction is quoted from supplied transcript or local frame OCR text.",
+      "limitation": "Meta text reasoning over locally extracted OCR; visual appearance and hidden state are unknown.",
+      "instruction_warnings": [],
+      "demo_review": {
+        "actor": "Owner-authorized coding agent preparing the demonstration, not an independent human annotator",
+        "original_proposal_sha256": "1225956930bc4dbe943410bb2f9b7ad888f634a91bf1586e32b36b3a5545e9f6",
+        "original_step_count": 5,
+        "retained_step_count": 2,
+        "changes": [
+          "Retained two transcript actions; removed duplicated and incidental OCR-derived actions.",
+          "Removed navigation-only alternatives and replaced always-visible Settings contradiction with transcript-quoted content heading Preferences.",
+          "Required both Search results and Replay Formatter; removed ambiguous/no-result intermediate typing states."
+        ],
+        "approved_automatically": false
+      },
+      "user_edited": true
+    },
+    "modality": "digital",
+    "interface_version": "CodeLab 1.0"
+  },
+  "reviewed": true,
+  "failed_attempts": [
+    {
+      "outcome": "timeout",
+      "phase": "first extraction",
+      "timeout_seconds": 120
+    },
+    {
+      "outcome": "connection interrupted during backend reload",
+      "phase": "second extraction"
+    }
+  ],
+  "successful_model_ms": 110047.619,
+  "source_frame_count": 4,
+  "original_model_proposal": {
+    "id": "01794893fe7d4c9381d894b1e15dec44",
+    "title": "Checkpoints",
+    "description": "Digital Checkpoints",
+    "objects": [],
+    "steps": [
+      {
+        "id": "1",
+        "title": "Open Extensions Marketplace",
+        "description": "Open the Extensions Marketplace",
+        "dependencies": [],
+        "timestamp_start": 0.0,
+        "timestamp_end": 6.0,
+        "reference_frame_id": "6a3e90e1f5ad408e871b15f13c42da26",
+        "object_labels": [],
+        "rules": [],
+        "expected_state": "Extensions Marketplace",
+        "screen_rules": [
+          {
+            "id": "1",
+            "kind": "text_present",
+            "expected": "Extensions Marketplace",
+            "alternatives": [
+              "Extensions"
+            ],
+            "contradictions": [
+              "Settings"
+            ],
+            "description": "The correct destination is 'Extensions' instead of 'Settings'."
+          }
+        ]
+      },
+      {
+        "id": "2",
+        "title": "Search for Replay Formatter",
+        "description": "Search for 'Replay Formatter' in the Extensions Marketplace",
+        "dependencies": [
+          "1"
+        ],
+        "timestamp_start": 6.0,
+        "timestamp_end": 6.0,
+        "reference_frame_id": "6a3e90e1f5ad408e871b15f13c42da26",
+        "object_labels": [],
+        "rules": [],
+        "expected_state": "Search results",
+        "screen_rules": [
+          {
+            "id": "2",
+            "kind": "text_present",
+            "expected": "Search results",
+            "alternatives": [
+              "Replay Formatter"
+            ],
+            "contradictions": [
+              "No matching package. Check the name in your tutorial."
+            ],
+            "description": "Search for 'Replay Formatter' and confirm 'Search results'."
+          }
+        ]
+      },
+      {
+        "id": "3",
+        "title": "Confirm Search Results",
+        "description": "Confirm 'Search results' for 'Replay Formatter'",
+        "dependencies": [
+          "2"
+        ],
+        "timestamp_start": 6.0,
+        "timestamp_end": 6.0,
+        "reference_frame_id": "6a3e90e1f5ad408e871b15f13c42da26",
+        "object_labels": [],
+        "rules": [],
+        "expected_state": "Search results",
+        "screen_rules": [
+          {
+            "id": "3",
+            "kind": "text_present",
+            "expected": "Search results",
+            "alternatives": [
+              "Replay Formatter"
+            ],
+            "contradictions": [
+              "No matching package. Check the name in your tutorial."
+            ],
+            "description": "Confirm 'Search results' for 'Replay Formatter'."
+          }
+        ]
+      },
+      {
+        "id": "4",
+        "title": "No Matching Package",
+        "description": "Verify 'No matching package. Check the name in your tutorial.'",
+        "dependencies": [
+          "2"
+        ],
+        "timestamp_start": 6.0,
+        "timestamp_end": 6.0,
+        "reference_frame_id": "6a3e90e1f5ad408e871b15f13c42da26",
+        "object_labels": [],
+        "rules": [],
+        "expected_state": "No matching package. Check the name in your tutorial.",
+        "screen_rules": [
+          {
+            "id": "4",
+            "kind": "text_present",
+            "expected": "No matching package. Check the name in your tutorial.",
+            "alternatives": [
+              "Search results"
+            ],
+            "contradictions": [
+              "Replay Formatter"
+            ],
+            "description": "Verify 'No matching package. Check the name in your tutorial.'"
+          }
+        ]
+      },
+      {
+        "id": "5",
+        "title": "Replay Formatter Details",
+        "description": "Verify 'Replay Formatter' details",
+        "dependencies": [
+          "4"
+        ],
+        "timestamp_start": 10.444,
+        "timestamp_end": 10.444,
+        "reference_frame_id": "308f6b29d6a840e0844c93b46e6bc406",
+        "object_labels": [],
+        "rules": [],
+        "expected_state": "Replay Formatter details",
+        "screen_rules": [
+          {
+            "id": "5",
+            "kind": "text_present",
+            "expected": "Replay Formatter",
+            "alternatives": [
+              "RF"
+            ],
+            "contradictions": [
+              "A consistent style for your practice files."
+            ],
+            "description": "Verify 'Replay Formatter' details."
+          }
+        ]
+      }
+    ],
+    "provider_mode": "local_meta",
+    "provenance": {
+      "provider": "local_meta",
+      "model": "meta-llama/Llama-3.2-3B-Instruct",
+      "response_model": "meta-llama/Llama-3.2-3B-Instruct",
+      "requires_approval": true,
+      "input": "local_ocr_and_optional_transcript",
+      "source_frame_count": 4,
+      "local_only": true,
+      "vision_inference": false,
+      "request_id": "chatcmpl-QEzCvU71OXmu5GqBbWQyxOl9LsLORCvg",
+      "latency_ms": 110047.619,
+      "token_usage": {
+        "completion_tokens": 797,
+        "prompt_tokens": 474,
+        "total_tokens": 1271
+      },
+      "cache_hit": false,
+      "interface_version_source": "local_frame_ocr",
+      "observed_interface_versions": [
+        "CodeLab 1.0"
+      ],
+      "interface_version_ambiguous": false,
+      "screen_rule_grounding": "Every expected label, alternative and contradiction is quoted from supplied transcript or local frame OCR text.",
+      "limitation": "Meta text reasoning over locally extracted OCR; visual appearance and hidden state are unknown.",
+      "instruction_warnings": []
+    },
+    "modality": "digital",
+    "interface_version": "CodeLab 1.0"
+  },
+  "final_preparation": {
+    "success": true,
+    "created_at": "2026-11-03T14:13:32.481268+00:00",
+    "phase": "complete",
+    "source": "Actual continuous browser interactions in labeled CodeLab simulation",
+    "model": "meta-llama/Llama-3.2-3B-Instruct",
+    "approved": false,
+    "transcript": "00:00 In the CodeLab simulation, open \"Extensions Marketplace\". \"Preferences\" is the wrong destination; use Extensions instead of Settings.\n00:06 Search for \"Replay Formatter\" and confirm \"Search results\". This tutorial demonstrates searching, not installing real software.",
+    "prepared_copy_from": "1441d06e0dad4cd1859e094f655c312a",
+    "new_model_extraction": false,
+    "tutorial_sha256": "697c3bcfbc4181daeaa6ceb959548fa7bd96b1534f5f45064f88f635de392110",
+    "tutorial_file": ".artifacts\\hackathon-preparation-20261103T141332Z\\CodeLab-real-interaction-tutorial.mp4",
+    "project_id": "2680d1d6875648b9a195708702070baa",
+    "source_frame_count": 4,
+    "proposal": {
+      "id": "01794893fe7d4c9381d894b1e15dec44",
+      "title": "Prepared CodeLab extension search",
+      "description": "Prepared Meta proposal reviewed against the two tutorial actions. CodeLab is an interactive simulation.",
+      "objects": [],
+      "steps": [
+        {
+          "id": "1",
+          "title": "Open Extensions Marketplace",
+          "description": "Open the Extensions Marketplace",
+          "dependencies": [],
+          "timestamp_start": 0.0,
+          "timestamp_end": 6.0,
+          "reference_frame_id": "dac52579bb62474fbaa1d2c96f39f086",
+          "object_labels": [],
+          "rules": [],
+          "expected_state": "Extensions Marketplace",
+          "screen_rules": [
+            {
+              "id": "1",
+              "kind": "text_present",
+              "expected": "Extensions Marketplace",
+              "alternatives": [],
+              "contradictions": [
+                "Preferences"
+              ],
+              "description": "Require the content heading Extensions Marketplace; Preferences is the contradictory content heading, while Settings is always a sidebar label."
+            }
+          ]
+        },
+        {
+          "id": "2",
+          "title": "Search for Replay Formatter",
+          "description": "Search for 'Replay Formatter' in the Extensions Marketplace",
+          "dependencies": [
+            "1"
+          ],
+          "timestamp_start": 6.0,
+          "timestamp_end": 14.92,
+          "reference_frame_id": "4359a14ee3bb4ce8a322e8111cc15e4c",
+          "object_labels": [],
+          "rules": [],
+          "expected_state": "Search results",
+          "screen_rules": [
+            {
+              "id": "2",
+              "kind": "text_present",
+              "expected": "Search results",
+              "alternatives": [],
+              "contradictions": [],
+              "description": "Search for 'Replay Formatter' and confirm 'Search results'."
+            },
+            {
+              "id": "package-name",
+              "kind": "text_present",
+              "expected": "Replay Formatter",
+              "alternatives": [],
+              "contradictions": [],
+              "description": "Require the package name together with Search results."
+            }
+          ]
+        }
+      ],
+      "provider_mode": "local_meta",
+      "provenance": {
+        "provider": "local_meta",
+        "model": "meta-llama/Llama-3.2-3B-Instruct",
+        "response_model": "meta-llama/Llama-3.2-3B-Instruct",
+        "requires_approval": true,
+        "input": "local_ocr_and_optional_transcript",
+        "source_frame_count": 4,
+        "local_only": true,
+        "vision_inference": false,
+        "request_id": "chatcmpl-QEzCvU71OXmu5GqBbWQyxOl9LsLORCvg",
+        "latency_ms": 110047.619,
+        "token_usage": {
+          "completion_tokens": 797,
+          "prompt_tokens": 474,
+          "total_tokens": 1271
+        },
+        "cache_hit": false,
+        "interface_version_source": "local_frame_ocr",
+        "observed_interface_versions": [
+          "CodeLab 1.0"
+        ],
+        "interface_version_ambiguous": false,
+        "screen_rule_grounding": "Every expected label, alternative and contradiction is quoted from supplied transcript or local frame OCR text.",
+        "limitation": "Meta text reasoning over locally extracted OCR; visual appearance and hidden state are unknown.",
+        "instruction_warnings": [],
+        "demo_review": {
+          "actor": "Owner-authorized coding agent preparing the demonstration, not an independent human annotator",
+          "original_proposal_sha256": "1225956930bc4dbe943410bb2f9b7ad888f634a91bf1586e32b36b3a5545e9f6",
+          "original_step_count": 5,
+          "retained_step_count": 2,
+          "changes": [
+            "Retained two transcript actions; removed duplicated and incidental OCR-derived actions.",
+            "Removed navigation-only alternatives and replaced always-visible Settings contradiction with transcript-quoted content heading Preferences.",
+            "Required both Search results and Replay Formatter; removed ambiguous/no-result intermediate typing states.",
+            "Selected the actual Marketplace source frame at 2.984 seconds for step 1, instead of the next action at 6.714 seconds."
+          ],
+          "approved_automatically": false
+        },
+        "user_edited": true,
+        "prepared_copy_from": "1441d06e0dad4cd1859e094f655c312a"
+      },
+      "modality": "digital",
+      "interface_version": "CodeLab 1.0"
+    },
+    "finished_at": "2026-11-03T14:13:33.990001+00:00"
+  },
+  "note": "Original five-step Meta response was reviewed to two transcript actions. A later visual review corrected the first source frame. Prepared copies are not new model extraction.",
+  "ready_for_owner": {
+    "success": true,
+    "created_at": "2026-11-03T14:18:32.179713+00:00",
+    "phase": "complete",
+    "source": "Actual continuous browser interactions in labeled CodeLab simulation",
+    "model": "meta-llama/Llama-3.2-3B-Instruct",
+    "approved": false,
+    "transcript": "00:00 In the CodeLab simulation, open \"Extensions Marketplace\". \"Preferences\" is the wrong destination; use Extensions instead of Settings.\n00:06 Search for \"Replay Formatter\" and confirm \"Search results\". This tutorial demonstrates searching, not installing real software.",
+    "prepared_copy_from": "2680d1d6875648b9a195708702070baa",
+    "new_model_extraction": false,
+    "tutorial_sha256": "697c3bcfbc4181daeaa6ceb959548fa7bd96b1534f5f45064f88f635de392110",
+    "tutorial_file": ".artifacts\\hackathon-preparation-20261103T141832Z\\CodeLab-real-interaction-tutorial.mp4",
+    "project_id": "74cba3aa8c4b4f998587b5d08c6f283a",
+    "source_frame_count": 4,
+    "proposal": {
+      "id": "01794893fe7d4c9381d894b1e15dec44",
+      "title": "Prepared CodeLab extension search",
+      "description": "Prepared Meta proposal reviewed against the two tutorial actions. CodeLab is an interactive simulation.",
+      "objects": [],
+      "steps": [
+        {
+          "id": "1",
+          "title": "Open Extensions Marketplace",
+          "description": "Open the Extensions Marketplace",
+          "dependencies": [],
+          "timestamp_start": 0.0,
+          "timestamp_end": 6.0,
+          "reference_frame_id": "b5c25883bdc448bd985e813c0dc7a94c",
+          "object_labels": [],
+          "rules": [],
+          "expected_state": "Extensions Marketplace",
+          "screen_rules": [
+            {
+              "id": "1",
+              "kind": "text_present",
+              "expected": "Extensions Marketplace",
+              "alternatives": [],
+              "contradictions": [
+                "Preferences"
+              ],
+              "description": "Require the content heading Extensions Marketplace; Preferences is the contradictory content heading, while Settings is always a sidebar label."
+            }
+          ]
+        },
+        {
+          "id": "2",
+          "title": "Search for Replay Formatter",
+          "description": "Search for 'Replay Formatter' in the Extensions Marketplace",
+          "dependencies": [
+            "1"
+          ],
+          "timestamp_start": 6.0,
+          "timestamp_end": 14.92,
+          "reference_frame_id": "0f5543daf81f4634bcb25e068cd215d8",
+          "object_labels": [],
+          "rules": [],
+          "expected_state": "Search results",
+          "screen_rules": [
+            {
+              "id": "2",
+              "kind": "text_present",
+              "expected": "Search results",
+              "alternatives": [],
+              "contradictions": [],
+              "description": "Search for 'Replay Formatter' and confirm 'Search results'."
+            },
+            {
+              "id": "package-name",
+              "kind": "text_present",
+              "expected": "Replay Formatter",
+              "alternatives": [],
+              "contradictions": [],
+              "description": "Require the package name together with Search results."
+            }
+          ]
+        }
+      ],
+      "provider_mode": "local_meta",
+      "provenance": {
+        "provider": "local_meta",
+        "model": "meta-llama/Llama-3.2-3B-Instruct",
+        "response_model": "meta-llama/Llama-3.2-3B-Instruct",
+        "requires_approval": true,
+        "input": "local_ocr_and_optional_transcript",
+        "source_frame_count": 4,
+        "local_only": true,
+        "vision_inference": false,
+        "request_id": "chatcmpl-QEzCvU71OXmu5GqBbWQyxOl9LsLORCvg",
+        "latency_ms": 110047.619,
+        "token_usage": {
+          "completion_tokens": 797,
+          "prompt_tokens": 474,
+          "total_tokens": 1271
+        },
+        "cache_hit": false,
+        "interface_version_source": "local_frame_ocr",
+        "observed_interface_versions": [
+          "CodeLab 1.0"
+        ],
+        "interface_version_ambiguous": false,
+        "screen_rule_grounding": "Every expected label, alternative and contradiction is quoted from supplied transcript or local frame OCR text.",
+        "limitation": "Meta text reasoning over locally extracted OCR; visual appearance and hidden state are unknown.",
+        "instruction_warnings": [],
+        "demo_review": {
+          "actor": "Owner-authorized coding agent preparing the demonstration, not an independent human annotator",
+          "original_proposal_sha256": "1225956930bc4dbe943410bb2f9b7ad888f634a91bf1586e32b36b3a5545e9f6",
+          "original_step_count": 5,
+          "retained_step_count": 2,
+          "changes": [
+            "Retained two transcript actions; removed duplicated and incidental OCR-derived actions.",
+            "Removed navigation-only alternatives and replaced always-visible Settings contradiction with transcript-quoted content heading Preferences.",
+            "Required both Search results and Replay Formatter; removed ambiguous/no-result intermediate typing states.",
+            "Selected the actual Marketplace source frame at 2.984 seconds for step 1, instead of the next action at 6.714 seconds."
+          ],
+          "approved_automatically": false
+        },
+        "user_edited": true,
+        "prepared_copy_from": "2680d1d6875648b9a195708702070baa"
+      },
+      "modality": "digital",
+      "interface_version": "CodeLab 1.0"
+    },
+    "finished_at": "2026-11-03T14:18:33.674449+00:00"
+  }
+}

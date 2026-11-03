@@ -1,5 +1,34 @@
 # Recorded validation
 
+## Live demonstration checks — 3 November 2026
+
+Accepted recording: **176.4 s, 1920 × 1080, H.264, 30 FPS, 5,292 frames**.
+FFprobe, full FFmpeg decode, actual Chromium playback, and visual/privacy review
+passed. Final live-stream checks returned FAIL in **26.42 s**, corrected PASS in
+**21.78 s**, and UNCERTAIN in **24.67 s**; three fresh Meta observations, correct
+progression, zero JavaScript errors/nonlocal browser hosts. See the
+[actual recording report](validation/hackathon-recording.json).
+
+- Backend: **489 passed** in **54.93 s**; Ruff passed.
+- Frontend after the pending-checkpoint copy fix: **53 passed** in **9.52 s**;
+  TypeScript and Vite production build passed.
+- Helper Ruff, Node syntax, and Windows launcher syntax/start/reuse checks passed.
+- Corrected rehearsal: **94.408 s**, three actual shared-tab Meta observations,
+  FAIL/PASS/UNCERTAIN with correct progression, zero JavaScript errors/nonlocal
+  browser hosts, and the capture track ended after Stop.
+- Actual source upload: four OCR frames; successful Meta proposal **110.048 s**,
+  followed by recorded review. A timeout and interrupted attempt are retained.
+- Fresh local OCR evaluation: **20/20**, false certainty **0/10**, uncertainty
+  recall **10/10**; median **3575.15 ms**, p95 **5204.44 ms**, while extraction
+  was also using the CPU. This suite does not measure Meta model accuracy.
+
+Two recordings were withheld after visual QA found incorrect source-reference
+selection and misleading sidebar completion copy. Both bugs were fixed and
+regression-tested. [Demo verification](DEMO_VERIFICATION.md) identifies the
+accepted take, actual media validation, and each retained diagnostic attempt.
+
+The reports below describe earlier milestones rather than the current test total.
+
 ## Local Meta inference — 2 November 2026
 
 - Backend: **486 passed** in 58.26 seconds; Ruff passed.

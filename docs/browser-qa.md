@@ -48,7 +48,7 @@ The [silent browser recording](assets/demo.mp4) shows the working mock walkthrou
 at normal speed. It is an actual screen capture, not stock footage or a rendered
 prototype. Its first 180 seconds were retained without padding to meet a strict
 three-minute limit. Narration is supplied separately in the
-[demo script](demo-script.md); the MP4 has no audio track. No public hosting or
+[demo script](offline-demo-script.md); the MP4 has no audio track. No public hosting or
 external video upload is claimed.
 
 FFprobe verified:

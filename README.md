@@ -1,11 +1,19 @@
 # ReplayLab 3.0
 
+**3 November live demonstration:** [Watch the actual uncut MP4](ReplayLab_Meta_Hackathon_Demo.mp4)
+— **2:56.4, 1080p, 30 FPS**. Real shared-tab OCR and local Meta Llama inference
+show **FAIL → correction → PASS → UNCERTAIN**, then measured evaluation and the
+actual provider. The CodeLab target is visibly a simulation and the workflow is
+prepared and reviewed before recording. The video is silent;
+[timed narration](docs/DEMO_SCRIPT.md) is provided separately.
+
 **2 November local Meta update:** ReplayLab can run **Meta Llama 3.2 3B Instruct**
 on this Windows PC's CPU. Local OCR reads screenshots; Meta reasons over redacted
 text, proposes reviewed digital workflows, and plans grounded explanations.
 Deterministic rules retain every qualified OCR fact and decide completion.
 **Built with Llama.** See [local setup and measured limits](docs/local-meta-setup.md).
-Watch the [actual local Meta demonstration](docs/local-meta-demo.md) (88 seconds).
+The earlier [local Meta screenshot demonstration](docs/local-meta-demo.md)
+(88 seconds) remains available with its original scope.
 
 ```powershell
 .venv\Scripts\python.exe scripts/setup-local-meta.py --activate
@@ -18,6 +26,14 @@ successfully during diagnosis; the owner requires a Meta model, so that alternat
 was not selected. Local Llama is text reasoning over OCR, not Muse/SAM vision, and
 hackathon eligibility remains unconfirmed. See [NVIDIA evidence](docs/nvidia-integration.md).
 The original three-minute recording below remains explicitly offline.
+
+For the current live Meta recording workflow, use the [Windows demo launcher and
+recording setup](docs/DEMO_SETUP.md), [feature audit](docs/DEMO_READINESS.md),
+[timed narration](docs/DEMO_SCRIPT.md), and [executed evidence](docs/DEMO_VERIFICATION.md).
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File scripts/start_demo.ps1
+```
 
 **Watch. Learn. Do.** Learn visual workflows with evidence, one reviewed checkpoint at a time.
 
@@ -135,7 +151,7 @@ The verifier checks visible 2D geometry, not invisible joints or attachment.
 ![Original physical task graph, still supported](docs/assets/screenshots/task-graph.png)
 
 [Original three-minute silent physical walkthrough](docs/assets/demo.mp4) ·
-[Physical browser QA](docs/browser-qa.md) · [Suggested narration](docs/demo-script.md)
+[Physical browser QA](docs/browser-qa.md) · [Suggested narration](docs/offline-demo-script.md)
 
 ## Privacy and providers
 
@@ -143,7 +159,8 @@ The default `AI_PROVIDER=mock` needs no API key. `AI_PROVIDER=nvidia` uses the
 server-only `NVIDIA_API_KEY`; run `scripts/configure-nvidia.py` with the project
 Python environment for hidden-input setup. Digital mock proposals and actual
 local OCR are labeled separately. Physical SAM and digital Muse screenshot
-observation use distinct adapters. No successful live Meta calls are claimed.
+observation use distinct adapters. Direct Meta Model API/SAM calls remain
+unverified; the separately configured local Meta Llama route has actual responses.
 
 Live preview masks cover selected rectangles before transmission. Local OCR
 redacts detected emails and key-like text in observations and before optional
