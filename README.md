@@ -4,8 +4,9 @@
 — **2:56.4, 1080p, 30 FPS**. Real shared-tab OCR and local Meta Llama inference
 show **FAIL → correction → PASS → UNCERTAIN**, then measured evaluation and the
 actual provider. The CodeLab target is visibly a simulation and the workflow is
-prepared and reviewed before recording. The video is silent;
-[timed narration](docs/DEMO_SCRIPT.md) is provided separately.
+prepared and reviewed before recording. The video now includes a timed synthetic voiceover, disclosed at the start.
+The [spoken script](docs/DEMO_SCRIPT.md) and [audio validation](docs/validation/hackathon-voiceover.json)
+are included; the original video frames and timing are unchanged.
 
 **2 November local Meta update:** ReplayLab can run **Meta Llama 3.2 3B Instruct**
 on this Windows PC's CPU. Local OCR reads screenshots; Meta reasons over redacted

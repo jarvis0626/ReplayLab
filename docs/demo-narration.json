@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "source_video_sha256": "6b29c86fd655f9f6a47317ea99b2b29fe988a7996f44e0562a2ae8dae7163f7b",
+  "duration_seconds": 176.4,
+  "voice": "Microsoft Zira Desktop",
+  "rate": 0,
+  "disclosure": "Synthetic narration added after the actual continuous recording. No video frames or inference timing are changed.",
+  "segments": [
+    {"id": "intro", "start": 0.6, "end": 10.9, "text": "This synthetic narration was added afterward. The video is one continuous take of Replay Lab, which learns workflows and checks your progress."},
+    {"id": "prepared-tutorial", "start": 12.0, "end": 28.5, "text": "This tutorial records our clearly labeled Code Lab simulation. Before this take, Meta Llama generated a proposal from the transcript and locally extracted screen text. The proposal was reviewed and simplified."},
+    {"id": "workflow-review", "start": 29.6, "end": 42.5, "text": "Here are the two prepared checkpoints and their dependency. The reviewed workflow requires explicit approval before guided verification. Model proposals alone cannot establish completion."},
+    {"id": "live-mistake", "start": 43.8, "end": 68.5, "text": "The tutorial expects Extensions Marketplace, but Settings is deliberately opened instead. Replay Lab captures the real shared tab. Local O C R reads its pixels, and Meta Llama reasons over that text. Waiting is shown at its actual speed."},
+    {"id": "fail", "start": 70.3, "end": 80.5, "text": "FAIL. The visible Preferences heading contradicts the approved state. Replay Lab recommends returning to Extensions Marketplace."},
+    {"id": "correction", "start": 82.0, "end": 102.5, "text": "The suggested correction is followed on the same shared tab. Extensions Marketplace is now visible. Replay Lab captures the updated screen and checks the same approved constraint again."},
+    {"id": "pass", "start": 104.0, "end": 112.7, "text": "PASS. This checkpoint is verified. The search step unlocks and stays pending."},
+    {"id": "ambiguous-screen", "start": 114.0, "end": 137.8, "text": "The next step requires search results for Replay Formatter. Instead, Explorer is shown. This screen does not establish the required state, and missing text alone cannot prove a specific mistake."},
+    {"id": "uncertain", "start": 138.7, "end": 143.2, "text": "Replay Lab returns UNCERTAIN and keeps the checkpoint pending."},
+    {"id": "evaluation", "start": 144.0, "end": 159.8, "text": "This separate evaluation executed twenty controlled local O C R cases. All expected verdicts matched, including ten uncertainty cases. These development measurements are not a benchmark of Meta model accuracy."},
+    {"id": "technical-close", "start": 160.8, "end": 175.8, "text": "Meta Llama three point two runs locally. O C R reads pixels; Llama receives redacted text. Deterministic rules decide completion. One checkpoint is verified; the other remains pending."}
+  ]
+}

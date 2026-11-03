@@ -1,0 +1,179 @@
+{
+  "success": true,
+  "created_at": "2026-11-03T14:40:45.830921+00:00",
+  "source_sha256": "6b29c86fd655f9f6a47317ea99b2b29fe988a7996f44e0562a2ae8dae7163f7b",
+  "voice": "Microsoft Zira Desktop",
+  "rate": 0,
+  "plan_sha256": "df5e5a99004cdf0cc4e3a02af4e41c412051a0757d2328417beb7384bfe470c2",
+  "synthetic_narration": true,
+  "synthesis_location": "local Windows System.Speech",
+  "cloud_requests": 0,
+  "segments": [
+    {
+      "id": "intro",
+      "start": 0.6,
+      "end": 10.9,
+      "text": "This synthetic narration was added afterward. The video is one continuous take of Replay Lab, which learns workflows and checks your progress.",
+      "speech_duration_seconds": 9.557732,
+      "speech_end_seconds": 10.157732
+    },
+    {
+      "id": "prepared-tutorial",
+      "start": 12.0,
+      "end": 28.5,
+      "text": "This tutorial records our clearly labeled Code Lab simulation. Before this take, Meta Llama generated a proposal from the transcript and locally extracted screen text. The proposal was reviewed and simplified.",
+      "speech_duration_seconds": 14.391927,
+      "speech_end_seconds": 26.391927
+    },
+    {
+      "id": "workflow-review",
+      "start": 29.6,
+      "end": 42.5,
+      "text": "Here are the two prepared checkpoints and their dependency. The reviewed workflow requires explicit approval before guided verification. Model proposals alone cannot establish completion.",
+      "speech_duration_seconds": 12.406848,
+      "speech_end_seconds": 42.006848
+    },
+    {
+      "id": "live-mistake",
+      "start": 43.8,
+      "end": 68.5,
+      "text": "The tutorial expects Extensions Marketplace, but Settings is deliberately opened instead. Replay Lab captures the real shared tab. Local O C R reads its pixels, and Meta Llama reasons over that text. Waiting is shown at its actual speed.",
+      "speech_duration_seconds": 17.406032,
+      "speech_end_seconds": 61.206032
+    },
+    {
+      "id": "fail",
+      "start": 70.3,
+      "end": 80.5,
+      "text": "FAIL. The visible Preferences heading contradicts the approved state. Replay Lab recommends returning to Extensions Marketplace.",
+      "speech_duration_seconds": 9.502585,
+      "speech_end_seconds": 79.802585
+    },
+    {
+      "id": "correction",
+      "start": 82.0,
+      "end": 102.5,
+      "text": "The suggested correction is followed on the same shared tab. Extensions Marketplace is now visible. Replay Lab captures the updated screen and checks the same approved constraint again.",
+      "speech_duration_seconds": 12.287211,
+      "speech_end_seconds": 94.287211
+    },
+    {
+      "id": "pass",
+      "start": 104.0,
+      "end": 112.7,
+      "text": "PASS. This checkpoint is verified. The search step unlocks and stays pending.",
+      "speech_duration_seconds": 6.833605,
+      "speech_end_seconds": 110.833605
+    },
+    {
+      "id": "ambiguous-screen",
+      "start": 114.0,
+      "end": 137.8,
+      "text": "The next step requires search results for Replay Formatter. Instead, Explorer is shown. This screen does not establish the required state, and missing text alone cannot prove a specific mistake.",
+      "speech_duration_seconds": 14.03678,
+      "speech_end_seconds": 128.03678
+    },
+    {
+      "id": "uncertain",
+      "start": 138.7,
+      "end": 143.2,
+      "text": "Replay Lab returns UNCERTAIN and keeps the checkpoint pending.",
+      "speech_duration_seconds": 4.188753,
+      "speech_end_seconds": 142.888753
+    },
+    {
+      "id": "evaluation",
+      "start": 144.0,
+      "end": 159.8,
+      "text": "This separate evaluation executed twenty controlled local O C R cases. All expected verdicts matched, including ten uncertainty cases. These development measurements are not a benchmark of Meta model accuracy.",
+      "speech_duration_seconds": 14.816599,
+      "speech_end_seconds": 158.816599
+    },
+    {
+      "id": "technical-close",
+      "start": 160.8,
+      "end": 175.8,
+      "text": "Meta Llama three point two runs locally. O C R reads pixels; Llama receives redacted text. Deterministic rules decide completion. One checkpoint is verified; the other remains pending.",
+      "speech_duration_seconds": 14.902177,
+      "speech_end_seconds": 175.702177
+    }
+  ],
+  "video_frames_changed": false,
+  "disclosure": "Synthetic narration added after the actual continuous recording. No video frames or inference timing are changed.",
+  "source_media": {
+    "programs": [],
+    "stream_groups": [],
+    "streams": [
+      {
+        "index": 0,
+        "codec_name": "h264",
+        "codec_type": "video",
+        "width": 1920,
+        "height": 1080,
+        "r_frame_rate": "30/1",
+        "duration": "176.400000",
+        "nb_frames": "5292"
+      }
+    ],
+    "format": {
+      "duration": "176.400000",
+      "size": "6037770"
+    }
+  },
+  "output_media": {
+    "programs": [],
+    "stream_groups": [],
+    "streams": [
+      {
+        "index": 0,
+        "codec_name": "h264",
+        "codec_type": "video",
+        "width": 1920,
+        "height": 1080,
+        "r_frame_rate": "30/1",
+        "duration": "176.400000",
+        "nb_frames": "5292"
+      },
+      {
+        "index": 1,
+        "codec_name": "aac",
+        "codec_type": "audio",
+        "sample_rate": "48000",
+        "channels": 1,
+        "r_frame_rate": "0/0",
+        "duration": "176.302000",
+        "nb_frames": "8266"
+      }
+    ],
+    "format": {
+      "duration": "176.400000",
+      "size": "8714072"
+    }
+  },
+  "source_video_packet_sha256": "9fa18912d5fdfd5ed89954030c31315d95fa31bcda7dbbd5eb458ad719d28dde",
+  "output_video_packet_sha256": "9fa18912d5fdfd5ed89954030c31315d95fa31bcda7dbbd5eb458ad719d28dde",
+  "full_decode_passed": true,
+  "volume_detection": [
+    "[Parsed_volumedetect_0 @ 000001bd05461580] mean_volume: -17.8 dB",
+    "[Parsed_volumedetect_0 @ 000001bd05461580] max_volume: -1.4 dB"
+  ],
+  "output_sha256": "b7fddbaa85c3c4657b9ca8db323d08e407cf1c4d4cbb2ddb591fbb9ff2605a4a",
+  "finished_at": "2026-11-03T14:40:59.579242+00:00",
+  "browser_playback": {
+    "duration": 176.4,
+    "current_time": 1.737554,
+    "width": 1920,
+    "height": 1080,
+    "audio_decoded_bytes": 34779,
+    "video_decoded_bytes": 236087,
+    "error": null
+  },
+  "verdict_timing_checked": {
+    "fail_result_at": 69.597,
+    "fail_speech_starts_at": 70.3,
+    "pass_result_at": 103.292,
+    "pass_speech_starts_at": 104.0,
+    "uncertain_result_at": 138.16,
+    "uncertain_speech_starts_at": 138.7
+  }
+}

@@ -2,6 +2,13 @@
 
 ## Live demonstration checks — 3 November 2026
 
+The owner-requested narrated version retains identical H.264 video packets and
+176.4-second timing. Eleven local Windows speech segments fit their windows;
+AAC 48 kHz audio, full decode, browser audio/video playback, non-clipping levels,
+and the exact video-stream hash all passed. No application code changed for
+this audio update. See [voiceover evidence](validation/hackathon-voiceover.json).
+
+
 Accepted recording: **176.4 s, 1920 × 1080, H.264, 30 FPS, 5,292 frames**.
 FFprobe, full FFmpeg decode, actual Chromium playback, and visual/privacy review
 passed. Final live-stream checks returned FAIL in **26.42 s**, corrected PASS in

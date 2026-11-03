@@ -311,13 +311,13 @@ claiming that all checkpoints are verified.
 | Media acceptance check | Actual result |
 | --- | --- |
 | File | `ReplayLab_Meta_Hackathon_Demo.mp4` exists in the repository root |
-| FFprobe | 176.400000 s; 1920×1080; H.264; 30/1 FPS; 5292 frames; 6037770 bytes |
-| Audio | No audio stream; the recording is silent. Narration is supplied separately in [DEMO_SCRIPT.md](DEMO_SCRIPT.md). |
+| FFprobe | 176.400000 s; 1920×1080; H.264; 30/1 FPS; 5292 frames; 8714072 bytes |
+| Audio | AAC, 48 kHz, mono; owner-authorized synthetic Windows narration added afterwards, disclosed at the start. See [spoken script](DEMO_SCRIPT.md). |
 | Full FFmpeg decode | Passed over the complete video |
-| Actual Chromium playback | Duration 176.4 s; advanced to 1.303658 s; 1920×1080; `error=null` |
+| Actual Chromium playback | Narrated MP4: duration 176.4 s; advanced to 1.737554 s; audio 34779 bytes and video 236087 bytes decoded; `error=null` |
 | Visual review | Fourteen actual final MP4 frames inspected at 1, 18, 36, 70, 75, 90, 104, 109, 134, 139, 141, 150, 161, and 174 s; expected references, evidence, pending-step copy, readability, and provider disclosure checked |
 | Privacy review | No visible credentials or personal desktop content in the reviewed samples; recording scope is the owned browser page/target stream |
-| SHA256 | `6b29c86fd655f9f6a47317ea99b2b29fe988a7996f44e0562a2ae8dae7163f7b` |
+| SHA256 | `b7fddbaa85c3c4657b9ca8db323d08e407cf1c4d4cbb2ddb591fbb9ff2605a4a` |
 
 The safe [final recording report](validation/hackathon-recording.json) marks
 `acceptance.accepted=true` and `single_take=true`. Raw recordings, failed
@@ -333,3 +333,28 @@ unapproved with zero of two steps complete. The default launcher verified the
 UI, API, local model, prepared project, and `live_verified=true`. This prepared
 copy reuses the genuinely generated and reviewed task; it does not represent a
 new model extraction or silently approve the owner's practice session.
+
+## Synthetic narration update
+
+At the owner's request, eleven timed narration segments were added after the
+accepted recording using the installed **Microsoft Zira Desktop** Windows voice
+at its normal rate. The opening sentence explicitly identifies synthetic
+narration added afterward. This is a voiceover, not recorded live microphone
+audio or generated model speech. The exact text/windows are in
+[demo-narration.json](demo-narration.json).
+
+Every synthesized sentence fits its assigned real-time window. FAIL narration
+starts at 70.3 s, PASS at 104.0 s, and UNCERTAIN at 138.7 s, all after their actual
+recorded results. No speech is sped up, and no inference waiting is removed.
+
+FFmpeg copied the H.264 video stream without re-encoding, trimming or changing
+timestamps. Source and output video-packet SHA256 are identical:
+`9fa18912d5fdfd5ed89954030c31315d95fa31bcda7dbbd5eb458ad719d28dde`.
+The original silent capture remains backed up under ignored `.artifacts/` and
+its original metadata is retained in the accepted recording report.
+
+The narrated output remains 176.4 s with 5,292 video frames and adds AAC mono
+48 kHz audio. Full audio/video decode and real Chromium playback passed.
+Measured audio mean is -17.8 dBFS and peak is -1.4 dBFS, with no clipping.
+All speech was synthesized locally with zero cloud requests. See the
+[actual voiceover validation report](validation/hackathon-voiceover.json).

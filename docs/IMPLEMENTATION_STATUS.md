@@ -5,8 +5,9 @@
 The accepted [continuous MP4](../ReplayLab_Meta_Hackathon_Demo.mp4) is **176.4 s**,
 1920 × 1080, H.264 at 30 FPS. FFprobe, full decoding, real Chromium playback,
 and visual review passed. It shows three fresh Meta-backed observations with
-FAIL/PASS/UNCERTAIN, then the separately labeled OCR evaluation. The video is
-silent, with [narration supplied separately](DEMO_SCRIPT.md).
+FAIL/PASS/UNCERTAIN, then the separately labeled OCR evaluation. The video includes
+[synthetic narration](DEMO_SCRIPT.md), added afterwards with local Windows speech
+and disclosed at the start. Video-packet hashes prove the footage is unchanged.
 
 The actual application passed a fresh **94.408-second rehearsal** using a real
 shared CodeLab browser tab, local OCR, and three fresh Meta Llama observations:

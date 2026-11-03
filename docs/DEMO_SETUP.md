@@ -1,9 +1,11 @@
 # Preparing and recording the real demonstration
 
 The accepted [MP4](../ReplayLab_Meta_Hackathon_Demo.mp4) exists and has been
-validated: **176.4 s, 1920 × 1080, H.264, 30 FPS**. It is a silent, continuous
-capture of the real application, with the target visible through genuine tab
-sharing. [Verification](DEMO_VERIFICATION.md) records the actual outcomes.
+validated: **176.4 s, 1920 x 1080, H.264, 30 FPS**, with an AAC English narration
+track. The original continuous application video is unchanged, with the target
+visible through genuine tab sharing. Locally generated Microsoft Zira Desktop
+speech was added afterward at the owner's request and disclosed in its first
+sentence. [Verification](DEMO_VERIFICATION.md) records the actual outcomes.
 
 This laptop also has a fresh prepared project named **Hackathon live
 demonstration — ready for your run**, with two unapproved steps and no completion.
@@ -73,7 +75,9 @@ uses the actual Chromium page video stream and converts that one continuous
 source to H.264 MP4. FFmpeg validates duration, dimensions, 30 FPS and complete
 decoding. There is no concatenation, trimming, speed change, artificial padding,
 replacement frame, generated screenshot, verdict override or app DOM overlay.
-The final artifact is silent; [narration](DEMO_SCRIPT.md) is supplied separately.
+The accepted artifact now includes a synthetic voiceover, added after the actual
+continuous recording. Its exact words and timing are in [narration](DEMO_SCRIPT.md)
+and [the speech plan](demo-narration.json).
 
 Rehearse with a **new, unapproved** project prepared specifically for this run:
 
@@ -112,6 +116,33 @@ The expected output is `ReplayLab_Meta_Hackathon_Demo.mp4` in the repository roo
 175–180 seconds long. The recorder checks the actual file before reporting it as
 created. See [verification](DEMO_VERIFICATION.md) for the actual latest outcome,
 latencies, sample sizes and remaining limitations.
+
+## Reproduce the authorized synthetic voiceover
+
+The local postprocessing helper uses the already installed Windows
+**Microsoft Zira Desktop** voice at normal rate **0**, then adds an AAC track with
+FFmpeg. No cloud speech requests, API keys, scene edits, trimming, or video-speed
+changes are involved. It requires the accepted original silent take, whose hash
+is pinned in [the narration plan](demo-narration.json).
+
+The successful local run retained that source under the ignored
+`.artifacts/demo-voiceover-20261103T144045Z/source-silent.mp4`. Reproduce it with:
+
+```powershell
+.venv\Scripts\python.exe scripts/add_demo_voiceover.py --source ".artifacts/demo-voiceover-20261103T144045Z/source-silent.mp4"
+```
+
+For another retained run, use its own
+`.artifacts/<voiceover-run>/source-silent.mp4`. The default root MP4 already has
+narration; rerunning against it fails the original-source hash guard. The helper
+preserves the source, measures each sentence against its assigned window, copies
+H.264 packets unchanged, and validates audio/video streams and full decoding
+before replacing the root MP4. The [actual voiceover report](validation/hackathon-voiceover.json)
+records all eleven segment timings, matching video hashes, and audio levels.
+Raw WAVs and the original silent video stay in ignored `.artifacts/`.
+
+A newly recorded take needs a narration plan with its own source hash and actual
+chapter timings. The checked-in plan is tied to this accepted 176.4-second take.
 
 For a human-narrated recording, follow [the timed script](DEMO_SCRIPT.md) with OBS
 or another already trusted recorder. Record a fresh single take with the audio

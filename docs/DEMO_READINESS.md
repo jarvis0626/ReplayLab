@@ -3,8 +3,10 @@
 **Ready.** The accepted [continuous demonstration](../ReplayLab_Meta_Hackathon_Demo.mp4)
 is **2:56.4**, **1920×1080**, **30 FPS**, H.264 MP4. It shows actual local Meta
 inference, a real target-tab stream, **FAIL → correction → PASS → UNCERTAIN**,
-the measured evaluation, and the provider disclosure. The video is silent;
-the [narration and timestamps](DEMO_SCRIPT.md) are supplied separately.
+the measured evaluation, and the provider disclosure. The video includes locally generated synthetic narration, disclosed in the first
+spoken sentence. The [spoken script and timestamps](DEMO_SCRIPT.md) and
+[audio validation](validation/hackathon-voiceover.json) document the addition.
+The original video packets, frames, and timing are unchanged.
 
 Audit date: **3 November 2026 (Asia/Calcutta)**. This document distinguishes actual
 executed checks from implemented capabilities. A successful unit test is not a

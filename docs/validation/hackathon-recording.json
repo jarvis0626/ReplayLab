@@ -340,12 +340,23 @@
         "width": 1920,
         "height": 1080,
         "r_frame_rate": "30/1",
+        "duration": "176.400000",
         "nb_frames": "5292"
+      },
+      {
+        "index": 1,
+        "codec_name": "aac",
+        "codec_type": "audio",
+        "sample_rate": "48000",
+        "channels": 1,
+        "r_frame_rate": "0/0",
+        "duration": "176.302000",
+        "nb_frames": "8266"
       }
     ],
     "format": {
       "duration": "176.400000",
-      "size": "6037770"
+      "size": "8714072"
     }
   },
   "limitations": [
@@ -354,7 +365,7 @@
     "Local OCR reads actual captured pixels. Meta Llama receives redacted OCR text, not images.",
     "The evaluation dashboard is a separate controlled local OCR suite, not a Meta model accuracy benchmark.",
     "This small demonstration does not establish broad accuracy, SAM/camera performance, hosted Muse availability or hackathon eligibility.",
-    "The recording is silent. Separate narration instructions are supplied; no synthetic audio is presented as live speech."
+    "The original capture was silent. Owner-authorized synthetic narration was added afterwards locally and is disclosed in the opening sentence; the recorded video remains unchanged."
   ],
   "task_fingerprint": "a94e3ca39b40be833be46f2c1552f1bf637fedf61764caf405b3896d7243b73d",
   "workflow_provenance": {
@@ -425,11 +436,47 @@
   },
   "elapsed_seconds": 176.002,
   "output": "ReplayLab_Meta_Hackathon_Demo.mp4",
-  "output_sha256": "6b29c86fd655f9f6a47317ea99b2b29fe988a7996f44e0562a2ae8dae7163f7b",
+  "output_sha256": "b7fddbaa85c3c4657b9ca8db323d08e407cf1c4d4cbb2ddb591fbb9ff2605a4a",
   "acceptance": {
     "accepted": true,
     "visual_review": "Inspected actual final MP4 frames at 1, 18, 36, 70, 75, 90, 104, 109, 134, 139, 141, 150, 161, and 174 seconds; confirmed reference and pending-step copy, real evidence, provider disclosure, and no visible credentials or personal desktop content.",
     "single_take": true,
+    "playback": {
+      "duration": 176.4,
+      "current_time": 1.737554,
+      "width": 1920,
+      "height": 1080,
+      "audio_decoded_bytes": 34779,
+      "video_decoded_bytes": 236087,
+      "error": null
+    },
+    "audio": "AAC mono 48 kHz synthetic Windows Microsoft Zira Desktop narration, added after recording, disclosed in the opening spoken sentence.",
+    "fresh_meta_observation_count": 3,
+    "underlying_fresh_explanation_count": null,
+    "explanation_note": "FAIL/PASS use Meta grounded plans that may be cached; UNCERTAIN uses the deterministic template. No count of new explanation model requests is invented.",
+    "video_bitstream_unchanged": true
+  },
+  "silent_capture": {
+    "sha256": "6b29c86fd655f9f6a47317ea99b2b29fe988a7996f44e0562a2ae8dae7163f7b",
+    "media": {
+      "programs": [],
+      "stream_groups": [],
+      "streams": [
+        {
+          "index": 0,
+          "codec_name": "h264",
+          "codec_type": "video",
+          "width": 1920,
+          "height": 1080,
+          "r_frame_rate": "30/1",
+          "nb_frames": "5292"
+        }
+      ],
+      "format": {
+        "duration": "176.400000",
+        "size": "6037770"
+      }
+    },
     "playback": {
       "duration": 176.4,
       "current_time": 1.303658,
@@ -437,9 +484,15 @@
       "height": 1080,
       "error": null
     },
-    "audio": "No audio stream; narration supplied separately in docs/DEMO_SCRIPT.md.",
-    "fresh_meta_observation_count": 3,
-    "underlying_fresh_explanation_count": null,
-    "explanation_note": "FAIL/PASS use Meta grounded plans that may be cached; UNCERTAIN uses the deterministic template. No count of new explanation model requests is invented."
+    "note": "Original accepted continuous capture before the owner requested synthetic narration."
+  },
+  "postproduction": {
+    "synthetic_narration": true,
+    "report": "docs/validation/hackathon-voiceover.json",
+    "source_video_packet_sha256": "9fa18912d5fdfd5ed89954030c31315d95fa31bcda7dbbd5eb458ad719d28dde",
+    "output_video_packet_sha256": "9fa18912d5fdfd5ed89954030c31315d95fa31bcda7dbbd5eb458ad719d28dde",
+    "video_stream_copied": true,
+    "duration_changed": false,
+    "speech_windows": 11
   }
 }

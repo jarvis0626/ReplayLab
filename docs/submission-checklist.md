@@ -4,7 +4,8 @@
 is **176.4 s, 1080p, H.264, 30 FPS**, with real local Meta tab-stream observations,
 FAIL → correction → PASS → UNCERTAIN, measured OCR evaluation, and exact provider
 disclosure. The workflow was prepared from a real recorded CodeLab tutorial and
-reviewed before recording; CodeLab is visibly a simulation. The video is silent.
+reviewed before recording; CodeLab is visibly a simulation. The video includes a synthetic voiceover added afterwards, disclosed in its opening
+sentence; the continuous footage and inference timing are unchanged.
 See [current verification](DEMO_VERIFICATION.md), [setup](DEMO_SETUP.md), and
 [narration](DEMO_SCRIPT.md). The earlier milestones below retain their dates.
 
