@@ -1,0 +1,1518 @@
+{
+  "success": true,
+  "created_at": "2026-11-04T15:52:14.003219+00:00",
+  "model": "meta-llama/Llama-3.2-1B-Instruct",
+  "source_file": ".artifacts\\tutorial-proof-source\\Open-Extensions-Marketplace-tutorial.mp4",
+  "source_sha256": "183c17691c46c704497c3f7eca81d58307408ccead7e5aa6b948c6ec487399ee",
+  "transcript": "00:00 - 00:08 Open \"Extensions Marketplace\" in CodeLab. Confirm the visible heading \"Extensions Marketplace\". This tutorial contains one checkpoint.",
+  "chapters": [
+    {
+      "name": "Upload a real tutorial to the empty project",
+      "at_seconds": 1.276
+    },
+    {
+      "name": "Play the actual tutorial showing the Marketplace action",
+      "at_seconds": 8.334
+    },
+    {
+      "name": "Generate task steps now - actual local Meta request",
+      "at_seconds": 20.15
+    },
+    {
+      "name": "The model-generated workflow appears from this uploaded tutorial",
+      "at_seconds": 35.333
+    },
+    {
+      "name": "Review the model's source-quoted positive heading before approval",
+      "at_seconds": 42.359
+    },
+    {
+      "name": "wrong-settings: inspect the actual shared target",
+      "at_seconds": 55.045
+    },
+    {
+      "name": "wrong-settings: actual FAIL with observed evidence",
+      "at_seconds": 62.994
+    },
+    {
+      "name": "corrected-marketplace: inspect the actual shared target",
+      "at_seconds": 87.317
+    },
+    {
+      "name": "corrected-marketplace: actual PASS with observed evidence",
+      "at_seconds": 95.523
+    },
+    {
+      "name": "ambiguous-new-view: inspect the actual shared target",
+      "at_seconds": 114.302
+    },
+    {
+      "name": "ambiguous-new-view: actual UNCERTAIN with observed evidence",
+      "at_seconds": 127.72
+    },
+    {
+      "name": "Measured local OCR evaluation with explicit dataset and sample size",
+      "at_seconds": 140.734
+    },
+    {
+      "name": "Actual Meta model and local OCR/text boundary",
+      "at_seconds": 158.504
+    },
+    {
+      "name": "The uploaded tutorial checkpoint is now verified complete",
+      "at_seconds": 164.717
+    }
+  ],
+  "cases": [
+    {
+      "id": "wrong-settings",
+      "actual": "fail",
+      "expected": "fail",
+      "latency_ms": 7813.65,
+      "response": {
+        "result": {
+          "step_id": "Open \"Extensions Marketplace\" in CodeLab",
+          "status": "fail",
+          "rule_results": [
+            {
+              "rule_id": "visible heading \"Extensions Marketplace\"",
+              "status": "fail",
+              "expected": "Extensions Marketplace",
+              "observed": "A known contradictory UI state is reliably visible.",
+              "evidence": [
+                "Visible text: Preferences (confidence 1.00, source local_ocr)."
+              ],
+              "correction": "Return to the approved Extensions Marketplace state, then capture the target window again."
+            }
+          ],
+          "evidence": [
+            "Visible text: Preferences (confidence 1.00, source local_ocr)."
+          ],
+          "explanation": "A known contradictory UI state is reliably visible. Return to the approved Extensions Marketplace state, then capture the target window again. Visible evidence: Visible text: Preferences (confidence 1.00, source local_ocr)..",
+          "provider_mode": "local_meta",
+          "reason": "mismatch",
+          "observed_step_id": null,
+          "warnings": []
+        },
+        "observation": {
+          "elements": [
+            {
+              "text": "ReplayLab CodeLab",
+              "role": "text",
+              "bbox": [
+                0.034027777777777775,
+                0.024444444444444446,
+                0.125,
+                0.043333333333333335
+              ],
+              "confidence": 0.99993,
+              "source": "local_ocr"
+            },
+            {
+              "text": "Interactive simulation \u00b7 no actual software changes",
+              "role": "text",
+              "bbox": [
+                0.13402777777777777,
+                0.025555555555555557,
+                0.3229166666666667,
+                0.043333333333333335
+              ],
+              "confidence": 0.9769,
+              "source": "local_ocr"
+            },
+            {
+              "text": "Reset sandbox",
+              "role": "text",
+              "bbox": [
+                0.9173611111111111,
+                0.023333333333333334,
+                0.9763888888888889,
+                0.044444444444444446
+              ],
+              "confidence": 0.99996,
+              "source": "local_ocr"
+            },
+            {
+              "text": "</>",
+              "role": "text",
+              "bbox": [
+                0.01597222222222222,
+                0.09444444444444444,
+                0.030555555555555555,
+                0.11333333333333333
+              ],
+              "confidence": 0.79066,
+              "source": "local_ocr"
+            },
+            {
+              "text": "CodeLab 1.0",
+              "role": "text",
+              "bbox": [
+                0.034722222222222224,
+                0.09,
+                0.10902777777777778,
+                0.11555555555555555
+              ],
+              "confidence": 0.99701,
+              "source": "local_ocr"
+            },
+            {
+              "text": "practice-workspace",
+              "role": "text",
+              "bbox": [
+                0.12291666666666666,
+                0.09555555555555556,
+                0.19791666666666666,
+                0.11333333333333333
+              ],
+              "confidence": 0.99998,
+              "source": "local_ocr"
+            },
+            {
+              "text": "Change UI version",
+              "role": "text",
+              "bbox": [
+                0.8041666666666667,
+                0.09222222222222222,
+                0.8708333333333333,
+                0.1111111111111111
+              ],
+              "confidence": 0.97747,
+              "source": "local_ocr"
+            },
+            {
+              "text": "Show unexpected dialog",
+              "role": "text",
+              "bbox": [
+                0.8888888888888888,
+                0.09111111111111111,
+                0.9784722222222222,
+                0.11666666666666667
+              ],
+              "confidence": 0.99995,
+              "source": "local_ocr"
+            },
+            {
+              "text": "\u53e3",
+              "role": "text",
+              "bbox": [
+                0.025694444444444443,
+                0.17777777777777778,
+                0.044444444444444446,
+                0.21
+              ],
+              "confidence": 0.65421,
+              "source": "local_ocr"
+            },
+            {
+              "text": "Explorer",
+              "role": "text",
+              "bbox": [
+                0.01875,
+                0.21222222222222223,
+                0.05138888888888889,
+                0.23444444444444446
+              ],
+              "confidence": 0.99988,
+              "source": "local_ocr"
+            },
+            {
+              "text": "Settings",
+              "role": "text",
+              "bbox": [
+                0.10208333333333333,
+                0.25333333333333335,
+                0.19930555555555557,
+                0.3088888888888889
+              ],
+              "confidence": 0.99993,
+              "source": "local_ocr"
+            },
+            {
+              "text": "\u65e5",
+              "role": "text",
+              "bbox": [
+                0.02638888888888889,
+                0.27666666666666667,
+                0.044444444444444446,
+                0.30666666666666664
+              ],
+              "confidence": 0.83755,
+              "source": "local_ocr"
+            },
+            {
+              "text": "Extensions",
+              "role": "text",
+              "bbox": [
+                0.01597222222222222,
+                0.31444444444444447,
+                0.05486111111111111,
+                0.33
+              ],
+              "confidence": 0.99992,
+              "source": "local_ocr"
+            },
+            {
+              "text": "Preferences",
+              "role": "text",
+              "bbox": [
+                0.10416666666666667,
+                0.33444444444444443,
+                0.19930555555555557,
+                0.3711111111111111
+              ],
+              "confidence": 0.99996,
+              "source": "local_ocr"
+            },
+            {
+              "text": "This is a different destination from the tutorial workflow.",
+              "role": "text",
+              "bbox": [
+                0.10625,
+                0.3977777777777778,
+                0.3840277777777778,
+                0.42
+              ],
+              "confidence": 0.99218,
+              "source": "local_ocr"
+            },
+            {
+              "text": "Editor theme",
+              "role": "text",
+              "bbox": [
+                0.10486111111111111,
+                0.4688888888888889,
+                0.1763888888888889,
+                0.49333333333333335
+              ],
+              "confidence": 0.93493,
+              "source": "local_ocr"
+            },
+            {
+              "text": "Midnight",
+              "role": "text",
+              "bbox": [
+                0.11319444444444444,
+                0.51,
+                0.1701388888888889,
+                0.5444444444444444
+              ],
+              "confidence": 0.99963,
+              "source": "local_ocr"
+            },
+            {
+              "text": "Settings",
+              "role": "text",
+              "bbox": [
+                0.018055555555555554,
+                0.9,
+                0.052083333333333336,
+                0.9233333333333333
+              ],
+              "confidence": 0.99981,
+              "source": "local_ocr"
+            },
+            {
+              "text": "CodeLab 1.0",
+              "role": "text",
+              "bbox": [
+                0.015277777777777777,
+                0.9733333333333334,
+                0.06111111111111111,
+                0.9888888888888889
+              ],
+              "confidence": 0.99985,
+              "source": "local_ocr"
+            },
+            {
+              "text": "Local sandbox - Changes are simulated",
+              "role": "text",
+              "bbox": [
+                0.4444444444444444,
+                0.9744444444444444,
+                0.5770833333333333,
+                0.9888888888888889
+              ],
+              "confidence": 0.97526,
+              "source": "local_ocr"
+            },
+            {
+              "text": "U-TF-8",
+              "role": "text",
+              "bbox": [
+                0.9604166666666667,
+                0.9722222222222222,
+                0.9847222222222223,
+                0.9888888888888889
+              ],
+              "confidence": 0.58761,
+              "source": "local_ocr"
+            }
+          ],
+          "visible_text": "ReplayLab CodeLab\nInteractive simulation \u00b7 no actual software changes\nReset sandbox\n</>\nCodeLab 1.0\npractice-workspace\nChange UI version\nShow unexpected dialog\n\u53e3\nExplorer\nSettings\n\u65e5\nExtensions\nPreferences\nThis is a different destination from the tutorial workflow.\nEditor theme\nMidnight\nSettings\nCodeLab 1.0\nLocal sandbox - Changes are simulated\nU-TF-8",
+          "confidence": 0.9391704761904762,
+          "image_quality": 1.0,
+          "provider_mode": "local_meta",
+          "interface_version": "CodeLab 1.0",
+          "complete": false,
+          "provenance": {
+            "engine": "rapidocr-3.10.0/onnxruntime",
+            "ocr_available": true,
+            "real_ocr": true,
+            "fixture": false,
+            "cache_hit": false,
+            "redaction_applied": true,
+            "redacted_regions": 0,
+            "screenshots_stored": false,
+            "interface_version_ambiguous": false,
+            "self_capture": false,
+            "quality_source": "Screenshot contrast and sharpness heuristic; not calibrated model confidence",
+            "redaction_limits": "Best effort for detected email addresses and key-like text; review the selected sharing scope.",
+            "provider": "local_meta",
+            "model": "meta-llama/Llama-3.2-1B-Instruct",
+            "response_model": "meta-llama/Llama-3.2-1B-Instruct",
+            "request_id": "chatcmpl-MMHghza74zTL9s7iWcEi3klTZFY6lWCX",
+            "latency_ms": 1993.996,
+            "token_usage": {
+              "completion_tokens": 69,
+              "prompt_tokens": 474,
+              "total_tokens": 543
+            },
+            "local_only": true,
+            "vision_inference": false,
+            "api_response_validated": true,
+            "live_api_verified": true,
+            "ocr_selected_count": 8,
+            "pipeline": "local_ocr_plus_meta_text_reasoning",
+            "ocr_fact_count": 21,
+            "meta_focus_evidence_ids": [
+              "O1",
+              "O2",
+              "O3",
+              "O4",
+              "O5",
+              "O6",
+              "O7",
+              "O8"
+            ],
+            "meta_focus_labels": [
+              "ReplayLab CodeLab",
+              "Interactive simulation \u00b7 no actual software changes",
+              "Reset sandbox",
+              "</>",
+              "CodeLab 1.0",
+              "practice-workspace",
+              "Change UI version",
+              "Show unexpected dialog"
+            ],
+            "visible_application": null,
+            "current_window": null,
+            "missing_information": [
+              "This Meta text model cannot inspect icons, visual appearance or hidden application state."
+            ],
+            "grounding": "All deterministic evidence, roles, boxes and confidence remain actual local OCR. Meta attention IDs annotate semantic focus and cannot discard or override observed facts."
+          }
+        },
+        "completed_step_ids": [],
+        "current_step_id": "Open \"Extensions Marketplace\" in CodeLab",
+        "upcoming_step_id": null,
+        "screen_stored": false,
+        "source_scope": "browser tab",
+        "verification": {
+          "id": "8c3927a692ae46d5a2cc8854b098aeef",
+          "workflow_id": "46305030db0044dc8d619492e25f129d",
+          "task_id": "85ebe43024a44d139deba28faa86d1d3",
+          "step_id": "Open \"Extensions Marketplace\" in CodeLab",
+          "modality": "digital",
+          "verdict": "fail",
+          "expected_conditions": [
+            "Extensions Marketplace"
+          ],
+          "observed_conditions": [
+            "A known contradictory UI state is reliably visible."
+          ],
+          "constraints": [
+            {
+              "id": "visible heading \"Extensions Marketplace\"",
+              "kind": "text_present",
+              "verdict": "fail",
+              "expected": "Extensions Marketplace",
+              "observed": "A known contradictory UI state is reliably visible.",
+              "evidence": [
+                "Visible text: Preferences (confidence 1.00, source local_ocr)."
+              ],
+              "correction": "Return to the approved Extensions Marketplace state, then capture the target window again."
+            }
+          ],
+          "evidence_references": [
+            {
+              "id": "observation-1",
+              "kind": "visible_observation",
+              "text": "Visible text: Preferences (confidence 1.00, source local_ocr).",
+              "source": "local_meta",
+              "timestamp": null
+            },
+            {
+              "id": "34db120d747e4dda8046fdad7562955a",
+              "kind": "reference_frame",
+              "text": "Reviewed tutorial reference frame 34db120d747e4dda8046fdad7562955a.",
+              "source": "reviewed_tutorial",
+              "timestamp": 1.824
+            }
+          ],
+          "uncertainty_reasons": [],
+          "correction": "Return to the approved Extensions Marketplace state, then capture the target window again.",
+          "explanation": "A known contradictory UI state is reliably visible. Return to the approved Extensions Marketplace state, then capture the target window again. Visible evidence: Visible text: Preferences (confidence 1.00, source local_ocr)..",
+          "provider": {
+            "mode": "local_meta",
+            "observation": "local_meta",
+            "explanation": "local_meta_grounded_plan"
+          },
+          "mismatch_classification": "unexpected_ui_state",
+          "latency_ms": 6733.619,
+          "created_at": "2026-11-04T15:53:19.740005+00:00",
+          "task_revision": "e0db53f2df9ddb02372784e9d32a72a16e7860f6960a26ebadaf75cd5011d116",
+          "retained": false
+        }
+      }
+    },
+    {
+      "id": "corrected-marketplace",
+      "actual": "pass",
+      "expected": "pass",
+      "latency_ms": 7954.96,
+      "response": {
+        "result": {
+          "step_id": "Open \"Extensions Marketplace\" in CodeLab",
+          "status": "pass",
+          "rule_results": [
+            {
+              "rule_id": "visible heading \"Extensions Marketplace\"",
+              "status": "pass",
+              "expected": "Extensions Marketplace",
+              "observed": "Expected text Extensions Marketplace is reliably visible.",
+              "evidence": [
+                "Visible text: Extensions Marketplace (confidence 1.00, source local_ocr)."
+              ],
+              "correction": null
+            }
+          ],
+          "evidence": [
+            "Visible text: Extensions Marketplace (confidence 1.00, source local_ocr)."
+          ],
+          "explanation": "All 1 approved screen constraint(s) are supported by visible UI evidence. Visible evidence: Visible text: Extensions Marketplace (confidence 1.00, source local_ocr)..",
+          "provider_mode": "local_meta",
+          "reason": "completed",
+          "observed_step_id": "Open \"Extensions Marketplace\" in CodeLab",
+          "warnings": []
+        },
+        "observation": {
+          "elements": [
+            {
+              "text": "ReplayLab CodeLab",
+              "role": "text",
+              "bbox": [
+                0.031875,
+                0.021,
+                0.1275,
+                0.045
+              ],
+              "confidence": 0.99983,
+              "source": "local_ocr"
+            },
+            {
+              "text": "Interactive simulation - no actual software changes",
+              "role": "text",
+              "bbox": [
+                0.131875,
+                0.022,
+                0.3225,
+                0.043
+              ],
+              "confidence": 0.98957,
+              "source": "local_ocr"
+            },
+            {
+              "text": "Reset sandbox",
+              "role": "text",
+              "bbox": [
+                0.918125,
+                0.023,
+                0.976875,
+                0.043
+              ],
+              "confidence": 0.99996,
+              "source": "local_ocr"
+            },
+            {
+              "text": "</",
+              "role": "text",
+              "bbox": [
+                0.013125,
+                0.089,
+                0.0325,
+                0.116
+              ],
+              "confidence": 0.79366,
+              "source": "local_ocr"
+            },
+            {
+              "text": "CodeLab 1.0",
+              "role": "text",
+              "bbox": [
+                0.034375,
+                0.089,
+                0.109375,
+                0.116
+              ],
+              "confidence": 0.99965,
+              "source": "local_ocr"
+            },
+            {
+              "text": "practice-workspace",
+              "role": "text",
+              "bbox": [
+                0.124375,
+                0.096,
+                0.19875,
+                0.113
+              ],
+              "confidence": 0.99997,
+              "source": "local_ocr"
+            },
+            {
+              "text": "Change Ul version",
+              "role": "text",
+              "bbox": [
+                0.804375,
+                0.093,
+                0.873125,
+                0.116
+              ],
+              "confidence": 0.98943,
+              "source": "local_ocr"
+            },
+            {
+              "text": "Show unexpected dialog",
+              "role": "text",
+              "bbox": [
+                0.889375,
+                0.092,
+                0.979375,
+                0.117
+              ],
+              "confidence": 0.97984,
+              "source": "local_ocr"
+            },
+            {
+              "text": "\u53e3",
+              "role": "text",
+              "bbox": [
+                0.024375,
+                0.174,
+                0.045,
+                0.212
+              ],
+              "confidence": 0.60357,
+              "source": "local_ocr"
+            },
+            {
+              "text": "\u65e5",
+              "role": "text",
+              "bbox": [
+                0.106875,
+                0.197,
+                0.12375,
+                0.226
+              ],
+              "confidence": 0.67209,
+              "source": "local_ocr"
+            },
+            {
+              "text": "Extensions Marketplace",
+              "role": "text",
+              "bbox": [
+                0.129375,
+                0.189,
+                0.344375,
+                0.233
+              ],
+              "confidence": 0.99997,
+              "source": "local_ocr"
+            },
+            {
+              "text": "Explorer",
+              "role": "text",
+              "bbox": [
+                0.019375,
+                0.216,
+                0.05125,
+                0.234
+              ],
+              "confidence": 0.99992,
+              "source": "local_ocr"
+            },
+            {
+              "text": "Find a package by name",
+              "role": "text",
+              "bbox": [
+                0.13125,
+                0.279,
+                0.29375,
+                0.32
+              ],
+              "confidence": 0.99934,
+              "source": "local_ocr"
+            },
+            {
+              "text": "Extensions",
+              "role": "text",
+              "bbox": [
+                0.01375,
+                0.31,
+                0.05625,
+                0.333
+              ],
+              "confidence": 0.99989,
+              "source": "local_ocr"
+            },
+            {
+              "text": "A space for your tools.",
+              "role": "text",
+              "bbox": [
+                0.388125,
+                0.499,
+                0.549375,
+                0.535
+              ],
+              "confidence": 0.96204,
+              "source": "local_ocr"
+            },
+            {
+              "text": "Search for the package named in your tutorial.",
+              "role": "text",
+              "bbox": [
+                0.359375,
+                0.548,
+                0.576875,
+                0.575
+              ],
+              "confidence": 0.99163,
+              "source": "local_ocr"
+            },
+            {
+              "text": "Settings",
+              "role": "text",
+              "bbox": [
+                0.018125,
+                0.902,
+                0.051875,
+                0.925
+              ],
+              "confidence": 0.99991,
+              "source": "local_ocr"
+            },
+            {
+              "text": "CodeLab 1.0",
+              "role": "text",
+              "bbox": [
+                0.014375,
+                0.971,
+                0.06125,
+                0.991
+              ],
+              "confidence": 0.99974,
+              "source": "local_ocr"
+            },
+            {
+              "text": "Local sandbox - Changes are simulated",
+              "role": "text",
+              "bbox": [
+                0.44375,
+                0.974,
+                0.5775,
+                0.99
+              ],
+              "confidence": 0.97421,
+              "source": "local_ocr"
+            },
+            {
+              "text": "UT-T-8",
+              "role": "text",
+              "bbox": [
+                0.95875,
+                0.97,
+                0.985625,
+                0.991
+              ],
+              "confidence": 0.72062,
+              "source": "local_ocr"
+            }
+          ],
+          "visible_text": "ReplayLab CodeLab\nInteractive simulation - no actual software changes\nReset sandbox\n</\nCodeLab 1.0\npractice-workspace\nChange Ul version\nShow unexpected dialog\n\u53e3\n\u65e5\nExtensions Marketplace\nExplorer\nFind a package by name\nExtensions\nA space for your tools.\nSearch for the package named in your tutorial.\nSettings\nCodeLab 1.0\nLocal sandbox - Changes are simulated\nUT-T-8",
+          "confidence": 0.933742,
+          "image_quality": 1.0,
+          "provider_mode": "local_meta",
+          "interface_version": "CodeLab 1.0",
+          "complete": false,
+          "provenance": {
+            "engine": "rapidocr-3.10.0/onnxruntime",
+            "ocr_available": true,
+            "real_ocr": true,
+            "fixture": false,
+            "cache_hit": false,
+            "redaction_applied": true,
+            "redacted_regions": 0,
+            "screenshots_stored": false,
+            "interface_version_ambiguous": false,
+            "self_capture": false,
+            "quality_source": "Screenshot contrast and sharpness heuristic; not calibrated model confidence",
+            "redaction_limits": "Best effort for detected email addresses and key-like text; review the selected sharing scope.",
+            "provider": "local_meta",
+            "model": "meta-llama/Llama-3.2-1B-Instruct",
+            "response_model": "meta-llama/Llama-3.2-1B-Instruct",
+            "request_id": "chatcmpl-BlgJRRYnpCVvcY5JJztNFRHQ9L5RCcSs",
+            "latency_ms": 4283.96,
+            "token_usage": {
+              "completion_tokens": 69,
+              "prompt_tokens": 461,
+              "total_tokens": 530
+            },
+            "local_only": true,
+            "vision_inference": false,
+            "api_response_validated": true,
+            "live_api_verified": true,
+            "ocr_selected_count": 8,
+            "pipeline": "local_ocr_plus_meta_text_reasoning",
+            "ocr_fact_count": 20,
+            "meta_focus_evidence_ids": [
+              "O1",
+              "O2",
+              "O3",
+              "O4",
+              "O5",
+              "O6",
+              "O7",
+              "O8"
+            ],
+            "meta_focus_labels": [
+              "ReplayLab CodeLab",
+              "Interactive simulation - no actual software changes",
+              "Reset sandbox",
+              "</",
+              "CodeLab 1.0",
+              "practice-workspace",
+              "Change Ul version",
+              "Show unexpected dialog"
+            ],
+            "visible_application": null,
+            "current_window": null,
+            "missing_information": [
+              "This Meta text model cannot inspect icons, visual appearance or hidden application state."
+            ],
+            "grounding": "All deterministic evidence, roles, boxes and confidence remain actual local OCR. Meta attention IDs annotate semantic focus and cannot discard or override observed facts."
+          }
+        },
+        "completed_step_ids": [
+          "Open \"Extensions Marketplace\" in CodeLab"
+        ],
+        "current_step_id": null,
+        "upcoming_step_id": null,
+        "screen_stored": false,
+        "source_scope": "browser tab",
+        "verification": {
+          "id": "fc1df2682e2f42c18a7a7b6262fde80b",
+          "workflow_id": "46305030db0044dc8d619492e25f129d",
+          "task_id": "85ebe43024a44d139deba28faa86d1d3",
+          "step_id": "Open \"Extensions Marketplace\" in CodeLab",
+          "modality": "digital",
+          "verdict": "pass",
+          "expected_conditions": [
+            "Extensions Marketplace"
+          ],
+          "observed_conditions": [
+            "Expected text Extensions Marketplace is reliably visible."
+          ],
+          "constraints": [
+            {
+              "id": "visible heading \"Extensions Marketplace\"",
+              "kind": "text_present",
+              "verdict": "pass",
+              "expected": "Extensions Marketplace",
+              "observed": "Expected text Extensions Marketplace is reliably visible.",
+              "evidence": [
+                "Visible text: Extensions Marketplace (confidence 1.00, source local_ocr)."
+              ],
+              "correction": null
+            }
+          ],
+          "evidence_references": [
+            {
+              "id": "observation-1",
+              "kind": "visible_observation",
+              "text": "Visible text: Extensions Marketplace (confidence 1.00, source local_ocr).",
+              "source": "local_meta",
+              "timestamp": null
+            },
+            {
+              "id": "34db120d747e4dda8046fdad7562955a",
+              "kind": "reference_frame",
+              "text": "Reviewed tutorial reference frame 34db120d747e4dda8046fdad7562955a.",
+              "source": "reviewed_tutorial",
+              "timestamp": 1.824
+            }
+          ],
+          "uncertainty_reasons": [],
+          "correction": null,
+          "explanation": "All 1 approved screen constraint(s) are supported by visible UI evidence. Visible evidence: Visible text: Extensions Marketplace (confidence 1.00, source local_ocr)..",
+          "provider": {
+            "mode": "local_meta",
+            "observation": "local_meta",
+            "explanation": "local_meta_grounded_plan"
+          },
+          "mismatch_classification": null,
+          "latency_ms": 6758.928,
+          "created_at": "2026-11-04T15:53:51.915286+00:00",
+          "task_revision": "e0db53f2df9ddb02372784e9d32a72a16e7860f6960a26ebadaf75cd5011d116",
+          "retained": false
+        }
+      }
+    },
+    {
+      "id": "ambiguous-new-view",
+      "actual": "uncertain",
+      "expected": "uncertain",
+      "latency_ms": 13221.67,
+      "response": {
+        "result": {
+          "step_id": "Open \"Extensions Marketplace\" in CodeLab",
+          "status": "uncertain",
+          "rule_results": [
+            {
+              "rule_id": "visible heading \"Extensions Marketplace\"",
+              "status": "uncertain",
+              "expected": "Extensions Marketplace",
+              "observed": "No adequately qualified observation establishes Extensions Marketplace. A missing label alone is not a mismatch.",
+              "evidence": [],
+              "correction": null
+            }
+          ],
+          "evidence": [],
+          "explanation": "No adequately qualified observation establishes Extensions Marketplace. A missing label alone is not a mismatch. Recheck the target window or clarify the checkpoint.",
+          "provider_mode": "local_meta",
+          "reason": "insufficient_evidence",
+          "observed_step_id": null,
+          "warnings": []
+        },
+        "observation": {
+          "elements": [
+            {
+              "text": "ReplayLab CodeLab",
+              "role": "text",
+              "bbox": [
+                0.031875,
+                0.021,
+                0.1275,
+                0.045
+              ],
+              "confidence": 0.99967,
+              "source": "local_ocr"
+            },
+            {
+              "text": "Interactive simulation \u00b7 no actual software changes",
+              "role": "text",
+              "bbox": [
+                0.131875,
+                0.022,
+                0.3225,
+                0.043
+              ],
+              "confidence": 0.98651,
+              "source": "local_ocr"
+            },
+            {
+              "text": "Reset sandbox",
+              "role": "text",
+              "bbox": [
+                0.918125,
+                0.023,
+                0.9775,
+                0.043
+              ],
+              "confidence": 0.99995,
+              "source": "local_ocr"
+            },
+            {
+              "text": "</",
+              "role": "text",
+              "bbox": [
+                0.013125,
+                0.089,
+                0.0325,
+                0.116
+              ],
+              "confidence": 0.79366,
+              "source": "local_ocr"
+            },
+            {
+              "text": "CodeLab 1.0",
+              "role": "text",
+              "bbox": [
+                0.034375,
+                0.089,
+                0.109375,
+                0.116
+              ],
+              "confidence": 0.99965,
+              "source": "local_ocr"
+            },
+            {
+              "text": "practice-workspace",
+              "role": "text",
+              "bbox": [
+                0.12375,
+                0.096,
+                0.19875,
+                0.113
+              ],
+              "confidence": 0.99998,
+              "source": "local_ocr"
+            },
+            {
+              "text": "Change Ul version",
+              "role": "text",
+              "bbox": [
+                0.804375,
+                0.093,
+                0.873125,
+                0.116
+              ],
+              "confidence": 0.98542,
+              "source": "local_ocr"
+            },
+            {
+              "text": "Show unexpected dialog",
+              "role": "text",
+              "bbox": [
+                0.889375,
+                0.092,
+                0.979375,
+                0.117
+              ],
+              "confidence": 0.99763,
+              "source": "local_ocr"
+            },
+            {
+              "text": "\u53e3",
+              "role": "text",
+              "bbox": [
+                0.02375,
+                0.173,
+                0.045625,
+                0.213
+              ],
+              "confidence": 0.73995,
+              "source": "local_ocr"
+            },
+            {
+              "text": "Explorer",
+              "role": "text",
+              "bbox": [
+                0.018125,
+                0.213,
+                0.051875,
+                0.235
+              ],
+              "confidence": 0.99978,
+              "source": "local_ocr"
+            },
+            {
+              "text": "Extensions",
+              "role": "text",
+              "bbox": [
+                0.015,
+                0.312,
+                0.055625,
+                0.333
+              ],
+              "confidence": 0.99996,
+              "source": "local_ocr"
+            },
+            {
+              "text": "Your next skill starts here.",
+              "role": "text",
+              "bbox": [
+                0.233125,
+                0.368,
+                0.510625,
+                0.414
+              ],
+              "confidence": 0.99974,
+              "source": "local_ocr"
+            },
+            {
+              "text": "A small, safe workspace for visual learning.",
+              "role": "text",
+              "bbox": [
+                0.231875,
+                0.432,
+                0.485,
+                0.47
+              ],
+              "confidence": 0.99931,
+              "source": "local_ocr"
+            },
+            {
+              "text": "Open a panel from the sidebar to begin.",
+              "role": "text",
+              "bbox": [
+                0.268125,
+                0.54,
+                0.470625,
+                0.567
+              ],
+              "confidence": 0.99507,
+              "source": "local_ocr"
+            },
+            {
+              "text": "Follow the tutorial in ReplayLab. Changes here affect only this sandbox.",
+              "role": "text",
+              "bbox": [
+                0.233125,
+                0.64,
+                0.498125,
+                0.661
+              ],
+              "confidence": 0.99966,
+              "source": "local_ocr"
+            },
+            {
+              "text": "\u7ae0",
+              "role": "text",
+              "bbox": [
+                0.025625,
+                0.868,
+                0.045,
+                0.899
+              ],
+              "confidence": 0.51841,
+              "source": "local_ocr"
+            },
+            {
+              "text": "Settings",
+              "role": "text",
+              "bbox": [
+                0.0175,
+                0.901,
+                0.051875,
+                0.925
+              ],
+              "confidence": 0.93398,
+              "source": "local_ocr"
+            },
+            {
+              "text": "CodeLab 1.0",
+              "role": "text",
+              "bbox": [
+                0.014375,
+                0.971,
+                0.06125,
+                0.991
+              ],
+              "confidence": 0.99974,
+              "source": "local_ocr"
+            },
+            {
+              "text": "Local sandbox - Changes are simulated",
+              "role": "text",
+              "bbox": [
+                0.44375,
+                0.974,
+                0.5775,
+                0.99
+              ],
+              "confidence": 0.98249,
+              "source": "local_ocr"
+            },
+            {
+              "text": "UT-T-8",
+              "role": "text",
+              "bbox": [
+                0.95875,
+                0.97,
+                0.98625,
+                0.992
+              ],
+              "confidence": 0.65133,
+              "source": "local_ocr"
+            }
+          ],
+          "visible_text": "ReplayLab CodeLab\nInteractive simulation \u00b7 no actual software changes\nReset sandbox\n</\nCodeLab 1.0\npractice-workspace\nChange Ul version\nShow unexpected dialog\n\u53e3\nExplorer\nExtensions\nYour next skill starts here.\nA small, safe workspace for visual learning.\nOpen a panel from the sidebar to begin.\nFollow the tutorial in ReplayLab. Changes here affect only this sandbox.\n\u7ae0\nSettings\nCodeLab 1.0\nLocal sandbox - Changes are simulated\nUT-T-8",
+          "confidence": 0.9290945,
+          "image_quality": 1.0,
+          "provider_mode": "local_meta",
+          "interface_version": "CodeLab 1.0",
+          "complete": false,
+          "provenance": {
+            "engine": "rapidocr-3.10.0/onnxruntime",
+            "ocr_available": true,
+            "real_ocr": true,
+            "fixture": false,
+            "cache_hit": false,
+            "redaction_applied": true,
+            "redacted_regions": 0,
+            "screenshots_stored": false,
+            "interface_version_ambiguous": false,
+            "self_capture": false,
+            "quality_source": "Screenshot contrast and sharpness heuristic; not calibrated model confidence",
+            "redaction_limits": "Best effort for detected email addresses and key-like text; review the selected sharing scope.",
+            "provider": "local_meta",
+            "model": "meta-llama/Llama-3.2-1B-Instruct",
+            "response_model": "meta-llama/Llama-3.2-1B-Instruct",
+            "request_id": "chatcmpl-lpQkr83tjsV0E5d4SQynuk3uMdPFH9G1",
+            "latency_ms": 3713.02,
+            "token_usage": {
+              "completion_tokens": 69,
+              "prompt_tokens": 479,
+              "total_tokens": 548
+            },
+            "local_only": true,
+            "vision_inference": false,
+            "api_response_validated": true,
+            "live_api_verified": true,
+            "ocr_selected_count": 8,
+            "pipeline": "local_ocr_plus_meta_text_reasoning",
+            "ocr_fact_count": 20,
+            "meta_focus_evidence_ids": [
+              "O1",
+              "O2",
+              "O3",
+              "O4",
+              "O5",
+              "O6",
+              "O7",
+              "O8"
+            ],
+            "meta_focus_labels": [
+              "ReplayLab CodeLab",
+              "Interactive simulation \u00b7 no actual software changes",
+              "Reset sandbox",
+              "</",
+              "CodeLab 1.0",
+              "practice-workspace",
+              "Change Ul version",
+              "Show unexpected dialog"
+            ],
+            "visible_application": null,
+            "current_window": null,
+            "missing_information": [
+              "This Meta text model cannot inspect icons, visual appearance or hidden application state."
+            ],
+            "grounding": "All deterministic evidence, roles, boxes and confidence remain actual local OCR. Meta attention IDs annotate semantic focus and cannot discard or override observed facts."
+          }
+        },
+        "completed_step_ids": [
+          "Open \"Extensions Marketplace\" in CodeLab"
+        ],
+        "current_step_id": null,
+        "upcoming_step_id": null,
+        "screen_stored": false,
+        "source_scope": "browser tab",
+        "verification": {
+          "id": "2033ccf5ae824fe7a93d8c96d41192d3",
+          "workflow_id": "46305030db0044dc8d619492e25f129d",
+          "task_id": "85ebe43024a44d139deba28faa86d1d3",
+          "step_id": "Open \"Extensions Marketplace\" in CodeLab",
+          "modality": "digital",
+          "verdict": "uncertain",
+          "expected_conditions": [
+            "Extensions Marketplace"
+          ],
+          "observed_conditions": [
+            "No adequately qualified observation establishes Extensions Marketplace. A missing label alone is not a mismatch."
+          ],
+          "constraints": [
+            {
+              "id": "visible heading \"Extensions Marketplace\"",
+              "kind": "text_present",
+              "verdict": "uncertain",
+              "expected": "Extensions Marketplace",
+              "observed": "No adequately qualified observation establishes Extensions Marketplace. A missing label alone is not a mismatch.",
+              "evidence": [],
+              "correction": null
+            }
+          ],
+          "evidence_references": [
+            {
+              "id": "34db120d747e4dda8046fdad7562955a",
+              "kind": "reference_frame",
+              "text": "Reviewed tutorial reference frame 34db120d747e4dda8046fdad7562955a.",
+              "source": "reviewed_tutorial",
+              "timestamp": 1.824
+            }
+          ],
+          "uncertainty_reasons": [
+            "No adequately qualified observation establishes Extensions Marketplace. A missing label alone is not a mismatch."
+          ],
+          "correction": "No adequately qualified observation establishes Extensions Marketplace. A missing label alone is not a mismatch. Recheck the target window or clarify the checkpoint.",
+          "explanation": "No adequately qualified observation establishes Extensions Marketplace. A missing label alone is not a mismatch. Recheck the target window or clarify the checkpoint.",
+          "provider": {
+            "mode": "local_meta",
+            "observation": "local_meta",
+            "explanation": "deterministic_template"
+          },
+          "mismatch_classification": "expected_ui_not_found",
+          "latency_ms": 12226.365,
+          "created_at": "2026-11-04T15:54:24.152444+00:00",
+          "task_revision": "e0db53f2df9ddb02372784e9d32a72a16e7860f6960a26ebadaf75cd5011d116",
+          "retained": false
+        }
+      }
+    }
+  ],
+  "rehearsal": false,
+  "delivery_window": {
+    "minimum_seconds": 175,
+    "maximum_seconds": 180,
+    "internal_cuts": 0,
+    "speed_changes": false,
+    "padding": false,
+    "boundary_trim": false,
+    "method": "One continuous capture, paced in real time and stopped naturally near three minutes."
+  },
+  "screen_submissions": 3,
+  "nonlocal_browser_hosts": [],
+  "page_errors": [],
+  "limitations": [
+    "CodeLab is a labeled interactive simulation; no extension is installed.",
+    "Meta Llama reasons over actual OCR text and a supplied transcript, not image pixels.",
+    "The engineering agent visibly reviews source goals and adds a separately identified wrong-destination counterstate.",
+    "Chromium selects a real tab stream with its test source selector; no human OS picker is claimed.",
+    "This is a small controlled demonstration, not a representative accuracy benchmark."
+  ],
+  "evaluation": {
+    "dataset": "ReplayLab CodeLab controlled browser challenge v1",
+    "provider_mode": "local_ocr",
+    "sample_size": 20,
+    "correct": 20,
+    "accuracy": 1.0,
+    "false_certainty_rate": 0.0,
+    "uncertainty_recall": 1.0,
+    "latency_ms": {
+      "sample_size": 20,
+      "median": 3575.15,
+      "p95": 5204.44,
+      "min": 967.19,
+      "max": 7802.53
+    },
+    "measured_at": "2026-11-03T13:49:35.294926+00:00"
+  },
+  "project_id": "46305030db0044dc8d619492e25f129d",
+  "screen_submission_times": [
+    55.866,
+    87.92,
+    114.754
+  ],
+  "source_frame_count": 4,
+  "tutorial_playback": {
+    "duration": 9.12,
+    "current_time": 9.12,
+    "ended": true,
+    "width": 1280,
+    "height": 800
+  },
+  "tutorial_playback_completed_at_seconds": 17.472,
+  "extraction_seconds": 9.478,
+  "original_model_proposal": {
+    "id": "85ebe43024a44d139deba28faa86d1d3",
+    "title": "Extensions Marketplace",
+    "description": "Open \"Extensions Marketplace\" in CodeLab. Confirm the visible heading \"Extensions Marketplace\"",
+    "objects": [],
+    "steps": [
+      {
+        "id": "Open \"Extensions Marketplace\" in CodeLab",
+        "title": "Open \"Extensions Marketplace\" in CodeLab",
+        "description": "Open \"Extensions Marketplace\" in CodeLab. Confirm the visible heading \"Extensions Marketplace\"",
+        "dependencies": [],
+        "timestamp_start": 1.824,
+        "timestamp_end": 1.824,
+        "reference_frame_id": "34db120d747e4dda8046fdad7562955a",
+        "object_labels": [],
+        "rules": [],
+        "expected_state": "visible heading \"Extensions Marketplace\"",
+        "screen_rules": [
+          {
+            "id": "visible heading \"Extensions Marketplace\"",
+            "kind": "text_present",
+            "expected": "Extensions Marketplace",
+            "alternatives": [],
+            "contradictions": [],
+            "description": "Visible heading \"Extensions Marketplace\""
+          }
+        ]
+      }
+    ],
+    "provider_mode": "local_meta",
+    "provenance": {
+      "provider": "local_meta",
+      "model": "meta-llama/Llama-3.2-1B-Instruct",
+      "response_model": "meta-llama/Llama-3.2-1B-Instruct",
+      "requires_approval": true,
+      "input": "local_ocr_and_optional_transcript",
+      "source_frame_count": 1,
+      "local_only": true,
+      "vision_inference": false,
+      "available_source_frame_count": 4,
+      "sampling": "One representative frame for one quoted transcript goal; otherwise up to four frames.",
+      "request_id": "chatcmpl-Lxo13DJrI9CkzKCDbc3kHcz6CNZB0hon",
+      "latency_ms": 9215.472,
+      "token_usage": {
+        "completion_tokens": 214,
+        "prompt_tokens": 383,
+        "total_tokens": 597
+      },
+      "cache_hit": false,
+      "interface_version_source": "local_frame_ocr",
+      "observed_interface_versions": [
+        "CodeLab 1.0"
+      ],
+      "interface_version_ambiguous": false,
+      "screen_rule_grounding": "Every expected label, alternative and contradiction is quoted from supplied transcript or local frame OCR text.",
+      "proposal_rule_scope": "Positive source text only; alternatives, counterstates and other rule types require explicit reviewer edits.",
+      "limitation": "Meta text reasoning over locally extracted OCR; visual appearance and hidden state are unknown.",
+      "instruction_warnings": []
+    },
+    "modality": "digital",
+    "interface_version": "CodeLab 1.0"
+  },
+  "generation_ready_at_seconds": 29.491,
+  "reviewer_added_constraints": [
+    {
+      "field": "contradictions",
+      "value": "Preferences",
+      "source": "Reviewer-defined wrong-destination heading from CodeLab Settings; not extracted by the model or claimed as tutorial text."
+    }
+  ],
+  "review_saved_changes": true,
+  "reviewed_task": {
+    "id": "85ebe43024a44d139deba28faa86d1d3",
+    "title": "Extensions Marketplace",
+    "description": "Open \"Extensions Marketplace\" in CodeLab. Confirm the visible heading \"Extensions Marketplace\"",
+    "objects": [],
+    "steps": [
+      {
+        "id": "Open \"Extensions Marketplace\" in CodeLab",
+        "title": "Open \"Extensions Marketplace\" in CodeLab",
+        "description": "Open \"Extensions Marketplace\" in CodeLab. Confirm the visible heading \"Extensions Marketplace\"",
+        "dependencies": [],
+        "timestamp_start": 1.824,
+        "timestamp_end": 1.824,
+        "reference_frame_id": "34db120d747e4dda8046fdad7562955a",
+        "object_labels": [],
+        "rules": [],
+        "expected_state": "visible heading \"Extensions Marketplace\"",
+        "screen_rules": [
+          {
+            "id": "visible heading \"Extensions Marketplace\"",
+            "kind": "text_present",
+            "expected": "Extensions Marketplace",
+            "alternatives": [],
+            "contradictions": [
+              "Preferences"
+            ],
+            "description": "Visible heading \"Extensions Marketplace\""
+          }
+        ]
+      }
+    ],
+    "provider_mode": "local_meta",
+    "provenance": {
+      "provider": "local_meta",
+      "model": "meta-llama/Llama-3.2-1B-Instruct",
+      "response_model": "meta-llama/Llama-3.2-1B-Instruct",
+      "requires_approval": true,
+      "input": "local_ocr_and_optional_transcript",
+      "source_frame_count": 1,
+      "local_only": true,
+      "vision_inference": false,
+      "available_source_frame_count": 4,
+      "sampling": "One representative frame for one quoted transcript goal; otherwise up to four frames.",
+      "request_id": "chatcmpl-Lxo13DJrI9CkzKCDbc3kHcz6CNZB0hon",
+      "latency_ms": 9215.472,
+      "token_usage": {
+        "completion_tokens": 214,
+        "prompt_tokens": 383,
+        "total_tokens": 597
+      },
+      "cache_hit": false,
+      "interface_version_source": "local_frame_ocr",
+      "observed_interface_versions": [
+        "CodeLab 1.0"
+      ],
+      "interface_version_ambiguous": false,
+      "screen_rule_grounding": "Every expected label, alternative and contradiction is quoted from supplied transcript or local frame OCR text.",
+      "proposal_rule_scope": "Positive source text only; alternatives, counterstates and other rule types require explicit reviewer edits.",
+      "limitation": "Meta text reasoning over locally extracted OCR; visual appearance and hidden state are unknown.",
+      "instruction_warnings": [],
+      "user_edited": true
+    },
+    "modality": "digital",
+    "interface_version": "CodeLab 1.0"
+  },
+  "review_changes": "Visible UI review retained the model's actual source-quoted positive heading, title and expected state. The reviewer explicitly added Preferences as a known wrong-destination counterstate. This addition is not attributed to model extraction.",
+  "selected_checks": [
+    "fail",
+    "pass",
+    "uncertain"
+  ],
+  "stream": {
+    "settings": {
+      "aspectRatio": 1.6,
+      "cursor": "motion",
+      "deviceId": "web-contents-media-stream://5:1",
+      "displaySurface": "browser",
+      "frameRate": 5,
+      "height": 1080,
+      "logicalSurface": true,
+      "resizeMode": "crop-and-scale",
+      "screenPixelRatio": 1.25,
+      "width": 1728
+    },
+    "state": "live"
+  },
+  "uncertain_scope": "This new observation is insufficient. The previously proven checkpoint remains completed; no pending second step is claimed.",
+  "stream_stopped": true,
+  "final_project": {
+    "approved": true,
+    "completed_step_ids": [
+      "Open \"Extensions Marketplace\" in CodeLab"
+    ]
+  },
+  "elapsed_seconds": 178.817,
+  "native_media": {
+    "format": {
+      "duration": "179.080000"
+    }
+  },
+  "video": {
+    "programs": [],
+    "stream_groups": [],
+    "streams": [
+      {
+        "codec_name": "h264",
+        "codec_type": "video",
+        "width": 1920,
+        "height": 1080,
+        "r_frame_rate": "30/1",
+        "nb_frames": "5372"
+      }
+    ],
+    "format": {
+      "duration": "179.066667",
+      "size": "6467980"
+    }
+  },
+  "full_decode_passed": true,
+  "output": ".artifacts\\three-minute-tutorial-20261104T155213Z\\three-minute-tutorial.mp4",
+  "output_sha256": "ed1af783c2078b851e73fccfb9750042862afd49340191df31e595d5a430cf21"
+}

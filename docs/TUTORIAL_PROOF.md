@@ -1,6 +1,9 @@
-# Tutorial to verified action
+# Archived short tutorial proof
 
-[Watch the actual tutorial demonstration](../ReplayLab_Meta_Hackathon_Demo.mp4):
+This 46-second proof is preserved for provenance. The requested full-length
+[three-minute demonstration](THREE_MINUTE_DEMO.md) is now the main deliverable.
+
+[Watch the archived short tutorial demonstration](assets/short-tutorial-proof.mp4):
 **45.633 seconds**, 1920 x 1080, H.264 at 30 FPS, with a timed neural voiceover.
 The recording and narrated file both passed validation. It starts directly with
 the tutorial upload, without a dashboard introduction or spoken voice disclaimer.

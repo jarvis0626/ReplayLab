@@ -636,5 +636,7 @@
     "model_proposal_unchanged": true,
     "final_output": "ReplayLab_Meta_Hackathon_Demo.mp4",
     "voiceover_report": "docs/validation/tutorial-proof-voiceover.json"
-  }
+  },
+  "archived_output": "docs/assets/short-tutorial-proof.mp4",
+  "superseded_by": "docs/validation/three-minute-tutorial-recording.json"
 }

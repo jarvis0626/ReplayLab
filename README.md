@@ -1,20 +1,25 @@
 # ReplayLab 3.0
 
-**4 November: [watch the tutorial actually become a verified task](ReplayLab_Meta_Hackathon_Demo.mp4)**
-- **46 seconds**, one continuous app recording: upload/play tutorial, generate its
-  workflow live, review/approve, share the target tab, and verify completion.
+**4 November: [watch the full three-minute demonstration](ReplayLab_Meta_Hackathon_Demo.mp4)**
+
+- **2:59.07**, one continuous recording: full tutorial playback, live Meta workflow
+  generation, visible review/approval, real screen sharing, **FAIL, correction,
+  PASS, UNCERTAIN**, evaluation and the completed graph.
 - **Natural neural narration**, with no spoken disclaimer or dashboard introduction.
-- Actual **Meta Llama 3.2 1B**, locally accelerated by AMD Vulkan; the generated
-  checkpoint was used unchanged. [Exact recording and audio evidence](docs/TUTORIAL_PROOF.md).
+- Actual **Meta Llama 3.2 1B**, accelerated locally by AMD Vulkan. The model's
+  Marketplace goal is retained; a reviewer visibly adds a known wrong destination.
+  [Exact recording and audio evidence](docs/THREE_MINUTE_DEMO.md).
 
 [Run the current setup](docs/DEMO_SETUP.md) or [read the spoken script](docs/DEMO_SCRIPT.md).
+The earlier [46-second tutorial proof](docs/assets/short-tutorial-proof.mp4) is archived
+with its [original measurements](docs/TUTORIAL_PROOF.md).
 
 **Earlier prepared-workflow demonstration:** [Watch the actual uncut MP4](docs/assets/prepared-workflow-demo.mp4)
 — **2:56.4, 1080p, 30 FPS**. Real shared-tab OCR and local Meta Llama inference
 show **FAIL → correction → PASS → UNCERTAIN**, then measured evaluation and the
 actual provider. The CodeLab target is visibly a simulation and the workflow is
 prepared and reviewed before recording. The video now includes a timed synthetic voiceover, disclosed at the start.
-The [spoken script](docs/DEMO_SCRIPT.md) and [audio validation](docs/validation/hackathon-voiceover.json)
+The [original spoken script](docs/PREPARED_DEMO_SCRIPT.md) and [audio validation](docs/validation/hackathon-voiceover.json)
 are included; the original video frames and timing are unchanged.
 
 **2 November local Meta update:** ReplayLab can run **Meta Llama 3.2 3B Instruct**

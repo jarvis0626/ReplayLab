@@ -136,5 +136,7 @@
     "audio_decoded_bytes": 34102,
     "video_decoded_bytes": 290743,
     "error": null
-  }
+  },
+  "archived_output": "docs/assets/short-tutorial-proof.mp4",
+  "superseded_by": "docs/validation/three-minute-tutorial-recording.json"
 }

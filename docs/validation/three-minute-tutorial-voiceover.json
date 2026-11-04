@@ -1,0 +1,244 @@
+{
+  "success": true,
+  "created_at": "2026-11-04T15:57:51.110786+00:00",
+  "source_sha256": "ed1af783c2078b851e73fccfb9750042862afd49340191df31e595d5a430cf21",
+  "source_media": {
+    "programs": [],
+    "stream_groups": [],
+    "streams": [
+      {
+        "index": 0,
+        "codec_name": "h264",
+        "codec_type": "video",
+        "width": 1920,
+        "height": 1080,
+        "r_frame_rate": "30/1",
+        "duration": "179.066667",
+        "nb_frames": "5372"
+      }
+    ],
+    "format": {
+      "duration": "179.066667",
+      "size": "6467980"
+    }
+  },
+  "plan_sha256": "a3de231d5e7fe9ce9d752dbe3335292e6dd6f48f6134512abb61d1d6b021cbf1",
+  "voice": "en-US-GuyNeural",
+  "synthetic_narration": true,
+  "video_stream_copied": true,
+  "narration_disclosure": "Synthetic voiceover is identified in metadata and project documentation.",
+  "online_content": "Only the owner-approved narration text; no screenshots, video or credentials.",
+  "previous_output_sha256": "5acbbbf822566aa51c829fb42e41d7038b43e793ba8f660e5446cc134ed13441",
+  "speech": {
+    "success": true,
+    "created_at": "2026-11-04T15:57:53.769180+00:00",
+    "synthetic_narration": true,
+    "provider": "Microsoft Edge online speech via edge-tts",
+    "client_version": "7.3.1",
+    "voice": "en-US-GuyNeural",
+    "rate": "+0%",
+    "online_content": "Only the supplied narration text; no application media or credentials.",
+    "plan_sha256": "a3de231d5e7fe9ce9d752dbe3335292e6dd6f48f6134512abb61d1d6b021cbf1",
+    "segments": [
+      {
+        "id": "tutorial",
+        "start": 0.6,
+        "end": 18.8,
+        "text": "I upload and play the tutorial. It shows opening Extensions Marketplace in CodeLab. ReplayLab will turn that demonstrated action into a checkpoint we can verify while practicing.",
+        "file": ".artifacts\\tutorial-proof-voiceover-20261104T155751109730Z\\speech\\tutorial.mp3",
+        "duration_seconds": 12.312,
+        "speech_end_seconds": 12.912,
+        "fits_window": true,
+        "sha256": "59118b3b9b355671ac6fbf51fa3871afd470e2255e11ce4c93e28df44381e75d"
+      },
+      {
+        "id": "generation",
+        "start": 20.6,
+        "end": 34.2,
+        "text": "Generate task steps makes a fresh request to Meta Llama. It uses the timestamped transcript and text read from an actual tutorial frame. The proposed workflow appears from that source.",
+        "file": ".artifacts\\tutorial-proof-voiceover-20261104T155751109730Z\\speech\\generation.mp3",
+        "duration_seconds": 12.576,
+        "speech_end_seconds": 33.176,
+        "fits_window": true,
+        "sha256": "66ce3c1d78cf2d3452d8252ccbc551528eb29a4548d2897aa86ae06ae91c1d55"
+      },
+      {
+        "id": "proposal",
+        "start": 35.8,
+        "end": 41.8,
+        "text": "The graph shows our tutorial checkpoint and expected Marketplace heading.",
+        "file": ".artifacts\\tutorial-proof-voiceover-20261104T155751109730Z\\speech\\proposal.mp3",
+        "duration_seconds": 4.608,
+        "speech_end_seconds": 40.408,
+        "fits_window": true,
+        "sha256": "80f5a0be1e81725df4ee1bde486c131c470c36cc448f0f2836c705895cf7185d"
+      },
+      {
+        "id": "review",
+        "start": 42.8,
+        "end": 54.1,
+        "text": "The proposed Marketplace goal stays intact. During review, I add Preferences as a known wrong destination, then approve the task before guided practice.",
+        "file": ".artifacts\\tutorial-proof-voiceover-20261104T155751109730Z\\speech\\review.mp3",
+        "duration_seconds": 9.792,
+        "speech_end_seconds": 52.592,
+        "fits_window": true,
+        "sha256": "3fbd83b84945c53481668610d18b894b5e9278598fbabd48ff4f76a46aa484f6"
+      },
+      {
+        "id": "wrong-screen",
+        "start": 55.6,
+        "end": 62.4,
+        "text": "I share the actual target tab. Settings is open instead of the Marketplace.",
+        "file": ".artifacts\\tutorial-proof-voiceover-20261104T155751109730Z\\speech\\wrong-screen.mp3",
+        "duration_seconds": 6.144,
+        "speech_end_seconds": 61.744,
+        "fits_window": true,
+        "sha256": "791a12fb1ca15efba2a13aea873729274571ca488d2ef25c64c9d32f4f1551ec"
+      },
+      {
+        "id": "fail",
+        "start": 63.8,
+        "end": 82.5,
+        "text": "ReplayLab returns FAIL. The evidence shows Preferences, the contradictory heading we approved. The correction asks us to return to Extensions Marketplace. This decision comes from observed text and the reviewed rule.",
+        "file": ".artifacts\\tutorial-proof-voiceover-20261104T155751109730Z\\speech\\fail.mp3",
+        "duration_seconds": 15.216,
+        "speech_end_seconds": 79.016,
+        "fits_window": true,
+        "sha256": "1a17a47627d3200ce844c6a8edfbfce00e9324daea7aca1c9a704f22fadaf6e5"
+      },
+      {
+        "id": "correction",
+        "start": 85.8,
+        "end": 95.0,
+        "text": "I follow that correction by opening Extensions in the same shared tab, then request a fresh check of the changed screen.",
+        "file": ".artifacts\\tutorial-proof-voiceover-20261104T155751109730Z\\speech\\correction.mp3",
+        "duration_seconds": 6.984,
+        "speech_end_seconds": 92.784,
+        "fits_window": true,
+        "sha256": "a674e3aab608a0e07b1d9cb2184755c9da2d4f27d421cb9d0eb9a8f50e64f8fb"
+      },
+      {
+        "id": "pass",
+        "start": 96.3,
+        "end": 110.8,
+        "text": "Now the Marketplace heading is visible, so verification returns PASS. The checkpoint becomes complete because its evidence satisfies the approved rule. Simply changing screens did not mark it done.",
+        "file": ".artifacts\\tutorial-proof-voiceover-20261104T155751109730Z\\speech\\pass.mp3",
+        "duration_seconds": 13.008,
+        "speech_end_seconds": 109.308,
+        "fits_window": true,
+        "sha256": "3f336dd821d36473ce6bc47a614a33aa254e7bb1254146f60f1e1dc5af54145c"
+      },
+      {
+        "id": "new-view",
+        "start": 114.9,
+        "end": 127.2,
+        "text": "Next I switch to Explorer and request another observation. This view does not show the expected Marketplace heading, and we should not infer success from the previous screen.",
+        "file": ".artifacts\\tutorial-proof-voiceover-20261104T155751109730Z\\speech\\new-view.mp3",
+        "duration_seconds": 10.776,
+        "speech_end_seconds": 125.676,
+        "fits_window": true,
+        "sha256": "d6495299b2f291f02ec9b7e40f8e6091c435efad4f578f59cf5b58bd227fbd6d"
+      },
+      {
+        "id": "uncertain",
+        "start": 128.5,
+        "end": 138.4,
+        "text": "This new view is UNCERTAIN. It proves neither the target nor a known contradiction. Earlier verified progress stays complete.",
+        "file": ".artifacts\\tutorial-proof-voiceover-20261104T155751109730Z\\speech\\uncertain.mp3",
+        "duration_seconds": 9.576,
+        "speech_end_seconds": 138.076,
+        "fits_window": true,
+        "sha256": "618a094cc271a14afcc7b24b150f42aaf796581f5963ba1a9b3fe7e71cf7308a"
+      },
+      {
+        "id": "evaluation",
+        "start": 141.3,
+        "end": 157.2,
+        "text": "This separate dashboard reports twenty controlled OCR cases, with twenty matching labels. It also shows uncertainty recall, false certainty, and measured latency. These results are limited to this dataset.",
+        "file": ".artifacts\\tutorial-proof-voiceover-20261104T155751109730Z\\speech\\evaluation.mp3",
+        "duration_seconds": 14.04,
+        "speech_end_seconds": 155.34,
+        "fits_window": true,
+        "sha256": "483d0fabb2d7de0a57545205b2462f6d96b596081295baadfcab2a0a9006ab79"
+      },
+      {
+        "id": "provider",
+        "start": 159.0,
+        "end": 178.3,
+        "text": "This runs on my laptop using Meta Llama 3.2, one billion parameters, accelerated by AMD Vulkan. OCR reads pixels; Llama reasons over the text. The original tutorial checkpoint is now verified in the graph.",
+        "file": ".artifacts\\tutorial-proof-voiceover-20261104T155751109730Z\\speech\\provider.mp3",
+        "duration_seconds": 15.72,
+        "speech_end_seconds": 174.72,
+        "fits_window": true,
+        "sha256": "4f334bb5af5bf06d2538c42b98168f4b0b9142767a5bdc6451cf92077f2d1d7a"
+      }
+    ],
+    "finished_at": "2026-11-04T15:57:59.053834+00:00"
+  },
+  "source_video_packet_sha256": "53b502b49a96cf7f7b3898c1ae5085cd14c9f170da3e45333a4fab1252d90907",
+  "output_video_packet_sha256": "53b502b49a96cf7f7b3898c1ae5085cd14c9f170da3e45333a4fab1252d90907",
+  "source_timestamp_sha256": "8c1988529f842cea606252954aeab8473fa926d476eff781126a8dbf2aa8fcf5",
+  "output_timestamp_sha256": "8c1988529f842cea606252954aeab8473fa926d476eff781126a8dbf2aa8fcf5",
+  "full_decode_passed": true,
+  "audio_levels_dbfs": {
+    "mean_volume": -18.4,
+    "max_volume": -1.4
+  },
+  "output_media": {
+    "programs": [],
+    "stream_groups": [],
+    "streams": [
+      {
+        "index": 0,
+        "codec_name": "h264",
+        "codec_type": "video",
+        "width": 1920,
+        "height": 1080,
+        "r_frame_rate": "30/1",
+        "duration": "179.066667",
+        "nb_frames": "5372"
+      },
+      {
+        "index": 1,
+        "codec_name": "aac",
+        "codec_type": "audio",
+        "sample_rate": "48000",
+        "channels": 1,
+        "r_frame_rate": "0/0",
+        "duration": "178.986000",
+        "nb_frames": "8391"
+      }
+    ],
+    "format": {
+      "duration": "179.066667",
+      "size": "9375600"
+    }
+  },
+  "output_sha256": "02581dce6ffff35b0fd878d790acf2f667f90c03e052ecba59add96e4a27efed",
+  "finished_at": "2026-11-04T15:58:20.199473+00:00",
+  "browser_playback": {
+    "duration": 179.066667,
+    "current_time": 1.526982,
+    "audio_decoded_bytes": 28559,
+    "video_decoded_bytes": 226667,
+    "ready_state": 4,
+    "error": null,
+    "ended": true,
+    "end_time": 179.066667
+  },
+  "visual_review": {
+    "frames_reviewed": 9,
+    "source": "Frames extracted from this accepted continuous take",
+    "checks": [
+      "tutorial source playback",
+      "fresh generation",
+      "reviewed rule",
+      "FAIL with Preferences evidence",
+      "PASS with Marketplace evidence",
+      "UNCERTAIN with earlier completion retained",
+      "controlled OCR evaluation",
+      "actual local Meta1B provider",
+      "completed graph"
+    ]
+  }
+}

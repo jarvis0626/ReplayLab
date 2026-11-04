@@ -38,8 +38,12 @@ def main():
     parser.add_argument("--source", type=Path, required=True)
     parser.add_argument("--plan", type=Path, required=True)
     parser.add_argument("--voice", default="en-US-GuyNeural")
+    parser.add_argument("--report", type=Path, default=Path("docs/validation/tutorial-proof-voiceover.json"))
     args = parser.parse_args()
     source, plan_path = args.source.resolve(), args.plan.resolve()
+    published_report = args.report.resolve()
+    if not published_report.is_relative_to(ROOT / "docs" / "validation") or published_report.suffix != ".json":
+        parser.error("Published reports must be JSON files under docs/validation.")
     if not source.is_relative_to(ROOT) or not source.is_file():
         parser.error("Source must be an existing video inside this repository.")
     if not plan_path.is_relative_to(ROOT) or not plan_path.is_file():
@@ -131,7 +135,7 @@ def main():
                       finished_at=datetime.now(UTC).isoformat())
         save()
         shutil.copyfile(candidate, OUTPUT)
-        (ROOT / "docs" / "validation" / "tutorial-proof-voiceover.json").write_text(
+        published_report.write_text(
             json.dumps(report, indent=2) + "\n", encoding="utf-8")
         print(json.dumps({"success": True, "output": OUTPUT.name, "voice": args.voice,
                           "duration_seconds": duration, "video_and_timestamps_unchanged": True,
