@@ -1,9 +1,10 @@
-"""Install a pinned local Meta Llama CPU runtime inside this repository only."""
+"""Install pinned local Meta Llama CPU/Vulkan artifacts inside this repository."""
 
 import argparse
 import hashlib
 import json
 import os
+import re
 import shutil
 import stat
 import sys
@@ -27,6 +28,18 @@ RUNTIME_FILE = "llama-b11960-bin-win-cpu-x64.zip"
 RUNTIME_SIZE = 24407745
 RUNTIME_SHA256 = "73f962f82850d244db47eaacb9d913637027b82399124324298576d58c5f4287"
 RUNTIME_URL = "https://github.com/ggml-org/llama.cpp/releases/download/b11960/" + RUNTIME_FILE
+MODELS = {
+    "3b": {"id": MODEL_ID, "file": MODEL_FILE, "commit": MODEL_COMMIT,
+           "size": MODEL_SIZE, "sha256": MODEL_SHA256},
+    "1b": {"id": "meta-llama/Llama-3.2-1B-Instruct", "file": "Llama-3.2-1B-Instruct-Q4_K_M.gguf",
+           "commit": "067b946cf014b7c697f3654f621d577a3e3afd1c", "size": 807694464,
+           "sha256": "6f85a640a97cf2bf5b8e764087b1e83da0fdb51d7c9fab7d0fece9385611df83"},
+}
+RUNTIMES = {
+    "cpu": {"file": RUNTIME_FILE, "size": RUNTIME_SIZE, "sha256": RUNTIME_SHA256, "directory": "runtime"},
+    "vulkan": {"file": "llama-b11960-bin-win-vulkan-x64.zip", "size": 37345851,
+               "sha256": "bac6914b5e83523eb008c6789eaa12669f93fbc196c3b9e8237b6672323b33e9", "directory": "runtime-vulkan"},
+}
 
 
 def digest(path: Path) -> str:
@@ -49,8 +62,12 @@ def verified_download(filename: str, url: str, size: int, expected: str) -> Path
         print("Verified existing artifact: " + filename, flush=True)
         return target
     # Reuse the already verified prototype archive when present, without a second download.
-    cached = ROOT / ".artifacts" / "local-vision" / filename
-    if filename == RUNTIME_FILE and cached.is_file() and cached.stat().st_size == size and digest(cached) == expected:
+    cached = next((ROOT / ".artifacts" / name / filename for name in ["local-vision", "local-meta-vulkan"]
+                   if (ROOT / ".artifacts" / name / filename).is_file()
+                   and (ROOT / ".artifacts" / name / filename).resolve().is_relative_to(ROOT.resolve())
+                   and (ROOT / ".artifacts" / name / filename).stat().st_size == size
+                   and digest(ROOT / ".artifacts" / name / filename) == expected), None)
+    if cached is not None:
         shutil.copyfile(cached, target)
     else:
         partial = inside(target.with_suffix(target.suffix + ".partial"))
@@ -74,8 +91,8 @@ def verified_download(filename: str, url: str, size: int, expected: str) -> Path
     return target
 
 
-def extract_runtime(archive: Path) -> list[dict]:
-    destination = inside(DIRECTORY / "runtime")
+def extract_runtime(archive: Path, directory: str = "runtime") -> list[dict]:
+    destination = inside(DIRECTORY / directory)
     destination.mkdir(exist_ok=True)
     entries = []
     with zipfile.ZipFile(archive) as bundle:
@@ -97,21 +114,31 @@ def extract_runtime(archive: Path) -> list[dict]:
                 shutil.copyfileobj(source, output)
             entries.append({"file": target.relative_to(DIRECTORY).as_posix(), "sha256": digest(target)})
     if not (destination / "llama-server.exe").is_file():
-        raise ValueError("Verified archive did not contain the expected CPU server.")
+        raise ValueError("Verified archive did not contain the expected server.")
     return entries
 
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--activate", action="store_true", help="Explicitly select local Meta in the ignored API configuration.")
+    parser.add_argument("--backend", choices=RUNTIMES, default="cpu")
+    parser.add_argument("--model-size", choices=MODELS, default="3b")
+    parser.add_argument("--device", default="Vulkan0", help="Explicit Vulkan device from llama-server --list-devices.")
+    parser.add_argument("--context-size", type=int, choices=[2048, 4096, 8192], default=None)
     args = parser.parse_args()
     if os.name != "nt":
         parser.error("This pinned portable setup supports Windows x64 only.")
+    if not re.fullmatch(r"Vulkan[0-9]+", args.device):
+        parser.error("Choose an explicit Vulkan device such as Vulkan0 or Vulkan1.")
+    selected_model, selected_runtime = MODELS[args.model_size], RUNTIMES[args.backend]
+    distribution = "bartowski/" + selected_model["id"].split("/", 1)[1] + "-GGUF"
+    model_url = "https://huggingface.co/" + distribution + "/resolve/" + selected_model["commit"] + "/" + selected_model["file"]
+    runtime_url = "https://github.com/ggml-org/llama.cpp/releases/download/b11960/" + selected_runtime["file"]
     DIRECTORY.mkdir(parents=True, exist_ok=True)
     inside(DIRECTORY)
-    model = verified_download(MODEL_FILE, MODEL_URL, MODEL_SIZE, MODEL_SHA256)
-    archive = verified_download(RUNTIME_FILE, RUNTIME_URL, RUNTIME_SIZE, RUNTIME_SHA256)
-    files = extract_runtime(archive)
+    model = verified_download(selected_model["file"], model_url, selected_model["size"], selected_model["sha256"])
+    archive = verified_download(selected_runtime["file"], runtime_url, selected_runtime["size"], selected_runtime["sha256"])
+    files = extract_runtime(archive, selected_runtime["directory"])
     notices = ROOT / "docs" / "third-party" / "llama3.2"
     for filename in ["LICENSE", "USE_POLICY.md", "NOTICE.txt", "LLAMA_CPP_LICENSE"]:
         source = notices / filename
@@ -119,13 +146,15 @@ def main() -> int:
             raise ValueError("Required third-party notice is missing: " + filename)
         shutil.copyfile(source, inside(DIRECTORY / filename))
     manifest = {
-        "schema_version": 1, "model_id": MODEL_ID,
-        "model_file": model.relative_to(DIRECTORY).as_posix(), "model_bytes": MODEL_SIZE,
-        "model_sha256": MODEL_SHA256, "model_source": MODEL_URL, "model_commit": MODEL_COMMIT,
-        "distribution": "bartowski/Llama-3.2-3B-Instruct-GGUF", "quantization": "Q4_K_M",
+        "schema_version": 1, "model_id": selected_model["id"],
+        "model_file": model.relative_to(DIRECTORY).as_posix(), "model_bytes": selected_model["size"],
+        "model_sha256": selected_model["sha256"], "model_source": model_url, "model_commit": selected_model["commit"],
+        "distribution": distribution, "quantization": "Q4_K_M",
         "modality": "text reasoning over local OCR and supplied transcript; no model vision",
-        "runtime_release": "b11960", "runtime_archive_sha256": RUNTIME_SHA256,
-        "runtime_executable": "runtime/llama-server.exe", "runtime_files": files,
+        "runtime_release": "b11960", "runtime_archive_sha256": selected_runtime["sha256"],
+        "runtime_executable": selected_runtime["directory"] + "/llama-server.exe", "runtime_files": files,
+        "runtime_backend": args.backend, "runtime_device": args.device if args.backend == "vulkan" else None,
+        "context_size": args.context_size or (4096 if args.backend == "vulkan" else 8192),
     }
     (DIRECTORY / "manifest.json").write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
     if args.activate:
@@ -135,11 +164,11 @@ def main() -> int:
         target.touch(exist_ok=True)
         for name, value in {
             "AI_PROVIDER": "local_meta", "LOCAL_META_BASE_URL": "http://127.0.0.1:8083/v1",
-            "LOCAL_META_MODEL": MODEL_ID, "LOCAL_META_TIMEOUT_SECONDS": "120",
+            "LOCAL_META_MODEL": selected_model["id"], "LOCAL_META_TIMEOUT_SECONDS": "120",
         }.items():
             set_key(str(target), name, value)
         print("Local Meta explicitly selected in ignored apps/api/.env. Existing provider credentials were preserved.")
-    print("Verified local Meta model and CPU runtime are ready. Built with Llama.")
+    print("Verified " + selected_model["id"] + " and " + args.backend + " runtime are ready. Built with Llama.")
     print("Start with: .venv\\Scripts\\python.exe scripts/run-local-meta.py")
     return 0
 

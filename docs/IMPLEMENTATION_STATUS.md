@@ -1,8 +1,15 @@
 # ReplayLab 3.0 implementation status
 
+**4 November current tutorial proof:** [45.633-second video](../ReplayLab_Meta_Hackathon_Demo.mp4)
+shows real tutorial upload, live Meta generation, review/approval, shared-screen
+PASS and completed progress. It uses Meta Llama 3.2 1B on AMD Vulkan and a natural
+GuyNeural voice without a spoken preamble. [Measured evidence](TUTORIAL_PROOF.md).
+The earlier prepared-workflow recording and its measurements below are historical
+and link to their preserved archive.
+
 ## Live demonstration preparation — 3 November 2026
 
-The accepted [continuous MP4](../ReplayLab_Meta_Hackathon_Demo.mp4) is **176.4 s**,
+The accepted [continuous MP4](assets/prepared-workflow-demo.mp4) is **176.4 s**,
 1920 × 1080, H.264 at 30 FPS. FFprobe, full decoding, real Chromium playback,
 and visual review passed. It shows three fresh Meta-backed observations with
 FAIL/PASS/UNCERTAIN, then the separately labeled OCR evaluation. The video includes

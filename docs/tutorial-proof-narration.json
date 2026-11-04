@@ -1,0 +1,33 @@
+{
+  "schema_version": 1,
+  "source_video_sha256": "6418c660c5e9c09f373f791a191c3b4a2b188f54b7ec631683479acf9ff16543",
+  "duration_seconds": 45.633333,
+  "voice": "en-US-GuyNeural",
+  "disclosure": "Synthetic neural narration added afterwards, identified in metadata and documentation. The video is a continuous actual application recording.",
+  "segments": [
+    {
+      "id": "tutorial",
+      "start": 0.5,
+      "end": 12.1,
+      "text": "Upload a tutorial and watch it play. Replay Lab turns its instructions into a checkpoint you can practice."
+    },
+    {
+      "id": "generate",
+      "start": 12.9,
+      "end": 22.4,
+      "text": "Meta Llama generates a checkpoint from the tutorial's transcript and sampled frame. Review the result, then approve it."
+    },
+    {
+      "id": "practice",
+      "start": 23.4,
+      "end": 37.2,
+      "text": "Now follow the tutorial in the shared Code Lab tab. Replay Lab reads the actual screen and checks its visible heading against the approved checkpoint."
+    },
+    {
+      "id": "complete",
+      "start": 38.2,
+      "end": 45.2,
+      "text": "Pass. The screen matches the tutorial, and the graph marks the checkpoint complete."
+    }
+  ]
+}

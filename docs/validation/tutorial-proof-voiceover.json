@@ -1,0 +1,140 @@
+{
+  "success": true,
+  "created_at": "2026-11-04T15:29:17.288085+00:00",
+  "source_sha256": "6418c660c5e9c09f373f791a191c3b4a2b188f54b7ec631683479acf9ff16543",
+  "source_media": {
+    "programs": [],
+    "stream_groups": [],
+    "streams": [
+      {
+        "index": 0,
+        "codec_name": "h264",
+        "codec_type": "video",
+        "width": 1920,
+        "height": 1080,
+        "r_frame_rate": "30/1",
+        "duration": "45.633333",
+        "nb_frames": "1369"
+      }
+    ],
+    "format": {
+      "duration": "45.633333",
+      "size": "2560493"
+    }
+  },
+  "plan_sha256": "9de48995996c7f5f5d3d5404a1011d121ba01606b7536ed9c0099f48bde611c8",
+  "voice": "en-US-GuyNeural",
+  "synthetic_narration": true,
+  "video_stream_copied": true,
+  "narration_disclosure": "Synthetic voiceover is identified in metadata and project documentation.",
+  "online_content": "Only the owner-approved narration text; no screenshots, video or credentials.",
+  "previous_output_sha256": "b7fddbaa85c3c4657b9ca8db323d08e407cf1c4d4cbb2ddb591fbb9ff2605a4a",
+  "speech": {
+    "success": true,
+    "created_at": "2026-11-04T15:29:19.880766+00:00",
+    "synthetic_narration": true,
+    "provider": "Microsoft Edge online speech via edge-tts",
+    "client_version": "7.3.1",
+    "voice": "en-US-GuyNeural",
+    "rate": "+0%",
+    "online_content": "Only the supplied narration text; no application media or credentials.",
+    "plan_sha256": "9de48995996c7f5f5d3d5404a1011d121ba01606b7536ed9c0099f48bde611c8",
+    "segments": [
+      {
+        "id": "tutorial",
+        "start": 0.5,
+        "end": 12.1,
+        "text": "Upload a tutorial and watch it play. Replay Lab turns its instructions into a checkpoint you can practice.",
+        "file": ".artifacts\\tutorial-proof-voiceover-20261104T152917286252Z\\speech\\tutorial.mp3",
+        "duration_seconds": 7.536,
+        "speech_end_seconds": 8.036,
+        "fits_window": true,
+        "sha256": "aa6d8c1745ac9bd5b37efd75a7920b6ab75ba07ecd40a3d28a8ba40cb66550d4"
+      },
+      {
+        "id": "generate",
+        "start": 12.9,
+        "end": 22.4,
+        "text": "Meta Llama generates a checkpoint from the tutorial's transcript and sampled frame. Review the result, then approve it.",
+        "file": ".artifacts\\tutorial-proof-voiceover-20261104T152917286252Z\\speech\\generate.mp3",
+        "duration_seconds": 8.184,
+        "speech_end_seconds": 21.084,
+        "fits_window": true,
+        "sha256": "e7b350c6707e829df5a12134b86cba370cbc5d4df057af373dfbefc6d7f3aaa3"
+      },
+      {
+        "id": "practice",
+        "start": 23.4,
+        "end": 37.2,
+        "text": "Now follow the tutorial in the shared Code Lab tab. Replay Lab reads the actual screen and checks its visible heading against the approved checkpoint.",
+        "file": ".artifacts\\tutorial-proof-voiceover-20261104T152917286252Z\\speech\\practice.mp3",
+        "duration_seconds": 9.288,
+        "speech_end_seconds": 32.688,
+        "fits_window": true,
+        "sha256": "1114bd36be05708a77d74e3ecb124009f9877a6e9a85743f953186b5129f5357"
+      },
+      {
+        "id": "complete",
+        "start": 38.2,
+        "end": 45.2,
+        "text": "Pass. The screen matches the tutorial, and the graph marks the checkpoint complete.",
+        "file": ".artifacts\\tutorial-proof-voiceover-20261104T152917286252Z\\speech\\complete.mp3",
+        "duration_seconds": 6.288,
+        "speech_end_seconds": 44.488,
+        "fits_window": true,
+        "sha256": "2f7b26fab3711e9c19be3c15947609c4d97ba779e5bcfc4cd169612a3bd8d12d"
+      }
+    ],
+    "finished_at": "2026-11-04T15:29:22.623536+00:00"
+  },
+  "source_video_packet_sha256": "812a5c20b249b011dc957fc2fcaaa563236cdae25dca6c5331c7edd86c7d9af1",
+  "output_video_packet_sha256": "812a5c20b249b011dc957fc2fcaaa563236cdae25dca6c5331c7edd86c7d9af1",
+  "source_timestamp_sha256": "932f6497f64461ba6d3cf5ba232f8add57de4b5f8e0ad4117b1eeb1b112d2842",
+  "output_timestamp_sha256": "932f6497f64461ba6d3cf5ba232f8add57de4b5f8e0ad4117b1eeb1b112d2842",
+  "full_decode_passed": true,
+  "audio_levels_dbfs": {
+    "mean_volume": -19.1,
+    "max_volume": -1.4
+  },
+  "output_media": {
+    "programs": [],
+    "stream_groups": [],
+    "streams": [
+      {
+        "index": 0,
+        "codec_name": "h264",
+        "codec_type": "video",
+        "width": 1920,
+        "height": 1080,
+        "r_frame_rate": "30/1",
+        "duration": "45.633333",
+        "nb_frames": "1369"
+      },
+      {
+        "index": 1,
+        "codec_name": "aac",
+        "codec_type": "audio",
+        "sample_rate": "48000",
+        "channels": 1,
+        "r_frame_rate": "0/0",
+        "duration": "45.621000",
+        "nb_frames": "2140"
+      }
+    ],
+    "format": {
+      "duration": "45.633333",
+      "size": "3233185"
+    }
+  },
+  "output_sha256": "5acbbbf822566aa51c829fb42e41d7038b43e793ba8f660e5446cc134ed13441",
+  "finished_at": "2026-11-04T15:29:30.319811+00:00",
+  "browser_playback": {
+    "duration": 45.633333,
+    "current_time": 1.686049,
+    "width": 1920,
+    "height": 1080,
+    "audio_decoded_bytes": 34102,
+    "video_decoded_bytes": 290743,
+    "error": null
+  }
+}

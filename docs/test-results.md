@@ -1,5 +1,12 @@
 # Recorded validation
 
+**4 November current tutorial proof:** [45.633-second video](../ReplayLab_Meta_Hackathon_Demo.mp4)
+shows real tutorial upload, live Meta generation, review/approval, shared-screen
+PASS and completed progress. It uses Meta Llama 3.2 1B on AMD Vulkan and a natural
+GuyNeural voice without a spoken preamble. [Measured evidence](TUTORIAL_PROOF.md).
+The earlier prepared-workflow recording and its measurements below are historical
+and link to their preserved archive.
+
 ## Live demonstration checks — 3 November 2026
 
 The owner-requested narrated version retains identical H.264 video packets and

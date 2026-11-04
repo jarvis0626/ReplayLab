@@ -1,6 +1,13 @@
 # Submission readiness
 
-**3 November demonstration update:** the [actual continuous MP4](../ReplayLab_Meta_Hackathon_Demo.mp4)
+**4 November current tutorial proof:** [45.633-second video](../ReplayLab_Meta_Hackathon_Demo.mp4)
+shows real tutorial upload, live Meta generation, review/approval, shared-screen
+PASS and completed progress. It uses Meta Llama 3.2 1B on AMD Vulkan and a natural
+GuyNeural voice without a spoken preamble. [Measured evidence](TUTORIAL_PROOF.md).
+The earlier prepared-workflow recording and its measurements below are historical
+and link to their preserved archive.
+
+**3 November demonstration update:** the [actual continuous MP4](assets/prepared-workflow-demo.mp4)
 is **176.4 s, 1080p, H.264, 30 FPS**, with real local Meta tab-stream observations,
 FAIL → correction → PASS → UNCERTAIN, measured OCR evaluation, and exact provider
 disclosure. The workflow was prepared from a real recorded CodeLab tutorial and

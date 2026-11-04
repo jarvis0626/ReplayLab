@@ -38,7 +38,7 @@ def workflow(**step_extra):
     return {"title": "Open Extensions", "description": "Review the supplied OCR checkpoint.", "interface_version": None,
         "steps": [{"id": "open", "title": "Open Extensions", "description": "Review the Extensions Marketplace panel.",
             "dependencies": [], "timestamp_start": 0, "timestamp_end": 3, "expected_state": "Extensions Marketplace",
-            "screen_rules": [{"id": "panel", "kind": "window", "expected": "Extensions Marketplace",
+            "screen_rules": [{"id": "panel", "kind": "text_present", "expected": "Extensions Marketplace",
                 "alternatives": [], "contradictions": [], "description": "Check the visible panel title."}], **step_extra}]}
 
 
@@ -324,6 +324,61 @@ def test_missing_source_never_causes_a_model_request(tmp_path):
     with pytest.raises(ProviderError) as caught:
         adapter.extract_workflow({}, [])
     assert caught.value.code == "missing_source" and requests == []
+
+
+def test_tutorial_proposal_cannot_turn_neighboring_ocr_labels_into_counterstates(tmp_path):
+    value = workflow()
+    value["steps"][0]["screen_rules"][0]["contradictions"] = ["Preferences"]
+    adapter = provider(tmp_path, lambda request: httpx.Response(200, json=completed(json.dumps(value))))
+    project = {"tutorial": {"transcript_segments": [{"start": 0, "end": 4,
+        "text": 'Open "Extensions Marketplace". "Preferences" is a different destination.'}]}}
+    with pytest.raises(ProviderError, match="invalid workflow"):
+        adapter.extract_workflow(project, [])
+
+
+def test_tutorial_response_schema_uses_source_goals_without_incidental_navigation(tmp_path, monkeypatch):
+    path = tmp_path / "frame.png"
+    path.write_bytes(b"frame")
+    monkeypatch.setattr("app.services.screen_observation._local_observation",
+                        lambda value: ocr("Settings", "Extensions Marketplace", "Reset sandbox"))
+
+    def handle(request):
+        payload = json.loads(request.content)
+        schema = payload["response_format"]["json_schema"]["schema"]
+        assert schema["properties"]["steps"]["minItems"] == 1
+        assert schema["properties"]["steps"]["maxItems"] == 1
+        assert schema["properties"]["steps"]["items"]["properties"]["screen_rules"]["maxItems"] == 1
+        rules = schema["properties"]["steps"]["items"]["properties"]["screen_rules"]["items"]["properties"]
+        assert rules["expected"]["enum"] == ["Extensions Marketplace"]
+        assert rules["alternatives"]["maxItems"] == rules["contradictions"]["maxItems"] == 0
+        assert rules["kind"]["enum"] == ["text_present"]
+        return httpx.Response(200, json=completed(json.dumps(workflow())))
+
+    task = provider(tmp_path, handle).extract_workflow({"video": {"duration": 5},
+        "tutorial": {"transcript_segments": [{"start": 0, "end": 4,
+            "text": 'Open "Extensions Marketplace".'}]}},
+        [{"id": "frame", "path": str(path), "timestamp": 2}])
+    assert task.steps[0].screen_rules[0].expected == "Extensions Marketplace"
+
+
+def test_one_goal_tutorial_discloses_one_observed_frame_from_available_sources(tmp_path, monkeypatch):
+    frames, reads = [], []
+    for index in range(4):
+        path = tmp_path / f"source-{index}.png"
+        path.write_bytes(str(index).encode())
+        frames.append({"id": str(index), "path": str(path), "timestamp": index + 1})
+
+    def observe(value):
+        reads.append(value)
+        return ocr("Extensions Marketplace")
+
+    monkeypatch.setattr("app.services.screen_observation._local_observation", observe)
+    adapter = provider(tmp_path, lambda request: httpx.Response(200, json=completed(json.dumps(workflow()))))
+    task = adapter.extract_workflow({"video": {"duration": 5}, "tutorial": {"transcript_segments": [
+        {"start": 0, "end": 4, "text": 'Open "Extensions Marketplace".'}]}}, frames)
+    assert reads == [b"0"]
+    assert task.provenance["source_frame_count"] == 1
+    assert task.provenance["available_source_frame_count"] == 4
 
 
 def test_workflow_repeated_frame_text_keeps_first_timestamp_and_new_evidence(tmp_path, monkeypatch):

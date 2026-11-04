@@ -1,9 +1,10 @@
-"""Run the pinned local Meta CPU server on loopback without any cloud credential."""
+"""Run the manifest-selected pinned Meta CPU/Vulkan model on loopback."""
 
 import argparse
 import hashlib
 import json
 import os
+import re
 import socket
 import subprocess
 import sys
@@ -18,6 +19,16 @@ MODEL_ID = "meta-llama/Llama-3.2-3B-Instruct"
 MODEL_SHA256 = "6c1a2b41161032677be168d354123594c0e6e67d2b9227c84f296ad037c728ff"
 RUNTIME_SHA256 = "73f962f82850d244db47eaacb9d913637027b82399124324298576d58c5f4287"
 BASE_URL = "http://127.0.0.1:8083"
+MODELS = {
+    MODEL_ID: {"file": "Llama-3.2-3B-Instruct-Q4_K_M.gguf", "sha256": MODEL_SHA256},
+    "meta-llama/Llama-3.2-1B-Instruct": {"file": "Llama-3.2-1B-Instruct-Q4_K_M.gguf",
+        "sha256": "6f85a640a97cf2bf5b8e764087b1e83da0fdb51d7c9fab7d0fece9385611df83"},
+}
+RUNTIMES = {
+    "cpu": {"sha256": RUNTIME_SHA256, "executable": "runtime/llama-server.exe"},
+    "vulkan": {"sha256": "bac6914b5e83523eb008c6789eaa12669f93fbc196c3b9e8237b6672323b33e9",
+               "executable": "runtime-vulkan/llama-server.exe"},
+}
 
 
 def artifact(name: str) -> Path:
@@ -36,28 +47,43 @@ def digest(path: Path) -> str:
 
 def healthy() -> bool:
     try:
+        expected_model = configuration()["model_id"]
         with httpx.Client(base_url=BASE_URL, timeout=2, trust_env=False, follow_redirects=False) as client:
             if client.get("/health").status_code != 200:
                 return False
             response = client.get("/v1/models")
             return response.status_code == 200 and any(
-                entry.get("id") == MODEL_ID for entry in response.json().get("data", [])
+                entry.get("id") == expected_model for entry in response.json().get("data", [])
             )
     except (httpx.RequestError, ValueError, AttributeError, TypeError):
         return False
 
 
-def validate_files() -> tuple[Path, Path]:
+def configuration() -> dict:
     manifest = json.loads(artifact("manifest.json").read_text(encoding="utf-8"))
-    if (manifest.get("schema_version") != 1 or manifest.get("model_id") != MODEL_ID
-            or manifest.get("model_sha256") != MODEL_SHA256
-            or manifest.get("runtime_archive_sha256") != RUNTIME_SHA256):
+    model = MODELS.get(manifest.get("model_id"))
+    backend = manifest.get("runtime_backend", "cpu")
+    runtime = RUNTIMES.get(backend)
+    if (manifest.get("schema_version") != 1 or not model or not runtime
+            or manifest.get("model_sha256") != model["sha256"]
+            or manifest.get("model_file") != model["file"]
+            or manifest.get("runtime_archive_sha256") != runtime["sha256"]
+            or manifest.get("runtime_executable") != runtime["executable"]):
         raise ValueError("Local model manifest differs from the pinned setup.")
+    if backend == "vulkan" and not re.fullmatch(r"Vulkan[0-9]+", manifest.get("runtime_device", "")):
+        raise ValueError("The Vulkan manifest needs an explicit device.")
+    if manifest.get("context_size", 8192) not in {2048, 4096, 8192}:
+        raise ValueError("Unsupported local model context size.")
+    return manifest
+
+
+def validate_files() -> tuple[Path, Path]:
+    manifest = configuration()
     model = artifact(manifest["model_file"])
     executable = artifact(manifest["runtime_executable"])
-    if model.name != "Llama-3.2-3B-Instruct-Q4_K_M.gguf" or executable.name != "llama-server.exe":
+    if model.name != MODELS[manifest["model_id"]]["file"] or executable.name != "llama-server.exe":
         raise ValueError("Unexpected local model or runtime filename.")
-    if digest(model) != MODEL_SHA256:
+    if digest(model) != manifest["model_sha256"]:
         raise ValueError("Local model failed its pinned SHA256 check.")
     records = manifest.get("runtime_files", [])
     executable_listed = False
@@ -85,9 +111,14 @@ def main() -> int:
         except OSError:
             raise ValueError("Port8083 is occupied. No existing process was stopped; use --check-ready to inspect the model.") from None
     model, executable = validate_files()
+    manifest = configuration()
+    backend = manifest.get("runtime_backend", "cpu")
     command = [str(executable), "-m", str(model), "--host", "127.0.0.1", "--port", "8083",
-               "--alias", MODEL_ID, "-ngl", "0", "--threads", "8", "-c", "8192",
+               "--alias", manifest["model_id"], "-ngl", "99" if backend == "vulkan" else "0",
+               "--threads", "4" if backend == "vulkan" else "8", "-c", str(manifest.get("context_size", 8192)),
                "--parallel", "1", "--no-webui"]
+    if backend == "vulkan":
+        command.extend(["--device", manifest["runtime_device"], "--fit", "off"])
     # No API credential is needed or forwarded. This is a foreground child;
     # the caller can stop its process tree with the normal development runner.
     environment = {

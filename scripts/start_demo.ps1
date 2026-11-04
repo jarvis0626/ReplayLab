@@ -25,6 +25,7 @@ $repoRoot = [System.IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..'))
 $apiBase = 'http://127.0.0.1:8010'
 $webBase = 'http://127.0.0.1:5173'
 $expectedModel = 'meta-llama/Llama-3.2-3B-Instruct'
+$approvedModels = @('meta-llama/Llama-3.2-3B-Instruct', 'meta-llama/Llama-3.2-1B-Instruct')
 $pythonPath = Join-Path $repoRoot '.venv\Scripts\python.exe'
 $artifactRoot = Join-Path $repoRoot '.artifacts'
 $ownershipPath = Join-Path $artifactRoot 'demo-launcher-ownership.json'
@@ -86,9 +87,9 @@ try:
         raise ValueError("local Meta must be configured explicitly")
     if settings.local_meta_base_url != "http://127.0.0.1:8083/v1":
         raise ValueError("the demo launcher expects the pinned loopback server")
-    if settings.local_meta_model != "meta-llama/Llama-3.2-3B-Instruct":
+    if settings.local_meta_model not in {"meta-llama/Llama-3.2-3B-Instruct", "meta-llama/Llama-3.2-1B-Instruct"}:
         raise ValueError("the demo launcher expects the pinned Meta model")
-    print(json.dumps({"valid": True, "mode": "local_meta", "uses_cloud_credentials": False}))
+    print(json.dumps({"valid": True, "mode": "local_meta", "model": settings.local_meta_model, "uses_cloud_credentials": False}))
 except Exception:
     sys.exit(1)
 '@
@@ -106,6 +107,8 @@ except Exception:
     if (-not $configuration -or -not $configuration.valid) {
         throw 'Backend configuration check returned an unexpected result. Configuration values were hidden.'
     }
+    $expectedModel = $configuration.model
+    if ($approvedModels -notcontains $expectedModel) { throw 'The configured model is not a pinned supported Meta model.' }
     Write-Host 'Dependencies and local Meta settings: valid. No cloud API key is required by this mode.'
 
     $health = Get-Json ($apiBase + '/api/health')
@@ -162,7 +165,7 @@ except Exception:
     }
     if (-not $project -or $project.status -ne 'ready' -or -not $project.task -or
         $project.task.modality -ne 'digital' -or $project.task.provider_mode -ne 'local_meta' -or
-        @($project.task.steps).Count -eq 0 -or $project.task.provenance.model -ne $expectedModel -or
+        @($project.task.steps).Count -eq 0 -or $approvedModels -notcontains $project.task.provenance.model -or
         -not $project.task.provenance.request_id -or $project.task.provenance.local_only -ne $true -or
         $project.task.provenance.vision_inference -ne $false) {
         throw 'A ready, genuinely generated local Meta digital workflow was not found. Prepare the workflow as described in docs/DEMO_SETUP.md, or pass its identifier using -ProjectId. No project was changed.'
@@ -170,7 +173,7 @@ except Exception:
 
     $approvedText = if ($project.approved) { 'approved' } else { 'awaiting review and approval' }
     Write-Host ('Prepared digital workflow: ' + $project.id + ' (' + @($project.task.steps).Count + ' steps; ' + $approvedText + ').')
-    Write-Host ('Provider: local Meta Llama 3.2 3B. Exact model server is healthy: ' + $expectedModel)
+    Write-Host ('Provider: local Meta Llama. Exact model server is healthy: ' + $expectedModel)
     if ($health.provider.live_verified) {
         Write-Host 'API session: an actual local Meta inference response has been validated.'
     } else {

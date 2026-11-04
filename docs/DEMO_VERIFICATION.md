@@ -1,7 +1,14 @@
 # Live demonstration verification
 
+**4 November current tutorial proof:** [45.633-second video](../ReplayLab_Meta_Hackathon_Demo.mp4)
+shows real tutorial upload, live Meta generation, review/approval, shared-screen
+PASS and completed progress. It uses Meta Llama 3.2 1B on AMD Vulkan and a natural
+GuyNeural voice without a spoken preamble. [Measured evidence](TUTORIAL_PROOF.md).
+The earlier prepared-workflow recording and its measurements below are historical
+and link to their preserved archive.
+
 **Accepted final artifact:**
-[ReplayLab_Meta_Hackathon_Demo.mp4](../ReplayLab_Meta_Hackathon_Demo.mp4),
+[ReplayLab_Meta_Hackathon_Demo.mp4](assets/prepared-workflow-demo.mp4),
 **176.4 seconds**, one continuous actual application take. Its
 [safe recording report](validation/hackathon-recording.json) contains actual
 requests, verdicts, provenance, timings, and acceptance checks. Historical

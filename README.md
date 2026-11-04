@@ -1,6 +1,15 @@
 # ReplayLab 3.0
 
-**3 November live demonstration:** [Watch the actual uncut MP4](ReplayLab_Meta_Hackathon_Demo.mp4)
+**4 November: [watch the tutorial actually become a verified task](ReplayLab_Meta_Hackathon_Demo.mp4)**
+- **46 seconds**, one continuous app recording: upload/play tutorial, generate its
+  workflow live, review/approve, share the target tab, and verify completion.
+- **Natural neural narration**, with no spoken disclaimer or dashboard introduction.
+- Actual **Meta Llama 3.2 1B**, locally accelerated by AMD Vulkan; the generated
+  checkpoint was used unchanged. [Exact recording and audio evidence](docs/TUTORIAL_PROOF.md).
+
+[Run the current setup](docs/DEMO_SETUP.md) or [read the spoken script](docs/DEMO_SCRIPT.md).
+
+**Earlier prepared-workflow demonstration:** [Watch the actual uncut MP4](docs/assets/prepared-workflow-demo.mp4)
 — **2:56.4, 1080p, 30 FPS**. Real shared-tab OCR and local Meta Llama inference
 show **FAIL → correction → PASS → UNCERTAIN**, then measured evaluation and the
 actual provider. The CodeLab target is visibly a simulation and the workflow is

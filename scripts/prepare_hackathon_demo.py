@@ -20,7 +20,10 @@ from pathlib import Path
 from playwright.sync_api import expect, sync_playwright
 
 ROOT = Path(__file__).resolve().parents[1]
-MODEL = "meta-llama/Llama-3.2-3B-Instruct"
+APPROVED_MODELS = {
+    "meta-llama/Llama-3.2-1B-Instruct",
+    "meta-llama/Llama-3.2-3B-Instruct",
+}
 TRANSCRIPT = (
     '00:00 In the CodeLab simulation, open "Extensions Marketplace". '
     '"Preferences" is the wrong destination; use Extensions instead of Settings.\n'
@@ -43,7 +46,7 @@ def main():
     work.mkdir(parents=True, exist_ok=False)
     report = {"success": False, "created_at": datetime.now(UTC).isoformat(), "phase": "initialization",
               "source": "Actual continuous browser interactions in labeled CodeLab simulation",
-              "model": MODEL, "approved": False, "transcript": TRANSCRIPT}
+              "model": None, "approved": False, "transcript": TRANSCRIPT}
     report_path = work / "preparation.json"
 
     def save():
@@ -71,6 +74,11 @@ def main():
         resources.callback(request.dispose)
         health = request.get("/api/health").json()
         assert health["provider"]["mode"] == "local_meta", "Select local Meta before preparation."
+        active_model = health["provider"].get("model")
+        assert active_model in APPROVED_MODELS, "Select an approved local Meta Llama 3.2 model."
+        expected_model = active_model
+        report["active_model"] = active_model
+        report["model"] = expected_model
         source = work / "CodeLab-real-interaction-tutorial.mp4"
         original = None
         report["phase"] = "tutorial_source"
@@ -79,7 +87,9 @@ def main():
             original = request.get(f"/api/projects/{args.clone_from}").json()
             assert original["name"].startswith("Hackathon live demonstration")
             assert original["task"]["provider_mode"] == "local_meta" and original["video"]
-            assert original["task"]["provenance"]["model"] == MODEL
+            expected_model = original["task"]["provenance"]["model"]
+            assert expected_model in APPROVED_MODELS
+            report["model"] = expected_model
             assert original["task"]["provenance"]["request_id"]
             media = request.get(original["video"]["url"])
             assert media.ok
@@ -160,7 +170,7 @@ def main():
             assert response.ok
             project = response.json()
         assert project["task"]["provider_mode"] == "local_meta"
-        assert project["task"]["provenance"]["model"] == MODEL
+        assert project["task"]["provenance"]["model"] == expected_model
         assert project["task"]["provenance"]["request_id"]
         assert project["task"]["provenance"]["source_frame_count"] > 0
         assert not project["approved"] and not project["completed_step_ids"]
